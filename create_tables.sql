@@ -2,7 +2,7 @@
 
 CREATE TABLE users -- пользователи системы
 (
-id           INT 
+user_id      INT 
              PRIMARY KEY
              NOT NULL,
  
@@ -16,7 +16,7 @@ pass_hash    VARCHAR(128)
 
 CREATE TABLE products  
 (
-id           INT 
+product_id   INT 
              PRIMARY KEY
              NOT NULL,
  
@@ -27,7 +27,7 @@ name         VARCHAR(64)
 
 CREATE TABLE workers
 (
-id           INT 
+worker_id    INT 
              PRIMARY KEY
              NOT NULL,
 
@@ -49,7 +49,7 @@ position     VARCHAR(32)
 
 CREATE TABLE addresses
 (
-id           INT 
+address_id   INT 
              PRIMARY KEY
              NOT NULL,
 
@@ -66,7 +66,7 @@ postal_code  VARCHAR(16)
 
 CREATE TABLE customers
 (
-id           INT 
+customer_id  INT 
              PRIMARY KEY
              NOT NULL,
 
@@ -76,8 +76,7 @@ user_id      INT
              NOT NULL,
 
 address_id   INT
-             REFERENCES addresses
-             NOT NULL,
+             REFERENCES addresses,
 		 
 first_name   VARCHAR(16) 
              NOT NULL,
@@ -88,7 +87,7 @@ second_name  VARCHAR(16)
 
 CREATE TABLE suppliers
 (
-id           INT 
+supplier_id  INT 
              PRIMARY KEY
              NOT NULL,
 
@@ -101,16 +100,15 @@ product_id   INT
              NOT NULL,
 
 address_id   INT
-             REFERENCES addresses
-             NOT NULL,
+             REFERENCES addresses,
 		 
 name         VARCHAR(128)
              NOT NULL
 );
 
-CREATE TABLE warehouse
+CREATE TABLE warehouses
 (
-id           INT
+warehouse_id INT
              PRIMARY KEY
              NOT NULL,
    
@@ -125,7 +123,7 @@ quantity     INT
 
 CREATE TABLE orders -- покупка товара клиентом
 (
-id           INT
+order_id     INT
              PRIMARY KEY
              NOT NULL,
 
@@ -148,7 +146,7 @@ date         TIMESTAMP
 
 CREATE TABLE deliveries -- заказ товара у поставщика
 (
-id           INT
+delivery_id  INT
              PRIMARY KEY
              NOT NULL,
 
