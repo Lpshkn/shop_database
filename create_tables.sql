@@ -11,8 +11,7 @@ CONSTRAINT unique_name UNIQUE(name)
 CREATE TABLE workers
 (
 worker_id INT IDENTITY PRIMARY KEY,
-first_name VARCHAR(32) NOT NULL,
-second_name VARCHAR(32) NOT NULL,
+fullname VARCHAR(128) NOT NULL,
 salary MONEY,
 job VARCHAR(32)
 );
@@ -38,13 +37,20 @@ product_id INT UNIQUE NOT NULL,
 quantity INT NOT NULL
 );
 
-CREATE TABLE orders
+CREATE TABLE purchases
 (
-order_id INT IDENTITY PRIMARY KEY,
-product_id INT NOT NULL,
-customer_id INT NOT NULL,
+purchase_id INT NOT NULL PRIMARY KEY,
+product_id INT NOT NULL PRIMARY KEY,
 quantity SMALLINT NOT NULL,
-cost MONEY NOT NULL,
+default_cost MONEY NOT NULL
+)
+
+CREATE TABLE receipts
+(
+receipt_id INT IDENTITY PRIMARY KEY,
+customer_id INT NOT NULL,
+purchase_id INT NOT NULL,
+worker_name VARCHAR(128) NOT NULL,
 date DATETIME
 );
 
