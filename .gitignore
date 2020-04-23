@@ -1,4 +1,3 @@
 *.pyc
-web/venv
-web/.idea
-web/.git
+venv
+.idea
