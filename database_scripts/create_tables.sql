@@ -3,7 +3,7 @@ USE shop_db
 CREATE TABLE Discount_cards
 (
 card_id INT IDENTITY PRIMARY KEY,
-discount TINYINT NOT NULL DEFAULT 0,
+discount FLOAT NOT NULL DEFAULT 0,
 start_date DATE NOT NULL DEFAULT GETDATE(),
 expiration DATE NOT NULL
 );
