@@ -13,6 +13,8 @@ CREATE TABLE Customers
 customer_id INT IDENTITY PRIMARY KEY,
 fullname VARCHAR(128) NOT NULL,
 card_id INT,
+address VARCHAR(128),
+email VARCHAR(128),
 
 CONSTRAINT card_foreign FOREIGN KEY (card_id)
     REFERENCES discount_cards(card_id)
@@ -31,6 +33,7 @@ CREATE TABLE Products
 (
 product_id INT IDENTITY PRIMARY KEY,
 name VARCHAR(255) NOT NULL UNIQUE,
+company VARCHAR(128) NOT NULL,
 quantity_stock SMALLINT NOT NULL,
 supplier_name VARCHAR(255) NOT NULL,
 
@@ -59,7 +62,9 @@ CREATE TABLE Workers
 worker_id INT IDENTITY PRIMARY KEY,
 fullname VARCHAR(128) NOT NULL UNIQUE,
 salary MONEY,
-job VARCHAR(32)
+job VARCHAR(32),
+address VARCHAR(128) NOT NULL,
+passport_number CHAR(10) NOT NULL UNIQUE
 );
 
 CREATE TABLE Receipts
