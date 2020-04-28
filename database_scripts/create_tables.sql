@@ -1,6 +1,6 @@
 USE shopdb
 
-CREATE TABLE discount_cards
+CREATE TABLE DiscountCards
 (
 card_id      INT
              IDENTITY
@@ -18,7 +18,7 @@ expiration   DATE
              NOT NULL
 );
 
-CREATE TABLE customers
+CREATE TABLE Customers
 (
 customer_id  INT
              IDENTITY
@@ -33,12 +33,12 @@ address      VARCHAR(128),
 email        VARCHAR(128),
 
 CONSTRAINT card_foreign FOREIGN KEY (card_id)
-    REFERENCES discount_cards(card_id)
+    REFERENCES DiscountCards(card_id)
         ON DELETE SET NULL
         ON UPDATE CASCADE
 );
 
-CREATE TABLE suppliers
+CREATE TABLE Suppliers
 (
 supplier_id  INT
              IDENTITY
