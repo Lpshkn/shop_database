@@ -10,19 +10,25 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>195</height>
+    <height>207</height>
    </rect>
   </property>
   <property name="sizePolicy">
    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
+    <horstretch>1</horstretch>
+    <verstretch>1</verstretch>
    </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>600</width>
+    <height>207</height>
+   </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>600</width>
-    <height>16777215</height>
+    <height>207</height>
    </size>
   </property>
   <property name="font">
@@ -52,29 +58,18 @@
       <number>50</number>
      </property>
      <property name="verticalSpacing">
-      <number>10</number>
-     </property>
-     <property name="leftMargin">
-      <number>0</number>
+      <number>15</number>
      </property>
      <item row="0" column="0">
       <widget class="QLabel" name="name_server_label">
        <property name="font">
         <font>
          <pointsize>9</pointsize>
+         <underline>true</underline>
         </font>
        </property>
        <property name="text">
         <string>Имя сервера:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QComboBox" name="name_server_combox">
-       <property name="font">
-        <font>
-         <pointsize>9</pointsize>
-        </font>
        </property>
       </widget>
      </item>
@@ -83,6 +78,7 @@
        <property name="font">
         <font>
          <pointsize>9</pointsize>
+         <underline>true</underline>
         </font>
        </property>
        <property name="text">
@@ -92,10 +88,25 @@
      </item>
      <item row="1" column="1">
       <widget class="QComboBox" name="name_user_combox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>24</height>
+        </size>
+       </property>
        <property name="font">
         <font>
          <pointsize>9</pointsize>
         </font>
+       </property>
+       <property name="editable">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -104,6 +115,7 @@
        <property name="font">
         <font>
          <pointsize>9</pointsize>
+         <underline>true</underline>
         </font>
        </property>
        <property name="text">
@@ -113,6 +125,12 @@
      </item>
      <item row="2" column="1">
       <widget class="QLineEdit" name="password_ledit">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>24</height>
+        </size>
+       </property>
        <property name="font">
         <font>
          <pointsize>9</pointsize>
@@ -122,8 +140,38 @@
      </item>
      <item row="3" column="1">
       <widget class="QCheckBox" name="remember_pswd_chebox">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>22</height>
+        </size>
+       </property>
        <property name="text">
         <string>Запомнить пароль (не рекомендуется)</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QComboBox" name="name_server_combox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
+       <property name="editable">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -145,7 +193,7 @@
       <enum>QLayout::SetDefaultConstraint</enum>
      </property>
      <property name="leftMargin">
-      <number>300</number>
+      <number>380</number>
      </property>
      <item>
       <widget class="QPushButton" name="connect_button">
@@ -176,5 +224,22 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>reject_button</sender>
+   <signal>clicked()</signal>
+   <receiver>connect_dialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>540</x>
+     <y>168</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>299</x>
+     <y>97</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

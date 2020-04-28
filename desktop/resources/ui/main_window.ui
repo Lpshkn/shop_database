@@ -56,6 +56,9 @@
    <property name="statusTip">
     <string>Выполнить подключение к серверу базы данных</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
   </action>
   <action name="save_all">
    <property name="enabled">
@@ -78,5 +81,25 @@
   </action>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>connect_action</sender>
+   <signal>triggered()</signal>
+   <receiver>main_window</receiver>
+   <slot>connect_db()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>699</x>
+     <y>499</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>connect_db()</slot>
+ </slots>
 </ui>
