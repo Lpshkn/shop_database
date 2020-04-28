@@ -4,6 +4,7 @@ This module represents the class to work with the main window.
 from os.path import join, dirname
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow
+from desktop.connect_db import ConnectDatabaseDialog
 
 
 class MainWindow(QMainWindow):
@@ -21,3 +22,12 @@ class MainWindow(QMainWindow):
         except FileNotFoundError as e:
             print(e)
             exit(-1)
+
+        self.connect_db()
+
+    def connect_db(self):
+        """
+        This function creates the connect database dialog and settings it
+        """
+        self.connect_db_dialog = ConnectDatabaseDialog(self)
+        self.connect_db_dialog.show()
