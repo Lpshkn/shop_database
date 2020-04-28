@@ -1,20 +1,36 @@
-USE shop_db
+USE shopdb
 
-CREATE TABLE Discount_cards
+CREATE TABLE discount_cards
 (
-card_id INT IDENTITY PRIMARY KEY,
-discount FLOAT NOT NULL DEFAULT 0,
-start_date DATE NOT NULL DEFAULT GETDATE(),
-expiration DATE NOT NULL
+card_id      INT
+             IDENTITY
+             PRIMARY KEY,
+
+discount     FLOAT
+             NOT NULL
+             DEFAULT 0,
+
+start_date   DATE
+             NOT NULL
+             DEFAULT GETDATE(),
+
+expiration   DATE
+             NOT NULL
 );
 
-CREATE TABLE Customers
+CREATE TABLE customers
 (
-customer_id INT IDENTITY PRIMARY KEY,
-fullname VARCHAR(128) NOT NULL,
-card_id INT,
-address VARCHAR(128),
-email VARCHAR(128),
+customer_id  INT
+             IDENTITY
+             PRIMARY KEY,
+
+fullname     NVARCHAR(128)
+             NOT NULL,
+
+card_id      INT,
+
+address      VARCHAR(128),
+email        VARCHAR(128),
 
 CONSTRAINT card_foreign FOREIGN KEY (card_id)
     REFERENCES discount_cards(card_id)
@@ -22,20 +38,38 @@ CONSTRAINT card_foreign FOREIGN KEY (card_id)
         ON UPDATE CASCADE
 );
 
-CREATE TABLE Suppliers
+CREATE TABLE suppliers
 (
-supplier_id INT IDENTITY PRIMARY KEY,
-name VARCHAR(255) NOT NULL UNIQUE,
-address VARCHAR(255) NOT NULL
+supplier_id  INT
+             IDENTITY
+             PRIMARY KEY,
+
+name         NVARCHAR(128)
+             NOT NULL
+             UNIQUE,
+
+address      NVARCHAR(128)
+             NOT NULL
 );
 
 CREATE TABLE Products
 (
-product_id INT IDENTITY PRIMARY KEY,
-name VARCHAR(255) NOT NULL UNIQUE,
-company VARCHAR(128) NOT NULL,
-quantity_stock SMALLINT NOT NULL,
-supplier_name VARCHAR(255) NOT NULL,
+product_id   INT
+             IDENTITY
+             PRIMARY KEY,
+
+name         NVARCHAR(128)
+             NOT NULL
+             UNIQUE,
+
+company      NVARCHAR(128)
+             NOT NULL,
+
+quantity     SMALLINT
+             NOT NULL,
+
+supplier_name NVARCHAR(128)
+             NOT NULL,
 
 CONSTRAINT supplier_foreign FOREIGN KEY (supplier_name)
     REFERENCES Suppliers(name)
@@ -45,10 +79,18 @@ CONSTRAINT supplier_foreign FOREIGN KEY (supplier_name)
 
 CREATE TABLE Purchases
 (
-purchase_id INT NOT NULL UNIQUE,
-product_id INT NOT NULL,
-quantity SMALLINT NOT NULL,
-default_cost MONEY NOT NULL,
+purchase_id  INT
+             NOT NULL
+             UNIQUE,
+
+product_id   INT
+             NOT NULL,
+
+quantity     SMALLINT
+             NOT NULL,
+
+cost         MONEY
+             NOT NULL,
 
 CONSTRAINT purchases_prim PRIMARY KEY (purchase_id, product_id),
 CONSTRAINT product_foreign FOREIGN KEY (product_id)
@@ -59,21 +101,43 @@ CONSTRAINT product_foreign FOREIGN KEY (product_id)
 
 CREATE TABLE Workers
 (
-worker_id INT IDENTITY PRIMARY KEY,
-fullname VARCHAR(128) NOT NULL UNIQUE,
-salary MONEY,
-job VARCHAR(32),
-address VARCHAR(128) NOT NULL,
-passport_number CHAR(10) NOT NULL UNIQUE
+worker_id    INT
+             IDENTITY
+             PRIMARY KEY,
+
+fullname     NVARCHAR(128)
+             NOT NULL
+             UNIQUE,
+
+salary       MONEY,
+
+job          NVARCHAR(32),
+
+address      NVARCHAR(128)
+             NOT NULL,
+
+passport_number CHAR(10)
+             NOT NULL
+             UNIQUE
 );
 
 CREATE TABLE Receipts
 (
-receipt_id INT IDENTITY PRIMARY KEY,
-customer_id INT NOT NULL,
-purchase_id INT NOT NULL,
-worker_name VARCHAR(128),
-date DATETIME,
+receipt_id   INT
+             IDENTITY
+             PRIMARY KEY,
+
+customer_id  INT
+             NOT NULL,
+
+purchase_id  INT
+             NOT NULL,
+
+worker_name  NVARCHAR(128),
+
+date         DATETIME
+             NOT NULL
+             DEFAULT GETDATE(),
 
 CONSTRAINT fullname_foreign FOREIGN KEY (worker_name)
     REFERENCES Workers(fullname)
