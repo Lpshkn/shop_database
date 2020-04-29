@@ -3,6 +3,7 @@ This module represents the class to work with the dialog of connecting to the da
 """
 import json
 import keyring
+import pyodbc
 from os import mkdir, environ
 from os.path import join, dirname, isdir, isfile
 from PyQt5 import uic
@@ -37,7 +38,7 @@ class ConnectDatabaseDialog(QDialog):
         # Set echo mode to hide inputting a password
         self.password_ledit.setEchoMode(QLineEdit.Password)
 
-        self.load_config()
+        self.__load_config()
 
     def __init_config_directory(self):
         """
@@ -46,7 +47,7 @@ class ConnectDatabaseDialog(QDialog):
         if not isdir(self.CONFIG_DIRECTORY):
             mkdir(self.CONFIG_DIRECTORY)
 
-    def load_config(self):
+    def __load_config(self):
         """
         This method loads all configurations from the config file. If that file exists, then
         this method setups all configurations into the dialog.
@@ -55,22 +56,25 @@ class ConnectDatabaseDialog(QDialog):
             with open(self.CONFIG_FILE, "r") as config_file:
                 json_obj = json.load(config_file)
                 server_names = json_obj["server_names"]
+                database_names = json_obj["database_names"]
                 name = json_obj["name"]
                 self.remember_pswd_chebox.setChecked(json_obj["remember_pswd"])
 
-            self.__setup_credentials(server_names, name, self.remember_pswd_chebox.isChecked())
+            self.__setup_credentials(server_names, database_names, name, self.remember_pswd_chebox.isChecked())
 
         else:
             self.__setup_credentials()
 
-    def __setup_credentials(self, server: list = None, name: str = "", remember_pswd: bool = False):
+    def __setup_credentials(self, server: list = None, database: list = None, name: str = "", remember_pswd: bool = False):
         """
         This method setups configurations into the dialog. It fills edit lines, combo and check boxes.
         """
 
-        # Add all servers into server's names combobox
+        # Add all servers and databases into server's names combobox and database's names combobox
         if server:
             self.name_server_combox.addItems(server)
+        if database:
+            self.database_combox.addItems(database)
 
         # Set username into the user's name line edit
         self.name_user_ledit.setText(name)
@@ -101,7 +105,7 @@ class ConnectDatabaseDialog(QDialog):
         This method enables or disables the connect button for this dialog window depending on whether
         there is text in the server's name combo box.
         """
-        if self.name_server_combox.currentText():
+        if self.name_server_combox.currentText() and self.database_combox.currentText():
             self.connect_button.setEnabled(True)
         else:
             self.connect_button.setEnabled(False)
