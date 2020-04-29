@@ -68,30 +68,6 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QComboBox" name="name_user_combox">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>9</pointsize>
-        </font>
-       </property>
-       <property name="editable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
      <item row="2" column="0">
       <widget class="QLabel" name="password_label">
        <property name="font">
@@ -156,6 +132,9 @@
         <bool>true</bool>
        </property>
       </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="name_user_ledit"/>
      </item>
     </layout>
    </item>
