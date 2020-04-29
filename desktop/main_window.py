@@ -25,9 +25,12 @@ class MainWindow(QMainWindow):
 
         self.connect_db()
 
-    def connect_db(self):
+    def create_db_dialog(self):
         """
         This function creates the connect database dialog and settings it
         """
         self.connect_db_dialog = ConnectDatabaseDialog(self)
         self.connect_db_dialog.show()
+
+    def set_connection(self, connection):
+        self.connection = connection
