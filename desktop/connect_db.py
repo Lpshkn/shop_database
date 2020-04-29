@@ -4,6 +4,7 @@ This module represents the class to work with the dialog of connecting to the da
 from os.path import join, dirname
 from PyQt5 import uic
 from PyQt5.QtWidgets import QDialog
+from PyQt5.QtCore import Qt
 
 
 class ConnectDatabaseDialog(QDialog):
@@ -22,7 +23,20 @@ class ConnectDatabaseDialog(QDialog):
             print(e)
             exit(-1)
 
-        self.load_logs()
+        # Disable resizing a window
+        self.setWindowFlags(Qt.Dialog | Qt.MSWindowsFixedSizeDialogHint)
 
-    def load_logs(self):
+        self.load_credentials()
+
+    def load_credentials(self):
         pass
+
+    def enable_connect_button(self):
+        """
+        This method enables or disables the connect button for this dialog window depending on whether
+        there is text in the server's name combo box.
+        """
+        if self.name_server_combox.currentText():
+            self.connect_button.setEnabled(True)
+        else:
+            self.connect_button.setEnabled(False)
