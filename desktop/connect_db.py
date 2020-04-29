@@ -135,3 +135,69 @@ class ConnectDatabaseDialog(QDialog):
             self.connect_button.setEnabled(True)
         else:
             self.connect_button.setEnabled(False)
+
+    def connect(self):
+        """
+        This methods gets all values from window's fields and passes them into connecting to database method
+        """
+
+        server = self.name_server_combox.currentText()
+        database = self.database_combox.currentText()
+        name = self.name_user_ledit.text()
+        password = self.password_ledit.text()
+
+        try:
+            # Take connection to a database
+            connection = connect_db(server, database, name, password)
+        except pyodbc.InterfaceError or pyodbc.OperationalError as e:
+            self.set_error_connection(e.args)
+            return
+
+        # Close dialog window
+        self.reject()
+
+        # If the connection was established, then save all configurations into the configuration file
+        self.__save_config()
+        # Pass established connection into main window class
+        self.parent().set_connection(connection)
+
+    def set_error_connection(self, error):
+        """
+        This method sets error label if error has been occurred
+        """
+        if not self.error_label:
+            error_number, error_msg = convert_error_sql(error[1])
+            if error_msg:
+                error_msg = "Ошибка " + str(error_number) + ": " + error_msg
+            else:
+                error_msg = re.sub(r"\[.+\]", r"", error[1])
+
+            self.error_label = QLabel(error_msg, self)
+            self.error_label.setWordWrap(True)
+            self.error_label.setStyleSheet('QLabel { color : red; }')
+            self.fields_layout.insertWidget(1, self.error_label)
+
+    def remove_error_connection(self):
+        """
+        This method is slot which called when any field was edited. If error label is set,
+        then this method remove that label
+        """
+        if self.error_label:
+            self.fields_layout.removeWidget(self.error_label)
+            self.error_label.deleteLater()
+            self.error_label = None
+
+
+def connect_db(server: str, database: str, name: str, password: str):
+    """
+    This function connects to database and returns connection object
+    """
+
+    connection = pyodbc.connect("DRIVER={ODBC Driver 17 for SQL Server}",
+                                server=server,
+                                database=database,
+                                uid=name,
+                                pwd=password,
+                                autocommit=True)
+
+    return connection
