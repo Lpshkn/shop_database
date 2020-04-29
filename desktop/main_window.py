@@ -23,7 +23,7 @@ class MainWindow(QMainWindow):
             print(e)
             exit(-1)
 
-        self.connect_db()
+        self.create_db_dialog()
 
     def create_db_dialog(self):
         """

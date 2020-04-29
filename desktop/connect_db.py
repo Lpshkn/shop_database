@@ -4,11 +4,13 @@ This module represents the class to work with the dialog of connecting to the da
 import json
 import keyring
 import pyodbc
+import re
 from os import mkdir, environ
 from os.path import join, dirname, isdir, isfile
 from PyQt5 import uic
-from PyQt5.QtWidgets import QDialog, QLineEdit
+from PyQt5.QtWidgets import QDialog, QLineEdit, QLabel
 from PyQt5.QtCore import Qt
+from desktop.convert_error_sql import convert_error_sql
 
 
 class ConnectDatabaseDialog(QDialog):
@@ -31,6 +33,8 @@ class ConnectDatabaseDialog(QDialog):
             print(e)
             exit(-1)
 
+        # Define error label to print error message it the dialog
+        self.error_label = None
         # Initialize config directory
         self.__init_config_directory()
         # Disable resizing a window
@@ -97,8 +101,30 @@ class ConnectDatabaseDialog(QDialog):
         """
         return keyring.get_password(environ["USERNAME"], name)
 
-    def load_credentials(self):
-        pass
+    def __save_config(self):
+        config = dict()
+
+        # Get all names of servers and serialize it
+        config["server_names"] = [self.name_server_combox.itemText(i) for i in range(self.name_server_combox.count())]
+        current_server = self.name_server_combox.currentText()
+        if current_server not in config["server_names"]:
+            config["server_names"].append(current_server)
+
+        # Get all names of databases and serialize it
+        config["database_names"] = [self.database_combox.itemText(i) for i in range(self.database_combox.count())]
+        current_database = self.database_combox.currentText()
+        if current_database not in config["database_names"]:
+            config["database_names"].append(current_database)
+
+        config["name"] = self.name_user_ledit.text()
+        config["remember_pswd"] = self.remember_pswd_chebox.isChecked()
+
+        # If it's true, save the password using keyring
+        if config["remember_pswd"]:
+            self.__save_password_bydefault(name=self.name_user_ledit.text(), password=self.password_ledit.text())
+
+        with open(self.CONFIG_FILE, "w") as config_file:
+            json.dump(config, config_file)
 
     def enable_connect_button(self):
         """
