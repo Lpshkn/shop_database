@@ -33,4 +33,8 @@ class MainWindow(QMainWindow):
         self.connect_db_dialog.show()
 
     def set_connection(self, connection):
+        """
+        When connection will be established in the dialog window, then this method will be called
+        and the connection will be passed in here.
+        """
         self.connection = connection
