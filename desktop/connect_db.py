@@ -149,7 +149,7 @@ class ConnectDatabaseDialog(QDialog):
         try:
             # Take connection to a database
             connection = connect_db(server, database, name, password)
-        except pyodbc.InterfaceError or pyodbc.OperationalError as e:
+        except (pyodbc.InterfaceError, pyodbc.OperationalError) as e:
             self.set_error_connection(e.args)
             return
 
@@ -166,16 +166,14 @@ class ConnectDatabaseDialog(QDialog):
         This method sets error label if error has been occurred
         """
         if not self.error_label:
-            error_number, error_msg = convert_error_sql(error[1])
-            if error_msg:
-                error_msg = "Ошибка " + str(error_number) + ": " + error_msg
-            else:
-                error_msg = re.sub(r"\[.+\]", r"", error[1])
+            error_msg = convert_error_sql(error)
 
             self.error_label = QLabel(error_msg, self)
             self.error_label.setWordWrap(True)
             self.error_label.setStyleSheet('QLabel { color : red; }')
             self.fields_layout.insertWidget(1, self.error_label)
+
+            self.resize(self.sizeHint())
 
     def remove_error_connection(self):
         """
@@ -186,6 +184,8 @@ class ConnectDatabaseDialog(QDialog):
             self.fields_layout.removeWidget(self.error_label)
             self.error_label.deleteLater()
             self.error_label = None
+
+            self.resize(self.sizeHint())
 
 
 def connect_db(server: str, database: str, name: str, password: str):
@@ -198,6 +198,7 @@ def connect_db(server: str, database: str, name: str, password: str):
                                 database=database,
                                 uid=name,
                                 pwd=password,
-                                autocommit=True)
+                                autocommit=True,
+                                timeout=4)
 
     return connection
