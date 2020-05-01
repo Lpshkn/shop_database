@@ -5,6 +5,7 @@ from os.path import join, dirname
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow
 from desktop.connect_db import ConnectDatabaseDialog
+from desktop.central_widget import CentralWidget
 
 
 class MainWindow(QMainWindow):
@@ -45,6 +46,9 @@ class MainWindow(QMainWindow):
         self.connect_action.setEnabled(False)
         self.disconnect_action.setEnabled(True)
 
+        central_widget = CentralWidget(self)
+        self.setCentralWidget(central_widget)
+
     def disconnect_db(self):
         """
         This method will close all tables and a database
@@ -54,3 +58,6 @@ class MainWindow(QMainWindow):
 
         self.disconnect_action.setEnabled(False)
         self.connect_action.setEnabled(True)
+
+        self.centralWidget().deleteLater()
+        self.setCentralWidget(None)
