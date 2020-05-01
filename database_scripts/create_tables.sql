@@ -80,8 +80,7 @@ CONSTRAINT supplier_foreign FOREIGN KEY (supplier_name)
 CREATE TABLE Purchases
 (
 purchase_id  INT
-             NOT NULL
-             UNIQUE,
+             NOT NULL,
 
 product_id   INT
              NOT NULL,

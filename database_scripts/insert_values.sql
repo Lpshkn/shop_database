@@ -36,7 +36,7 @@ INSERT INTO Suppliers (name, address)
            ('ООО "Золотая жизнь"', 'Ижевск, ул. Октябрьская, 18'),
            ('Кочевник', 'Подольск, ул. Николаева, 1А')
 
-INSERT INTO Discount_cards (discount, start_date, expiration)
+INSERT INTO DiscountCards (discount, start_date, expiration)
     VALUES (0.05, '04/01/2018', '04/01/2027'),
            (0.10, '23/12/2019', '23/12/2024'),
            (0.15, '09/02/2020', '09/03/2020'),
@@ -79,7 +79,7 @@ INSERT INTO Customers (fullname, card_id, address, email)
            ('Котовска Юзефа Фёдоровна', NULL, 'Москва, ул. Крестовский 2-й пер, 115', 'kotakotakota@google.com'),
            ('Гелетей Ульяна Романовна', NULL, 'Москва, ул. Комбайнеров, 68', 'geletaf@google.com')
 
-INSERT INTO Products (name, company, quantity_stock, supplier_name)
+INSERT INTO Products (name, company, quantity, supplier_name)
     VALUES ('Гроб деревянный', 'ООО "Васян и партнеры"', 12, 'Живи и радуйся'),
            ('Сабля печенегов', 'ИП Азимов А.В.', 5, 'Кочевник'),
            ('Ковер "Молодежный"', 'ИП Самса А.П.', 56, 'ООО "Мир ковров"'),
@@ -96,7 +96,7 @@ INSERT INTO Products (name, company, quantity_stock, supplier_name)
            ('Вырезка куриная "Петушок"', 'ООО "Нягоньский мясокомбинат"', 75, 'ООО "Куриный рай"'),
            ('Вырезка говяжьих анусов, 1 кг', 'ИП Хрунин С.С.', 64, 'ООО "Мяско"')
 
-INSERT INTO Purchases (purchase_id, product_id, quantity, default_cost)
+INSERT INTO Purchases (purchase_id, product_id, quantity, cost)
     VALUES (1, 1, 5, 5000),
            (1, 7, 10, 300),
            (1, 8, 10, 500),
@@ -124,5 +124,3 @@ INSERT INTO Receipts (customer_id, purchase_id, worker_name, date)
            (6, 8, 'Алексеев Павел Анатольевич', '14/09/2019'),
            (15, 9, 'Алексеев Павел Анатольевич', '19/01/2020'),
            (1, 10, 'Алёхина Елена Дмитриевна', '30/03/2019')
-
-GO
