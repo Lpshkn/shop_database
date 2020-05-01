@@ -23,9 +23,12 @@ class MainWindow(QMainWindow):
             print(e)
             exit(-1)
 
-        self.create_db_dialog()
+        self.connect_db_dialog = None
+        self.connection = None
 
-    def create_db_dialog(self):
+        self.connect_db()
+
+    def connect_db(self):
         """
         This function creates the connect database dialog and settings it
         """
@@ -38,3 +41,16 @@ class MainWindow(QMainWindow):
         and the connection will be passed in here.
         """
         self.connection = connection
+
+        self.connect_action.setEnabled(False)
+        self.disconnect_action.setEnabled(True)
+
+    def disconnect_db(self):
+        """
+        This method will close all tables and a database
+        """
+        if self.connection:
+            self.connection = None
+
+        self.disconnect_action.setEnabled(False)
+        self.connect_action.setEnabled(True)

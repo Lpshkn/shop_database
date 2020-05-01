@@ -22,6 +22,9 @@
   <property name="autoFillBackground">
    <bool>true</bool>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <widget class="QWidget" name="centralwidget"/>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QMenuBar" name="menubar">
@@ -30,7 +33,7 @@
      <x>0</x>
      <y>0</y>
      <width>1400</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="file_menu">
@@ -38,6 +41,7 @@
      <string>Файл</string>
     </property>
     <addaction name="connect_action"/>
+    <addaction name="disconnect_action"/>
     <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="help_menu">
@@ -79,6 +83,14 @@
     <string>Показать информацию о программе</string>
    </property>
   </action>
+  <action name="disconnect_action">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Отключиться от базы данных</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections>
@@ -86,7 +98,7 @@
    <sender>connect_action</sender>
    <signal>triggered()</signal>
    <receiver>main_window</receiver>
-   <slot>create_db_dialog()</slot>
+   <slot>connect_db()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -98,9 +110,26 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>disconnect_action</sender>
+   <signal>triggered()</signal>
+   <receiver>main_window</receiver>
+   <slot>disconnect_db()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>699</x>
+     <y>509</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
-  <slot>create_db_dialog()</slot>
+  <slot>connect_db()</slot>
   <slot>connect()</slot>
+  <slot>disconnect_db()</slot>
  </slots>
 </ui>
