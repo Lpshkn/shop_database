@@ -46,7 +46,7 @@ class MainWindow(QMainWindow):
         self.connect_action.setEnabled(False)
         self.disconnect_action.setEnabled(True)
 
-        central_widget = CentralWidget(self)
+        central_widget = CentralWidget(self, self.connection)
         self.setCentralWidget(central_widget)
 
     def disconnect_db(self):
