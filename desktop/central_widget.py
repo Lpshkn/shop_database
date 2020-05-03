@@ -48,7 +48,7 @@ class CentralWidget(QWidget):
         This method creates new table widget, sets all configurations and returns created widget
         """
         widget = QWidget()
-        table_widget = TableWidget(widget)
+        table_widget = TableWidget(widget, self.connection, table_name)
         layout = QGridLayout()
         layout.addWidget(table_widget)
         widget.setObjectName(table_name)
