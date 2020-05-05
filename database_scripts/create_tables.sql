@@ -103,7 +103,7 @@ quantity     SMALLINT
 supplier     NVARCHAR(128)
              NOT NULL,
 
-price        INT
+price        MONEY
              NOT NULL,
 
 promotion    NVARCHAR(30),
