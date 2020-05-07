@@ -8,6 +8,8 @@ class TableWidget(QTableWidget):
     def __init__(self, parent, connection, table_name):
         super().__init__(parent)
 
+        self.setObjectName(table_name)
+
         self.connection = connection
         self.table_name = table_name
 
@@ -76,4 +78,33 @@ class TableWidget(QTableWidget):
                 # Set the value into the cell
                 item = QTableWidgetItem()
                 item.setData(Qt.EditRole, value)
+                # Set flags to disable editing any cell
+                item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                 self.setItem(index, column, item)
+
+    def delete_tuple(self):
+        """
+        This is a slot, which will be called when user will select any cells and will click the delete button.
+        This method deletes appropriate rows from the database.
+        """
+
+        cursor = self.connection.cursor()
+        # Get numbers of selected cells rows
+        selected_items = self.selectedItems()
+        rows_to_delete = set(item.row() for item in selected_items)
+
+        for index_row in rows_to_delete:
+            # Make a delete query
+            conditions = []
+            delete_query = f"DELETE FROM {self.table_name} WHERE "
+
+            # Iterate through the columns and append the conditions to delete the appropriate tuple
+            for index_col in range(self.columnCount()):
+                item_text = self.item(index_row, index_col).text()
+                column_name = self.horizontalHeaderItem(index_col).text()
+                condition = f"{column_name} = '{item_text}'"
+                conditions.append(condition)
+
+            # Concatenate whole list of conditions into the one query
+            delete_query += ' AND '.join(conditions)
+            cursor.execute(delete_query)

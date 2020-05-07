@@ -1,6 +1,6 @@
 from os.path import join, dirname
 from PyQt5 import uic
-from PyQt5.QtWidgets import QWidget, QGridLayout
+from PyQt5.QtWidgets import QWidget, QGridLayout, QTableWidget
 from desktop.table_widget import TableWidget
 
 
@@ -51,7 +51,16 @@ class CentralWidget(QWidget):
         table_widget = TableWidget(widget, self.connection, table_name)
         layout = QGridLayout()
         layout.addWidget(table_widget)
-        widget.setObjectName(table_name)
         widget.setLayout(layout)
 
         return widget
+
+    def delete_tuple(self):
+        """
+        This is a slot which will be called when the delete button will be clicked
+        """
+        # Determine the table name, then find the table and call its delete method
+        table_name = self.tab_widget.tabText(self.tab_widget.currentIndex())
+        widget = self.tab_widget.currentWidget()
+        table = widget.findChild(QTableWidget, table_name)
+        table.delete_tuple()
