@@ -62,5 +62,19 @@ class CentralWidget(QWidget):
         # Determine the table name, then find the table and call its delete method
         table_name = self.tab_widget.tabText(self.tab_widget.currentIndex())
         widget = self.tab_widget.currentWidget()
-        table = widget.findChild(QTableWidget, table_name)
-        table.delete_tuple()
+        if widget:
+            table = widget.findChild(QTableWidget, table_name)
+            if table:
+                table.delete_tuple()
+
+            self.update_tables()
+
+    def update_tables(self):
+        """
+        This method makes an value update of all tables
+        """
+        for tab_index in range(self.tab_widget.count()):
+            table_name = self.tab_widget.tabText(tab_index)
+            widget = self.tab_widget.widget(tab_index)
+            table = widget.findChild(QTableWidget, table_name)
+            table.update_table(table_name)
