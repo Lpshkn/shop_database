@@ -13,8 +13,7 @@ class TableWidget(QTableWidget):
         self.connection = connection
         self.table_name = table_name
 
-        self.set_columns(table_name)
-        self.set_values(table_name)
+        self.update_table(table_name)
         self.update_configurations()
 
     def update_configurations(self, section_size=250):
@@ -25,6 +24,14 @@ class TableWidget(QTableWidget):
         self.verticalHeader().setVisible(False)
         self.horizontalHeader().setSortIndicatorShown(True)
         self.horizontalHeader().setDefaultSectionSize(section_size)
+
+    def update_table(self, table_name):
+        self.clear()
+        self.setColumnCount(0)
+        self.setRowCount(0)
+
+        self.set_columns(table_name)
+        self.set_values(table_name)
 
     def set_columns(self, table_name):
         """
@@ -102,9 +109,12 @@ class TableWidget(QTableWidget):
             for index_col in range(self.columnCount()):
                 item_text = self.item(index_row, index_col).text()
                 column_name = self.horizontalHeaderItem(index_col).text()
-                condition = f"{column_name} = '{item_text}'"
+                if item_text:
+                    condition = f"{column_name} = '{item_text}'"
+                else:
+                    condition = f"{column_name} IS NULL"
                 conditions.append(condition)
 
             # Concatenate whole list of conditions into the one query
             delete_query += ' AND '.join(conditions)
-            cursor.execute(delete_query)
+            cursor.execute(delete_query).commit()
