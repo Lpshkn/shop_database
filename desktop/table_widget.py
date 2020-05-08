@@ -89,6 +89,41 @@ class TableWidget(QTableWidget):
                 item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                 self.setItem(index, column, item)
 
+    def get_columns(self, selected: bool = False) -> list:
+        """
+        This method returns the list of column names
+
+        :param selected: it's a flag which specify that only selected columns will be taken, else all columns will be taken
+        :return: list of column names
+        """
+        if selected:
+            selected_items = self.selectedItems()
+            columns_indexes = set(item.col() for item in selected_items)
+            columns = [self.horizontalHeaderItem(i) for i in columns_indexes]
+        else:
+            columns = [self.horizontalHeaderItem(i) for i in range(self.columnCount())]
+
+        return columns
+
+    def get_rows(self, selected: bool = False) -> list:
+        """
+        This method returns the list of rows values
+
+        :param selected: it's a flag which specify that only selected rows will be taken, else all rows will be taken
+        :return: list of rows values
+        """
+        rows = []
+        if selected:
+            selected_items = self.selectedItems()
+            rows_indexes = set(item.row() for item in selected_items)
+            for row_index in rows_indexes:
+                rows.append([self.item(row_index, col_index).text() for col_index in range(self.columnCount())])
+        else:
+            for row_index in range(self.rowCount()):
+                rows.append([self.item(row_index, col_index).text() for col_index in range(self.columnCount())])
+
+        return rows
+
     def delete_tuple(self):
         """
         This is a slot, which will be called when user will select any cells and will click the delete button.
