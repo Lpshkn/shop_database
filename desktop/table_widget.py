@@ -178,12 +178,6 @@ class TableWidget(QTableWidget):
 
         :param force_delete: the flag which specifies that it's important to execute the delete query at the moment
         """
-
-        cursor = self.connection.cursor()
-        # Get numbers of selected cells rows
-        selected_items = self.selectedItems()
-        rows_to_delete = set(item.row() for item in selected_items)
-
         for row in self.get_rows(selected=True):
             # Make a delete query
             conditions = []
