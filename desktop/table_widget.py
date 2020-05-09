@@ -171,10 +171,12 @@ class TableWidget(QTableWidget):
 
         return rows
 
-    def delete_tuple(self):
+    def delete_tuple(self, force_delete: bool = True):
         """
         This is a slot, which will be called when user will select any cells and will click the delete button.
         This method deletes appropriate rows from the database.
+
+        :param force_delete: the flag which specifies that it's important to execute the delete query at the moment
         """
 
         cursor = self.connection.cursor()
@@ -198,6 +200,9 @@ class TableWidget(QTableWidget):
             # Concatenate whole list of conditions into the one query
             query += ' AND '.join(conditions)
             self.add_query(query)
+
+            if force_delete:
+                self.execute_query()
 
     def add_query(self, query: str):
         """
