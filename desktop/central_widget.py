@@ -77,4 +77,4 @@ class CentralWidget(QWidget):
             table_name = self.tab_widget.tabText(tab_index)
             widget = self.tab_widget.widget(tab_index)
             table = widget.findChild(QTableWidget, table_name)
-            table.update_table(table_name)
+            table.update_table()

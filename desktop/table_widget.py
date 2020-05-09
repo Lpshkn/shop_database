@@ -1,5 +1,6 @@
 import datetime
 import decimal
+from functools import reduce
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
 from PyQt5.QtCore import Qt, QDateTime
 
@@ -13,7 +14,7 @@ class TableWidget(QTableWidget):
         self.connection = connection
         self.table_name = table_name
 
-        self.update_table(table_name)
+        self.update_table()
         self.update_configurations()
 
     def update_configurations(self, section_size=250):
@@ -25,18 +26,40 @@ class TableWidget(QTableWidget):
         self.horizontalHeader().setSortIndicatorShown(True)
         self.horizontalHeader().setDefaultSectionSize(section_size)
 
-    def update_table(self, table_name):
+    def update_table(self, columns=None, rows=None, flags: list = (Qt.ItemIsSelectable, Qt.ItemIsEnabled)):
+        """
+        This method provides updating the table. Depending on the passed values methods takes data
+        from the database or from the passed data.
+
+        :param columns: it's a list of columns name, which will be set into the table.
+                        If it's none, the columns will be taken from the database
+        :param rows: it's a list of rows values, which will be set into the table.
+                    If it's none, the rows will be taken from the database
+        :param flags: a list of flags, which will be applied when setting the cells
+        """
+
+        # Clear the previous values of the table
         self.clear()
         self.setColumnCount(0)
         self.setRowCount(0)
 
-        self.set_columns(table_name)
-        self.set_values(table_name)
+        if columns:
+            self.set_columns(columns)
+        else:
+            self.set_columns_from_database(self.table_name)
 
-    def set_columns(self, table_name):
+        if rows:
+            self.set_rows(rows, flags)
+        else:
+            self.set_rows_from_database(self.table_name, flags)
+
+    def set_columns_from_database(self, table_name: str):
         """
-        This method gets all names of columns and configures the columns into the table
+        This method sets columns names of the table. It takes columns names from the database using the table name.
+
+        :param table_name: take the columns names from this table
         """
+
         cursor = self.connection.cursor()
         columns = cursor.execute(
             f"""
@@ -46,13 +69,26 @@ class TableWidget(QTableWidget):
             """).fetchall()
         columns = [column[0] for column in columns]
 
+        self.set_columns(columns)
+
+    def set_columns(self, columns: list):
+        """
+        This method sets columns names of the table. It takes columns names from the passed list.
+
+        :param columns: take the columns names from this list
+        """
+
         self.setColumnCount(len(columns))
         self.setHorizontalHeaderLabels(columns)
 
-    def set_values(self, table_name):
+    def set_rows_from_database(self, table_name: str, flags: list):
         """
-        This method gets all values for columns and set rows into the table
+        This method sets rows values of the table. It takes rows values from the database using the table name.
+
+        :param table_name: take the rows values from this table
+        :param flags: a list of flags, which will be applied when setting the cells
         """
+
         cursor = self.connection.cursor()
         rows = cursor.execute(
             f"""
@@ -60,14 +96,24 @@ class TableWidget(QTableWidget):
                 FROM {table_name}
             """).fetchall()
 
+        self.set_rows(rows, flags)
+
+    def set_rows(self, rows: list, flags: list):
+        """
+        This method sets rows values of the table. It takes rows values from the passed list.
+
+        :param rows: take the rows values from this list
+        :param flags: a list of flags, which will be applied when setting the cells
+        """
+
         # Create empty rows to fill them later
         self.setRowCount(len(rows))
 
         # Set all values from the columns
-        for index, row in enumerate(rows):
-            for column in range(self.columnCount()):
+        for index_row, row in enumerate(rows):
+            for index_column in range(self.columnCount()):
                 # Get a value from the column
-                value = row[column]
+                value = row[index_column]
 
                 # Check that values is instance of Datetime SQL type
                 # It's necessary to convert that value to a type that the table understands
@@ -86,8 +132,8 @@ class TableWidget(QTableWidget):
                 item = QTableWidgetItem()
                 item.setData(Qt.EditRole, value)
                 # Set flags to disable editing any cell
-                item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-                self.setItem(index, column, item)
+                item.setFlags(reduce(lambda x, y: x | y, flags))
+                self.setItem(index_row, index_column, item)
 
     def get_columns(self, selected: bool = False) -> list:
         """
