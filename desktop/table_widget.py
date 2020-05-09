@@ -14,6 +14,9 @@ class TableWidget(QTableWidget):
         self.connection = connection
         self.table_name = table_name
 
+        # The list contains all query which must be executed
+        self._queries = []
+
         self.update_table()
         self.update_configurations()
 
@@ -60,13 +63,15 @@ class TableWidget(QTableWidget):
         :param table_name: take the columns names from this table
         """
 
-        cursor = self.connection.cursor()
-        columns = cursor.execute(
-            f"""
-            SELECT COLUMN_NAME
+        query = f"""
+                SELECT COLUMN_NAME
                 FROM INFORMATION_SCHEMA.COLUMNS
                 WHERE TABLE_NAME = '{table_name}'
-            """).fetchall()
+                """
+
+        self.add_query(query)
+        executed_query = self.execute_query()
+        columns = executed_query.fetchall()
         columns = [column[0] for column in columns]
 
         self.set_columns(columns)
@@ -89,12 +94,8 @@ class TableWidget(QTableWidget):
         :param flags: a list of flags, which will be applied when setting the cells
         """
 
-        cursor = self.connection.cursor()
-        rows = cursor.execute(
-            f"""
-            SELECT *
-                FROM {table_name}
-            """).fetchall()
+        self.add_query(f"SELECT * FROM {table_name}")
+        rows = self.execute_query().fetchall()
 
         self.set_rows(rows, flags)
 
@@ -184,7 +185,7 @@ class TableWidget(QTableWidget):
         for row in self.get_rows(selected=True):
             # Make a delete query
             conditions = []
-            delete_query = f"DELETE FROM {self.table_name} WHERE "
+            query = f"DELETE FROM {self.table_name} WHERE "
 
             # Iterate through the columns and append the conditions to delete the appropriate tuple
             for column, item in zip(self.get_columns(), row):
@@ -195,5 +196,45 @@ class TableWidget(QTableWidget):
                 conditions.append(condition)
 
             # Concatenate whole list of conditions into the one query
-            delete_query += ' AND '.join(conditions)
-            cursor.execute(delete_query).commit()
+            query += ' AND '.join(conditions)
+            self.add_query(query)
+
+    def add_query(self, query: str):
+        """
+        This method adds the query to the query list. Note, this method doesn't execute the query.
+        But this method must be used before executing the query.
+
+        :param query: this query will be added into the query list
+        """
+        self._queries.append(query)
+
+    def execute_query(self, all_queries: bool = False):
+        """
+        This method executes the first query containing in the query list. If it executes only one query,
+        it will return a result of executed query. Nevertheless, if the flag "all_queries" is True,
+        then the method will execute all queries starts from the first and doesn't return anything.
+
+        :param all_queries: specify that if it's necessary to execute all queries in the list
+        """
+        cursor = self.connection.cursor()
+
+        if all_queries:
+            for query in self._queries:
+                cursor.execute(query).commit()
+
+        else:
+            query = self._queries.pop(0)
+            executed_query = cursor.execute(query)
+            return executed_query
+
+    def reject_query(self, all_queries: bool = False):
+        """
+        This method rejects the last query containing in the query list and returns it. If the flag "all_queries"
+        is True, then the method will reject all queries in the query list and won't return any.
+
+        :param all_queries: specify that if it's necessary to reject all queries in the list
+        """
+        if all_queries:
+            self._queries.clear()
+        else:
+            return self._queries.pop()
