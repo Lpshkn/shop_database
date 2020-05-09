@@ -188,17 +188,3 @@ class ConnectDatabaseDialog(QDialog):
             self.resize(self.sizeHint())
 
 
-def connect_db(server: str, database: str, name: str, password: str):
-    """
-    This function connects to database and returns connection object
-    """
-
-    connection = pyodbc.connect("DRIVER={ODBC Driver 17 for SQL Server}",
-                                server=server,
-                                database=database,
-                                uid=name,
-                                pwd=password,
-                                autocommit=True,
-                                timeout=4)
-
-    return connection
