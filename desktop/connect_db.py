@@ -11,6 +11,7 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import QDialog, QLineEdit, QLabel
 from PyQt5.QtCore import Qt
 from desktop.convert_error_sql import convert_error_sql
+from desktop.database import Database
 
 
 class ConnectDatabaseDialog(QDialog):
@@ -41,6 +42,8 @@ class ConnectDatabaseDialog(QDialog):
         self.setWindowFlags(Qt.Dialog | Qt.MSWindowsFixedSizeDialogHint)
         # Set echo mode to hide inputting a password
         self.password_ledit.setEchoMode(QLineEdit.Password)
+
+        self.database = None
 
         self.__load_config()
 
@@ -148,7 +151,7 @@ class ConnectDatabaseDialog(QDialog):
 
         try:
             # Take connection to a database
-            connection = connect_db(server, database, name, password)
+            self.database = Database.connect_db(server, database, name, password, autocommit=True)
         except (pyodbc.InterfaceError, pyodbc.OperationalError) as e:
             self.set_error_connection(e.args)
             return
@@ -159,7 +162,7 @@ class ConnectDatabaseDialog(QDialog):
         # If the connection was established, then save all configurations into the configuration file
         self.__save_config()
         # Pass established connection into main window class
-        self.parent().set_connection(connection)
+        self.parent().set_connection(self.database.connection)
 
     def set_error_connection(self, error):
         """

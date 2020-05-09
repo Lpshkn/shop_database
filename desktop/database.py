@@ -5,8 +5,9 @@ class Database:
     def __init__(self):
         self.connection = None
 
-    def connect_db(self, server: str, database: str, name: str, password: str, autocommit: bool = False,
-                   timeout: int = 4, driver: str = "DRIVER={ODBC Driver 17 for SQL Server}") -> pyodbc.Connection:
+    @staticmethod
+    def connect_db(server: str, database: str, name: str, password: str, autocommit: bool = False,
+                   timeout: int = 4, driver: str = "DRIVER={ODBC Driver 17 for SQL Server}"):
         """
         This method connects to the database and returns the connection object.
 
@@ -19,7 +20,8 @@ class Database:
         :param driver: the driver of the ODBC to connect to the database using this driver
         """
 
-        self.connection = pyodbc.connect(driver, server=server, database=database,
-                                         uid=name, pwd=password, autocommit=autocommit, timeout=timeout)
+        db_object = Database()
+        db_object.connection = pyodbc.connect(driver, server=server, database=database,
+                                              uid=name, pwd=password, autocommit=autocommit, timeout=timeout)
 
-        return self.connection
+        return db_object
