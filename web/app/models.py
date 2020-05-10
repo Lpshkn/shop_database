@@ -24,7 +24,7 @@ class Customer(db.Model):
     email = db.Column(db.VARCHAR(128), unique=True)
     telephone = db.Column(db.VARCHAR(16), unique=True)
     card_id = db.Column(db.INT,
-                        db.ForeignKey('DiscountCards.card_id', ondelete='SET NULL', onupdate='CASCADE'),
+                        db.ForeignKey('DiscountCards.card_id', ondelete='CASCADE', onupdate='CASCADE'),
                         name='card_foreign',
                         nullable=False)
     purchases = db.relationship('Purchase',
@@ -77,7 +77,7 @@ class Product(db.Model):
                          name='producer_foreign',
                          nullable=False)
     purchases = db.relationship('Purchase',
-                               backref='product_foreign')
+                                backref='product_foreign')
 
     def __repr__(self):
         return '<Product: {}>'.format(self.name)
@@ -94,7 +94,7 @@ class Worker(db.Model):
     email = db.Column(db.VARCHAR(128), unique=True, nullable=False)
     telephone = db.Column(db.VARCHAR(16), unique=True)
     purchases = db.relationship('Purchase',
-                               backref='worker_foreign')
+                                backref='worker_foreign')
 
     def __repr__(self):
         return f'<Worker: {self.fullname}>'
@@ -114,7 +114,7 @@ class Purchase(db.Model):
                           db.ForeignKey('Workers.worker_id', ondelete='SET NULL', onupdate='CASCADE'),
                           name='worker_foreign')
     customer_id = db.Column(db.INT,
-                            db.ForeignKey('Customers.worker_id', ondelete='CASCADE', onupdate='CASCADE'),
+                            db.ForeignKey('Customers.customer_id', ondelete='CASCADE', onupdate='CASCADE'),
                             name='customer_foreign')
 
     def __repr__(self):

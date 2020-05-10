@@ -7,7 +7,7 @@ class Config:
     MSSQL_PW = os.environ.get('MSSQL_PW')
     MSSQL_HOST = os.environ.get('MSSQL_HOST') or 'leadness.keenetic.name'
     MSSQL_PORT = os.environ.get('MSSQL_PORT')
-    MSSQL_DB = os.environ.get('MSSQL_DB') or 'app'
-    SQLALCHEMY_DATABASE_URI = 'mssql+pymssql//{user}:{pw}@{host}:{port}/{db}?driver=SQL+Server'.format(
+    MSSQL_DB = os.environ.get('MSSQL_DB') or 'shopdb'
+    SQLALCHEMY_DATABASE_URI = 'mssql+pymssql://{user}:{pw}@{host}:{port}/{db}'.format(
         user=MSSQL_USER, pw=MSSQL_PW, host=MSSQL_HOST, port=MSSQL_PORT, db=MSSQL_DB)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
