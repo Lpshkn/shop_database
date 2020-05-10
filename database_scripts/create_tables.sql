@@ -103,7 +103,7 @@ quantity     SMALLINT
 supplier     NVARCHAR(128)
              NOT NULL,
 
-price        MONEY
+price        FLOAT
              NOT NULL,
 
 promotion    NVARCHAR(30),
@@ -129,7 +129,7 @@ fullname     NVARCHAR(128)
              NOT NULL
              UNIQUE,
 
-salary       MONEY,
+salary       FLOAT,
 
 job          NVARCHAR(32),
 
@@ -169,7 +169,7 @@ date         DATETIME
              NOT NULL
              DEFAULT GETDATE(),
 
-total_cost   MONEY
+total_cost   FLOAT
              NOT NULL,
 
 CONSTRAINT product_foreign FOREIGN KEY (product_id)

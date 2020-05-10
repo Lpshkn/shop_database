@@ -1,1 +1,0 @@
-from shopdb import app

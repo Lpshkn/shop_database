@@ -1,6 +1,6 @@
-from shopdb import app
+from app import app
 from flask import render_template, flash, redirect, url_for
-from shopdb.forms import LoginForm
+from app.forms import LoginForm
 
 
 @app.route('/')
