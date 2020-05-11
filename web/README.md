@@ -1,4 +1,4 @@
-# ShopDB
+# web-db-manager
 
 ### Description
 Web application for working with the subject database of the shop.
