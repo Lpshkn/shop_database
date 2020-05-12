@@ -29,7 +29,7 @@ fullname     NVARCHAR(128)
 
 card_id      INT,
 
-address      VARCHAR(128)
+address      NVARCHAR(128)
              NOT NULL,
 
 email        VARCHAR(128)
@@ -103,10 +103,10 @@ quantity     SMALLINT
 supplier     NVARCHAR(128)
              NOT NULL,
 
-price        FLOAT
+price        MONEY
              NOT NULL,
 
-promotion    NVARCHAR(30),
+promotion    VARCHAR(30),
 
 CONSTRAINT supplier_foreign FOREIGN KEY (supplier)
     REFERENCES Suppliers(name)
@@ -129,7 +129,7 @@ fullname     NVARCHAR(128)
              NOT NULL
              UNIQUE,
 
-salary       FLOAT,
+salary       MONEY,
 
 job          NVARCHAR(32),
 
@@ -169,7 +169,7 @@ date         DATETIME
              NOT NULL
              DEFAULT GETDATE(),
 
-total_cost   FLOAT
+total_cost   MONEY
              NOT NULL,
 
 CONSTRAINT product_foreign FOREIGN KEY (product_id)
@@ -187,3 +187,5 @@ CONSTRAINT customer_foreign FOREIGN KEY (customer_id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 )
+
+GO

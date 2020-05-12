@@ -1,29 +1,55 @@
+import pymssql
 from app import app
-from flask import render_template, flash, redirect, url_for
-from flask_login import current_user, login_user
+from flask import render_template, flash, redirect, url_for, request, g
+from flask_login import current_user, login_user, logout_user, login_required
 from app.forms import LoginForm
 from app.models import User
+from app.mssql import get_db, set_db, close_db
+from werkzeug.urls import url_parse
 
 
 @app.route('/')
 @app.route('/index', methods=['GET', 'POST'])
+@login_required
 def index():
+    cursor = get_db().cursor()
+    cursor.execute("SELECT * FROM shopdb.dbo.Workers")
+    row = list(cursor.fetchone())
     info = {
-        'user': 'User'
+        'user': 'User',
+        'info': row
     }
     return render_template('index.html', **info)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
+    logout_user()
+    close_db()
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password')
+        try:
+            user = User.query.filter_by(username=form.username.data).first()
+            if not user:
+                flash('Invalid user')
+                return redirect(url_for('login'))
+
+            set_db(
+                server=form.server.data,
+                user=form.username.data,
+                password=form.password.data,
+                dbname=form.dbname.data
+            )
+            login_user(user, remember=form.remember_me.data)
+            next_page = request.args.get('next')
+            if not next_page or url_parse(next_page).netloc != '':
+                next_page = url_for('index')
+            return redirect(next_page)
+        except pymssql.OperationalError:
+            flash('Invalid connection data')
             return redirect(url_for('login'))
-        login_user(user, remember=form.remember_me.data)
-        return redirect(url_for('index'))
+        except pymssql.InterfaceError:
+            flash('Connection to the database failed for an unknown reason')
+            return redirect(url_for('login'))
+
     return render_template('login.html', title='Sign In', form=form)
