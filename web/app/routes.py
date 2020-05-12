@@ -48,7 +48,8 @@ def workers():
         conn=mssql.get_conn())
     info = {
         'title': 'Workers | Shop database',
-        'table_name': 'workers',
+        'table_name': 'Workers',
+        'link': 'workers',
         'workers': storage.get_workers()
     }
     return render_template('workers/show.html', **info)
@@ -57,10 +58,82 @@ def workers():
 @app.route('/suppliers/show', methods=['GET', 'POST'])
 @login_required
 def suppliers():
-
+    storage = mssql.SuppliersStorage.get_connection(
+        conn=mssql.get_conn())
     info = {
         'title': 'Suppliers | Shop database',
-        'table_name': 'workers'
+        'table_name': 'Suppliers',
+        'link': 'suppliers',
+        'suppliers': storage.get_suppliers()
     }
-    return render_template('suppliers.html', **info)
+    return render_template('suppliers/show.html', **info)
 
+
+@app.route('/products/show', methods=['GET', 'POST'])
+@login_required
+def products():
+    storage = mssql.ProductsStorage.get_connection(
+        conn=mssql.get_conn())
+    info = {
+        'title': 'Products | Shop database',
+        'table_name': 'Products',
+        'link': 'products',
+        'products': storage.get_products()
+    }
+    return render_template('products/show.html', **info)
+
+
+@app.route('/customers/show', methods=['GET', 'POST'])
+@login_required
+def customers():
+    storage = mssql.CustomersStorage.get_connection(
+        conn=mssql.get_conn())
+    info = {
+        'title': 'Customers | Shop database',
+        'table_name': 'Customers',
+        'link': 'customers',
+        'customers': storage.get_customers()
+    }
+    return render_template('customers/show.html', **info)
+
+
+@app.route('/discount_cards/show', methods=['GET', 'POST'])
+@login_required
+def discount_cards():
+    storage = mssql.DiscountCardsStorage.get_connection(
+        conn=mssql.get_conn())
+    info = {
+        'title': 'Discount cards | Shop database',
+        'table_name': 'Discount cards',
+        'link': 'discount_cards',
+        'cards': storage.get_cards()
+    }
+    return render_template('discount_cards/show.html', **info)
+
+
+@app.route('/producers/show', methods=['GET', 'POST'])
+@login_required
+def producers():
+    storage = mssql.ProducersStorage.get_connection(
+        conn=mssql.get_conn())
+    info = {
+        'title': 'Producers | Shop database',
+        'table_name': 'Producers',
+        'link': 'producers',
+        'producers': storage.get_producers()
+    }
+    return render_template('producers/show.html', **info)
+
+
+@app.route('/purchases/show', methods=['GET', 'POST'])
+@login_required
+def purchases():
+    storage = mssql.PurchasesStorage.get_connection(
+        conn=mssql.get_conn())
+    info = {
+        'title': 'Purchases | Shop database',
+        'table_name': 'Purchases',
+        'link': 'purchases',
+        'producers': storage.get_purchases()
+    }
+    return render_template('purchases/show.html', **info)

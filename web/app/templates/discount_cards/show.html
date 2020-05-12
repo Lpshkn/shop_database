@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<br>
+	<table class="table">
+	  <thead>
+	    <tr>
+	      <th>ID</th>
+	      <th>Discoint</th>
+	      <th>Start date</th>
+	      <th>Expiration</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	  	{% for card in cards %}
+		<tr>
+	      <th scope="row">{{ card.0 }}</th>
+	      <td>{{ card.1 }}</td>
+	      <td>{{ card.2 }}</td>
+	      <td>{{ card.3 }}</td>
+	      <td>{{ card.4 }}</td>
+	    </tr>
+		{% endfor %}
+	  </tbody>
+	</table>
+{% endblock content %}

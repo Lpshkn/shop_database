@@ -31,20 +31,20 @@
     <div class="bg-light border-right" id="sidebar-wrapper">
       <div class="sidebar-heading">Action</div>
       <div class="list-group list-group-flush">
-        <a href="/{{ table_name }}/show" class="list-group-item list-group-item-action bg-light">Show all</a>
-        <a href="/{{ table_name }}/add" class="list-group-item list-group-item-action bg-light">Add</a>
-        <a href="/{{ table_name }}/modify" class="list-group-item list-group-item-action bg-light">Modify</a>
-        <a href="/{{ table_name }}/delete" class="list-group-item list-group-item-action bg-light">Delete</a>
+        <a href="/{{ link }}/show" class="list-group-item list-group-item-action bg-light">Show all</a>
+        <a href="/{{ link }}/add" class="list-group-item list-group-item-action bg-light">Add</a>
+        <a href="/{{ link }}/modify" class="list-group-item list-group-item-action bg-light">Modify</a>
+        <a href="/{{ link }}/delete" class="list-group-item list-group-item-action bg-light">Delete</a>
       </div>
-      <div class="sidebar-heading">Change table</div>
+      <div class="sidebar-heading">Switch table</div>
       <div class="list-group list-group-flush">
         <a href="{{ url_for('workers') }}" class="list-group-item list-group-item-action bg-light">Workers</a>
-        <a href="{{ url_for('workers') }}" class="list-group-item list-group-item-action bg-light">Suppliers</a>
-        <a href="{{ url_for('workers') }}" class="list-group-item list-group-item-action bg-light">Products</a>
-        <a href="{{ url_for('workers') }}" class="list-group-item list-group-item-action bg-light">Customers</a>
-        <a href="{{ url_for('workers') }}" class="list-group-item list-group-item-action bg-light">Discount cards</a>
-        <a href="{{ url_for('workers') }}" class="list-group-item list-group-item-action bg-light">Producers</a>
-        <a href="{{ url_for('workers') }}" class="list-group-item list-group-item-action bg-light">Purchases</a>
+        <a href="{{ url_for('suppliers') }}" class="list-group-item list-group-item-action bg-light">Suppliers</a>
+        <a href="{{ url_for('products') }}" class="list-group-item list-group-item-action bg-light">Products</a>
+        <a href="{{ url_for('customers') }}" class="list-group-item list-group-item-action bg-light">Customers</a>
+        <a href="{{ url_for('discount_cards') }}" class="list-group-item list-group-item-action bg-light">Discount cards</a>
+        <a href="{{ url_for('producers') }}" class="list-group-item list-group-item-action bg-light">Producers</a>
+        <a href="{{ url_for('purchases') }}" class="list-group-item list-group-item-action bg-light">Purchases</a>
       </div>
     </div>
     <!-- /#sidebar-wrapper -->
@@ -57,11 +57,7 @@
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-          <li class="nav-item active">
-            <a class="nav-link">Table: {{ table_name }}</a>
-          </li>
-        </ul>
+        <h4>Table: {{ table_name }}</h4>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav ml-auto mt-2 mt-lg-0">

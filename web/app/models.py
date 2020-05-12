@@ -14,13 +14,6 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(128), nullable=False)
     server = db.Column(db.String(128), nullable=False)
     dbname = db.Column(db.String(128), nullable=False)
-    _conn = None
-
-    def set_conn(self, conn):
-        self._conn = conn
-
-    def get_conn(self):
-        return self._conn
 
     def __repr__(self):
         return '<User: {}>'.format(self.username)

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<br>
+	<table class="table">
+	  <thead>
+	    <tr>
+	      <th>ID</th>
+	      <th>Name</th>
+	      <th>Address</th>
+	      <th>Email</th>
+	      <th>Telephone</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	  	{% for producer in producers %}
+		<tr>
+	      <th scope="row">{{ producer.0 }}</th>
+	      <td>{{ producer.1 }}</td>
+	      <td>{{ producer.2 }}</td>
+	      <td>{{ producer.3 }}</td>
+	      <td>{{ producer.4 }}</td>
+	      <td>{{ producer.5 }}</td>
+	    </tr>
+		{% endfor %}
+	  </tbody>
+	</table>
+{% endblock content %}

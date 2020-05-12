@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<br>
+	<table class="table">
+	  <thead>
+	    <tr>
+	      <th>ID</th>
+	      <th>Product ID</th>
+	      <th>Worker ID</th>
+	      <th>Customer ID</th>
+	      <th>Quantity</th>
+	      <th>Date</th>
+	      <th>Total cost</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	  	{% for producer in producers %}
+		<tr>
+	      <th scope="row">{{ producer.0 }}</th>
+	      <td>{{ producer.1 }}</td>
+	      <td>{{ producer.2 }}</td>
+	      <td>{{ producer.3 }}</td>
+	      <td>{{ producer.4 }}</td>
+	      <td>{{ producer.5 }}</td>
+	      <td>{{ producer.6 }}</td>
+	      <td>{{ producer.7 }}</td>
+	    </tr>
+		{% endfor %}
+	  </tbody>
+	</table>
+{% endblock content %}
