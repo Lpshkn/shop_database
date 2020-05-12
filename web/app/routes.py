@@ -1,9 +1,9 @@
 import pymssql
-from app import mssql
 from app import app
+from app import forms
+from app import mssql
 from flask import render_template, flash, redirect, url_for, request, g
 from flask_login import current_user, login_user, logout_user, login_required
-from app.forms import LoginForm
 from app.models import User
 from werkzeug.urls import url_parse
 
@@ -12,7 +12,7 @@ from werkzeug.urls import url_parse
 def login():
     logout_user()
     mssql.close_conn()
-    form = LoginForm()
+    form = forms.LoginForm()
     if form.validate_on_submit():
         try:
             user = User.query.filter_by(username=form.username.data).first()
@@ -37,7 +37,7 @@ def login():
             flash('Connection to the database failed for an unknown reason')
             return redirect(url_for('login'))
 
-    return render_template('login.html', title='Sign In', form=form)
+    return render_template('login.html', title='Sign In | Shop database ', form=form)
 
 
 @app.route('/')
@@ -53,6 +53,41 @@ def workers():
         'workers': storage.get_workers()
     }
     return render_template('workers/show.html', **info)
+
+
+@app.route('/workers/insert', methods=['GET', 'POST'])
+@login_required
+def insert_worker():
+    form = forms.WorkerForm()
+    info = {
+        'title': 'Add worker | Shop database',
+        'table_name': 'Workers',
+        'link': 'workers',
+        'form': form
+    }
+    if form.validate_on_submit():
+        try:
+            storage = mssql.WorkersStorage.get_connection(
+                conn=mssql.get_conn())
+            storage.add_worker(
+                fullname=form.fullname.data,
+                salary=form.salary.data,
+                job=form.job.data,
+                address=form.address.data,
+                passport_number=form.passport_number.data,
+                telephone=form.telephone.data,
+                email=form.email.data
+            )
+            info['message'] = {
+                'title': 'Insert result',
+                'body': f"Worker '{form.fullname.data}' was successfully added to database."
+            }
+            return render_template('info.html', **info)
+        except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.ProgrammingError):
+            flash("Error on inserting values into table.")
+            return redirect(url_for('insert_worker'))
+
+    return render_template('workers/insert.html', **info)
 
 
 @app.route('/suppliers/show', methods=['GET', 'POST'])

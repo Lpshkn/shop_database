@@ -48,6 +48,13 @@ class WorkersStorage(MssqlStorage):
             row = self._cur.fetchone()
         return workers
 
+    def add_worker(self, fullname, salary, job, address, passport_number, telephone, email):
+        sql = f"""INSERT INTO Workers 
+        (fullname, salary, job, address, passport_number, telephone, email) VALUES
+        (N'{fullname}', {salary}, N'{job}', N'{address}', '{passport_number}', '{telephone}', '{email}')"""
+        self._cur.execute(sql)
+        self._conn.commit()
+
 
 class SuppliersStorage(MssqlStorage):
 

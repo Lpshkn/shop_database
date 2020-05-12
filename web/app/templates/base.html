@@ -32,8 +32,8 @@
       <div class="sidebar-heading">Action</div>
       <div class="list-group list-group-flush">
         <a href="/{{ link }}/show" class="list-group-item list-group-item-action bg-light">Show all</a>
-        <a href="/{{ link }}/add" class="list-group-item list-group-item-action bg-light">Add</a>
-        <a href="/{{ link }}/modify" class="list-group-item list-group-item-action bg-light">Modify</a>
+        <a href="/{{ link }}/insert" class="list-group-item list-group-item-action bg-light">Insert</a>
+        <a href="/{{ link }}/update" class="list-group-item list-group-item-action bg-light">Update</a>
         <a href="/{{ link }}/delete" class="list-group-item list-group-item-action bg-light">Delete</a>
       </div>
       <div class="sidebar-heading">Switch table</div>
@@ -57,7 +57,7 @@
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <h4>Table: {{ table_name }}</h4>
+        <h5>Table: {{ table_name }}</h5>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
@@ -78,15 +78,11 @@
       </nav>
 
       <div class="container-fluid">
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-            <ul>
-                {% for message in messages %}
-                <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        {% endwith %}
+        {% for message in get_flashed_messages() %}
+        <div class="alert alert-danger" role="alert">
+            {{ message }}
+        </div>                    
+        {% endfor %}
 
         {% block content %}
         {% endblock content %}
