@@ -29,14 +29,22 @@
 
     <!-- Sidebar -->
     <div class="bg-light border-right" id="sidebar-wrapper">
-      <div class="sidebar-heading">Shop database </div>
+      <div class="sidebar-heading">Action</div>
       <div class="list-group list-group-flush">
-        <a href="#" class="list-group-item list-group-item-action bg-light">Dashboard</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Shortcuts</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Overview</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Events</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Profile</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Status</a>
+        <a href="/{{ table_name }}/show" class="list-group-item list-group-item-action bg-light">Show all</a>
+        <a href="/{{ table_name }}/add" class="list-group-item list-group-item-action bg-light">Add</a>
+        <a href="/{{ table_name }}/modify" class="list-group-item list-group-item-action bg-light">Modify</a>
+        <a href="/{{ table_name }}/delete" class="list-group-item list-group-item-action bg-light">Delete</a>
+      </div>
+      <div class="sidebar-heading">Change table</div>
+      <div class="list-group list-group-flush">
+        <a href="{{ url_for('workers') }}" class="list-group-item list-group-item-action bg-light">Workers</a>
+        <a href="{{ url_for('workers') }}" class="list-group-item list-group-item-action bg-light">Suppliers</a>
+        <a href="{{ url_for('workers') }}" class="list-group-item list-group-item-action bg-light">Products</a>
+        <a href="{{ url_for('workers') }}" class="list-group-item list-group-item-action bg-light">Customers</a>
+        <a href="{{ url_for('workers') }}" class="list-group-item list-group-item-action bg-light">Discount cards</a>
+        <a href="{{ url_for('workers') }}" class="list-group-item list-group-item-action bg-light">Producers</a>
+        <a href="{{ url_for('workers') }}" class="list-group-item list-group-item-action bg-light">Purchases</a>
       </div>
     </div>
     <!-- /#sidebar-wrapper -->
@@ -49,16 +57,24 @@
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
+        <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+          <li class="nav-item active">
+            <a class="nav-link">Table: {{ table_name }}</a>
+          </li>
+        </ul>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-            <li class="nav-item active">
-              <a class="nav-link">{{ current_user.username }} <span class="sr-only">(current)</span></a>
+            <li class="nav-item">
+              <a class="nav-link">Server: {{ current_user.server }}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link">{{ current_user.dbname }}</a>
+              <a class="nav-link">Database: {{ current_user.dbname }}</a>
             </li>
-            <li class="nav-item dropdown">
+            <li class="nav-item">
+              <a class="nav-link">User: {{ current_user.username }}</a>
+            </li>
+            <li class="nav-item active">
               <a class="nav-link" href="{{ url_for('login') }}">Logout</a>
             </li>
           </ul>
@@ -75,6 +91,7 @@
             </ul>
             {% endif %}
         {% endwith %}
+
         {% block content %}
         {% endblock content %}
       </div>

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<br>
+	<table class="table">
+	  <thead>
+	    <tr>
+	      <th>ID</th>
+	      <th>Fullname</th>
+	      <th>Salary</th>
+	      <th>Position</th>
+	      <th>Address</th>
+	      <th>Passport number</th>
+	      <th>Telephone</th>
+	      <th>Email</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	  	{% for worker in workers %}
+		<tr>
+	      <th scope="row">{{ worker.0 }}</th>
+	      <td>{{ worker.1 }}</td>
+	      <td>{{ worker.2 }}</td>
+	      <td>{{ worker.3 }}</td>
+	      <td>{{ worker.4 }}</td>
+	      <td>{{ worker.5 }}</td>
+	      <td>{{ worker.6 }}</td>
+	      <td>{{ worker.7 }}</td>
+	    </tr>
+		{% endfor %}
+	  </tbody>
+	</table>
+{% endblock content %}
