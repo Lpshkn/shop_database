@@ -25,7 +25,7 @@ def login():
                 password=form.password.data,
                 dbname=form.dbname.data
             )
-            login_user(user, remember=form.remember_me.data)
+            login_user(user)  #, remember=form.remember_me.data)
             next_page = request.args.get('next')
             if not next_page or url_parse(next_page).netloc != '':
                 next_page = url_for('workers')
@@ -166,6 +166,44 @@ def customers():
         'customers': storage.get_customers()
     }
     return render_template('customers/show.html', **info)
+
+
+@app.route('/customers/insert', methods=['GET', 'POST'])
+@login_required
+def insert_customer():
+    storage = mssql.DiscountCardsStorage.get_connection(
+        conn=mssql.get_conn())
+    form = forms.CustomerForm()
+    form.card_id.choices = [(i+1, str(_id)) for i, _id in enumerate(storage.get_cards_ids())] + [(0, '-')]
+    info = {
+        'title': 'Add customer | Shop database',
+        'table_name': 'Customers',
+        'link': 'customers',
+        'form': form
+    }
+    if form.validate_on_submit():
+        try:
+            storage = mssql.CustomersStorage.get_connection(
+                conn=mssql.get_conn())
+            storage.add_customer(
+                fullname=form.fullname.data,
+                card_id=form.card_id.data,
+                address=form.address.data,
+                telephone=form.telephone.data,
+                email=form.email.data
+            )
+            info['message'] = {
+                'title': 'Insert result',
+                'body': f"Customer '{form.fullname.data}' was successfully added to database."
+            }
+            return render_template('info.html', **info)
+        except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.ProgrammingError):
+            flash("Error on inserting value into table.")
+            return redirect(url_for('insert_customer'))
+    elif form.is_submitted():
+        flash("Invalid form data.")
+
+    return render_template('customers/insert.html', **info)
 
 
 @app.route('/discount_cards/show', methods=['GET', 'POST'])

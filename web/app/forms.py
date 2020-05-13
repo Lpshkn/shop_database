@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, DateField, FloatField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, DateField, FloatField, SelectField
 from wtforms.validators import DataRequired, NumberRange, Length
 
 
@@ -30,6 +30,15 @@ class SupplierForm(FlaskForm):
     telephone = StringField('Telephone number', validators=[DataRequired(), Length(max=16)])
     email = StringField('Email', validators=[DataRequired(), Length(max=128)])
     submit = SubmitField('Add supplier')
+
+
+class CustomerForm(FlaskForm):
+    fullname = StringField('Fullname', validators=[DataRequired(), Length(max=128)])
+    card_id = SelectField('Card ID', choices=[], default='-')
+    address = StringField('Address', validators=[DataRequired(), Length(max=128)])
+    telephone = StringField('Telephone number', validators=[DataRequired(), Length(max=16)])
+    email = StringField('Email', validators=[DataRequired(), Length(max=128)])
+    submit = SubmitField('Add customer')
 
 
 class DiscountCardForm(FlaskForm):

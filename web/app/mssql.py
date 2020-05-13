@@ -124,6 +124,13 @@ class CustomersStorage(MssqlStorage):
             row = self._cur.fetchone()
         return customers
 
+    def add_customer(self, fullname: str, card_id: int, address: str, telephone: str, email: str) -> None:
+        sql = f"""INSERT INTO shopdb.dbo.Customers 
+                  (name, address, card_id, email, telephone) VALUES
+                  (N'{fullname}', {card_id}, N'{address}', '{email}', '{telephone}')"""
+        self._cur.execute(sql)
+        self._conn.commit()
+
 
 class DiscountCardsStorage(MssqlStorage):
 
@@ -142,6 +149,15 @@ class DiscountCardsStorage(MssqlStorage):
             cards.append(row)
             row = self._cur.fetchone()
         return cards
+
+    def get_cards_ids(self) -> list:
+        self._cur.execute('SELECT card_id FROM shopdb.dbo.DiscountCards')
+        cards_ids = []
+        row = self._cur.fetchone()
+        while row:
+            cards_ids.append(row[0])
+            row = self._cur.fetchone()
+        return cards_ids
 
     def add_card(self, discount: float, start_date: datetime, expiration: datetime) -> None:
         sql = f"""INSERT INTO shopdb.dbo.DiscountCards 
