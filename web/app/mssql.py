@@ -1,19 +1,20 @@
 import pymssql
+from datetime import datetime
 
 _conn: pymssql.Connection = None
 
 
-def set_conn(**kwargs):
+def set_conn(**kwargs) -> None:
     global _conn
     _conn = MssqlStorage.connect_to_db(**kwargs)
 
 
-def get_conn():
+def get_conn() -> pymssql.Connection:
     global _conn
     return _conn
 
 
-def close_conn():
+def close_conn() -> None:
     global _conn
     if _conn:
         _conn.close()
@@ -25,7 +26,7 @@ class MssqlStorage:
     _cur = pymssql.Cursor
 
     @staticmethod
-    def connect_to_db(server: str, user: str, password: str, dbname: str):
+    def connect_to_db(server: str, user: str, password: str, dbname: str) -> pymssql.Connection:
         return pymssql.connect(server, user, password, dbname)
 
 
@@ -48,10 +49,11 @@ class WorkersStorage(MssqlStorage):
             row = self._cur.fetchone()
         return workers
 
-    def add_worker(self, fullname, salary, job, address, passport_number, telephone, email):
-        sql = f"""INSERT INTO Workers 
-        (fullname, salary, job, address, passport_number, telephone, email) VALUES
-        (N'{fullname}', {salary}, N'{job}', N'{address}', '{passport_number}', '{telephone}', '{email}')"""
+    def add_worker(self, fullname: str, salary: float, job: str, address: str,
+                   passport_number: str, telephone: str, email: str) -> None:
+        sql = f"""INSERT INTO shopdb.dbo.Workers 
+                  (fullname, salary, job, address, passport_number, telephone, email) VALUES
+                  (N'{fullname}', {salary}, N'{job}', N'{address}', '{passport_number}', '{telephone}', '{email}')"""
         self._cur.execute(sql)
         self._conn.commit()
 
@@ -74,6 +76,13 @@ class SuppliersStorage(MssqlStorage):
             suppliers.append(row)
             row = self._cur.fetchone()
         return suppliers
+
+    def add_supplier(self, name: str, address: str, telephone: str, email: str) -> None:
+        sql = f"""INSERT INTO shopdb.dbo.Suppliers 
+                  (name, address, email, telephone) VALUES
+                  (N'{name}', N'{address}', '{email}', '{telephone}')"""
+        self._cur.execute(sql)
+        self._conn.commit()
 
 
 class ProductsStorage(MssqlStorage):
@@ -134,6 +143,13 @@ class DiscountCardsStorage(MssqlStorage):
             row = self._cur.fetchone()
         return cards
 
+    def add_card(self, discount: float, start_date: datetime, expiration: datetime) -> None:
+        sql = f"""INSERT INTO shopdb.dbo.DiscountCards 
+                  (discount, start_date, expiration) VALUES
+                  ('{discount}', '{start_date}', '{expiration}')"""
+        self._cur.execute(sql)
+        self._conn.commit()
+
 
 class ProducersStorage(MssqlStorage):
 
@@ -153,6 +169,13 @@ class ProducersStorage(MssqlStorage):
             producers.append(row)
             row = self._cur.fetchone()
         return producers
+
+    def add_producer(self, name: str, address: str, telephone: str, email: str) -> None:
+        sql = f"""INSERT INTO shopdb.dbo.Producers 
+                  (name, address, email, telephone) VALUES
+                  (N'{name}', N'{address}', '{email}', '{telephone}')"""
+        self._cur.execute(sql)
+        self._conn.commit()
 
 
 class PurchasesStorage(MssqlStorage):

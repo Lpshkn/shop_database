@@ -2,8 +2,8 @@ import pymssql
 from app import app
 from app import forms
 from app import mssql
-from flask import render_template, flash, redirect, url_for, request, g
-from flask_login import current_user, login_user, logout_user, login_required
+from flask import render_template, flash, redirect, url_for, request
+from flask_login import login_user, logout_user, login_required
 from app.models import User
 from werkzeug.urls import url_parse
 
@@ -86,6 +86,8 @@ def insert_worker():
         except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.ProgrammingError):
             flash("Error on inserting values into table.")
             return redirect(url_for('insert_worker'))
+    elif form.is_submitted():
+        flash("Invalid form data.")
 
     return render_template('workers/insert.html', **info)
 
@@ -102,6 +104,40 @@ def suppliers():
         'suppliers': storage.get_suppliers()
     }
     return render_template('suppliers/show.html', **info)
+
+
+@app.route('/suppliers/insert', methods=['GET', 'POST'])
+@login_required
+def insert_supplier():
+    form = forms.SupplierForm()
+    info = {
+        'title': 'Add supplier | Shop database',
+        'table_name': 'Suppliers',
+        'link': 'suppliers',
+        'form': form
+    }
+    if form.validate_on_submit():
+        try:
+            storage = mssql.SuppliersStorage.get_connection(
+                conn=mssql.get_conn())
+            storage.add_supplier(
+                name=form.name.data,
+                address=form.address.data,
+                telephone=form.telephone.data,
+                email=form.email.data
+            )
+            info['message'] = {
+                'title': 'Insert result',
+                'body': f"Supplier '{form.name.data}' was successfully added to database."
+            }
+            return render_template('info.html', **info)
+        except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.ProgrammingError):
+            flash("Error on inserting value into table.")
+            return redirect(url_for('insert_supplier'))
+    elif form.is_submitted():
+        flash("Invalid form data.")
+
+    return render_template('suppliers/insert.html', **info)
 
 
 @app.route('/products/show', methods=['GET', 'POST'])
@@ -146,6 +182,39 @@ def discount_cards():
     return render_template('discount_cards/show.html', **info)
 
 
+@app.route('/discount_cards/insert', methods=['GET', 'POST'])
+@login_required
+def insert_card():
+    form = forms.DiscountCardForm()
+    info = {
+        'title': 'Add discount card | Shop database',
+        'table_name': 'Discount cards',
+        'link': 'discount_cards',
+        'form': form
+    }
+    if form.validate_on_submit():
+        try:
+            storage = mssql.DiscountCardsStorage.get_connection(
+                conn=mssql.get_conn())
+            storage.add_card(
+                discount=form.discount.data,
+                start_date=form.start_date.data,
+                expiration=form.expiration.data
+            )
+            info['message'] = {
+                'title': 'Insert result',
+                'body': f"Discount card [{form.discount.data * 100}%] was successfully added to database."
+            }
+            return render_template('info.html', **info)
+        except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.ProgrammingError):
+            flash("Error on inserting value into table.")
+            return redirect(url_for('insert_card'))
+    elif form.is_submitted():
+        flash("Invalid form data.")
+
+    return render_template('discount_cards/insert.html', **info)
+
+
 @app.route('/producers/show', methods=['GET', 'POST'])
 @login_required
 def producers():
@@ -158,6 +227,40 @@ def producers():
         'producers': storage.get_producers()
     }
     return render_template('producers/show.html', **info)
+
+
+@app.route('/producers/insert', methods=['GET', 'POST'])
+@login_required
+def insert_producer():
+    form = forms.ProducerForm()
+    info = {
+        'title': 'Add producer | Shop database',
+        'table_name': 'Producers',
+        'link': 'producers',
+        'form': form
+    }
+    if form.validate_on_submit():
+        try:
+            storage = mssql.ProducersStorage.get_connection(
+                conn=mssql.get_conn())
+            storage.add_producer(
+                name=form.name.data,
+                address=form.address.data,
+                telephone=form.telephone.data,
+                email=form.email.data
+            )
+            info['message'] = {
+                'title': 'Insert result',
+                'body': f"Producer '{form.name.data}' was successfully added to database."
+            }
+            return render_template('info.html', **info)
+        except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.ProgrammingError):
+            flash("Error on inserting value into table.")
+            return redirect(url_for('insert_producer'))
+    elif form.is_submitted():
+        flash("Invalid form data.")
+
+    return render_template('producers/insert.html', **info)
 
 
 @app.route('/purchases/show', methods=['GET', 'POST'])
