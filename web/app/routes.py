@@ -8,6 +8,7 @@ from app.models import User
 from werkzeug.urls import url_parse
 
 
+@app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     logout_user()
@@ -25,7 +26,7 @@ def login():
                 password=form.password.data,
                 dbname=form.dbname.data
             )
-            login_user(user)  #, remember=form.remember_me.data)
+            login_user(user)
             next_page = request.args.get('next')
             if not next_page or url_parse(next_page).netloc != '':
                 next_page = url_for('workers')
@@ -40,7 +41,6 @@ def login():
     return render_template('login.html', title='Sign In | Shop database ', form=form)
 
 
-@app.route('/')
 @app.route('/workers/show', methods=['GET', 'POST'])
 @login_required
 def workers():
@@ -78,11 +78,8 @@ def insert_worker():
                 telephone=form.telephone.data,
                 email=form.email.data
             )
-            info['message'] = {
-                'title': 'Insert result',
-                'body': f"Worker '{form.fullname.data}' was successfully added to database."
-            }
-            return render_template('info.html', **info)
+            info['message'] = f"Worker '{form.fullname.data}' was successfully added to database."
+            render_template('workers/insert.html', **info)
         except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.ProgrammingError):
             flash("Error on inserting values into table.")
             return redirect(url_for('insert_worker'))
@@ -126,11 +123,8 @@ def insert_supplier():
                 telephone=form.telephone.data,
                 email=form.email.data
             )
-            info['message'] = {
-                'title': 'Insert result',
-                'body': f"Supplier '{form.name.data}' was successfully added to database."
-            }
-            return render_template('info.html', **info)
+            info['message'] = f"Supplier '{form.name.data}' was successfully added to database."
+            render_template('suppliers/insert.html', **info)
         except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.ProgrammingError):
             flash("Error on inserting value into table.")
             return redirect(url_for('insert_supplier'))
@@ -174,7 +168,8 @@ def insert_customer():
     storage = mssql.DiscountCardsStorage.get_connection(
         conn=mssql.get_conn())
     form = forms.CustomerForm()
-    form.card_id.choices = [(i+1, str(_id)) for i, _id in enumerate(storage.get_cards_ids())] + [(0, '-')]
+    choices = [(0, '-')] + [(i+1, str(card_id)) for i, card_id in enumerate(storage.get_cards_ids())]
+    form.card_id.choices = choices
     info = {
         'title': 'Add customer | Shop database',
         'table_name': 'Customers',
@@ -183,20 +178,19 @@ def insert_customer():
     }
     if form.validate_on_submit():
         try:
+            choice = form.card_id.data
+            card_id = choices[choice][1] if choice else None
             storage = mssql.CustomersStorage.get_connection(
                 conn=mssql.get_conn())
             storage.add_customer(
                 fullname=form.fullname.data,
-                card_id=form.card_id.data,
                 address=form.address.data,
                 telephone=form.telephone.data,
-                email=form.email.data
+                email=form.email.data,
+                card_id=card_id,
             )
-            info['message'] = {
-                'title': 'Insert result',
-                'body': f"Customer '{form.fullname.data}' was successfully added to database."
-            }
-            return render_template('info.html', **info)
+            info['message'] = f"Customer '{form.fullname.data}' was successfully added to database."
+            render_template('customers/insert.html', **info)
         except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.ProgrammingError):
             flash("Error on inserting value into table.")
             return redirect(url_for('insert_customer'))
@@ -239,11 +233,8 @@ def insert_card():
                 start_date=form.start_date.data,
                 expiration=form.expiration.data
             )
-            info['message'] = {
-                'title': 'Insert result',
-                'body': f"Discount card [{form.discount.data * 100}%] was successfully added to database."
-            }
-            return render_template('info.html', **info)
+            info['message'] = f"Discount card [{form.discount.data * 100}%] was successfully added to database."
+            return render_template('discount_cards/insert.html', **info)
         except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.ProgrammingError):
             flash("Error on inserting value into table.")
             return redirect(url_for('insert_card'))
@@ -287,11 +278,8 @@ def insert_producer():
                 telephone=form.telephone.data,
                 email=form.email.data
             )
-            info['message'] = {
-                'title': 'Insert result',
-                'body': f"Producer '{form.name.data}' was successfully added to database."
-            }
-            return render_template('info.html', **info)
+            info['message'] = f"Producer '{form.name.data}' was successfully added to database."
+            return render_template('producers/insert.html', **info)
         except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.ProgrammingError):
             flash("Error on inserting value into table.")
             return redirect(url_for('insert_producer'))

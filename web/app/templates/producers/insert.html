@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
+    {% if message %}
+    <div class="alert alert-success" role="alert">
+        {{ message }}
+    </div>
+    {% endif %}
     <form action="" method="post">
         {{ form.hidden_tag() }}
         <p>

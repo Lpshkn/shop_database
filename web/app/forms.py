@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, DateField, FloatField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, DateField, FloatField, SelectField
 from wtforms.validators import DataRequired, NumberRange, Length
 
 
@@ -9,7 +9,6 @@ class LoginForm(FlaskForm):
     dbname = StringField('Database name', validators=[DataRequired()])
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
-    remember_me = BooleanField('Remember Me')
     submit = SubmitField('Establish connection')
 
 
@@ -34,7 +33,7 @@ class SupplierForm(FlaskForm):
 
 class CustomerForm(FlaskForm):
     fullname = StringField('Fullname', validators=[DataRequired(), Length(max=128)])
-    card_id = SelectField('Card ID', choices=[], default='-')
+    card_id = SelectField('Card ID', coerce=int)
     address = StringField('Address', validators=[DataRequired(), Length(max=128)])
     telephone = StringField('Telephone number', validators=[DataRequired(), Length(max=16)])
     email = StringField('Email', validators=[DataRequired(), Length(max=128)])
