@@ -1,7 +1,5 @@
 import pymssql
 from datetime import datetime
-from flask import url_for
-from werkzeug.utils import redirect
 
 _conn: pymssql.Connection = None
 
@@ -51,6 +49,9 @@ class WorkersStorage(MssqlStorage):
             row = self._cur.fetchone()
         return workers
 
+    def get_workers_ids(self) -> list:
+        return [row[0] for row in self.get_workers()]
+
     def add_worker(self, fullname: str, salary: float, job: str, address: str,
                    passport_number: str, telephone: str, email: str) -> None:
         sql = f"""INSERT INTO shopdb.dbo.Workers 
@@ -79,6 +80,9 @@ class SuppliersStorage(MssqlStorage):
             row = self._cur.fetchone()
         return suppliers
 
+    def get_suppliers_names(self) -> list:
+        return [row[1] for row in self.get_suppliers()]
+
     def add_supplier(self, name: str, address: str, telephone: str, email: str) -> None:
         sql = f"""INSERT INTO shopdb.dbo.Suppliers 
                   (name, address, email, telephone) VALUES
@@ -106,6 +110,16 @@ class ProductsStorage(MssqlStorage):
             row = self._cur.fetchone()
         return products
 
+    def get_products_ids(self) -> list:
+        return [row[0] for row in self.get_products()]
+
+    def add_product(self, name: str, producer: str, quantity: int, supplier: str, price: float, promotion: str) -> None:
+        sql = f"""INSERT INTO shopdb.dbo.Products 
+                  (name, producer, quantity, supplier, price) VALUES
+                  (N'{name}', N'{producer}', {quantity}, N'{supplier}', {price}, '{promotion}')"""
+        self._cur.execute(sql)
+        self._conn.commit()
+
 
 class CustomersStorage(MssqlStorage):
 
@@ -126,10 +140,13 @@ class CustomersStorage(MssqlStorage):
             row = self._cur.fetchone()
         return customers
 
+    def get_customers_ids(self) -> list:
+        return [row[0] for row in self.get_customers()]
+
     def add_customer(self, fullname: str, card_id: int, address: str, telephone: str, email: str) -> None:
         sql = f"""INSERT INTO shopdb.dbo.Customers 
-                  (name, address, card_id, email, telephone) VALUES
-                  (N'{fullname}', {card_id}, N'{address}', '{email}', '{telephone}')"""
+                  (fullname, address, card_id, email, telephone) VALUES
+                  (N'{fullname}', N'{address}', {card_id}, '{email}', '{telephone}')"""
         self._cur.execute(sql)
         self._conn.commit()
 
@@ -153,13 +170,7 @@ class DiscountCardsStorage(MssqlStorage):
         return cards
 
     def get_cards_ids(self) -> list:
-        self._cur.execute('SELECT card_id FROM shopdb.dbo.DiscountCards')
-        cards_ids = []
-        row = self._cur.fetchone()
-        while row:
-            cards_ids.append(row[0])
-            row = self._cur.fetchone()
-        return cards_ids
+        return [row[0] for row in self.get_cards()]
 
     def add_card(self, discount: float, start_date: datetime, expiration: datetime) -> None:
         sql = f"""INSERT INTO shopdb.dbo.DiscountCards 
@@ -188,6 +199,9 @@ class ProducersStorage(MssqlStorage):
             row = self._cur.fetchone()
         return producers
 
+    def get_producers_names(self) -> list:
+        return [row[1] for row in self.get_producers()]
+
     def add_producer(self, name: str, address: str, telephone: str, email: str) -> None:
         sql = f"""INSERT INTO shopdb.dbo.Producers 
                   (name, address, email, telephone) VALUES
@@ -214,3 +228,11 @@ class PurchasesStorage(MssqlStorage):
             purchases.append(row)
             row = self._cur.fetchone()
         return purchases
+
+    def add_purchase(self, product_id: int, worker_id: int, customer_id: int,
+                     quantity: int, total_cost: float, date: datetime) -> None:
+        sql = f"""INSERT INTO shopdb.dbo.Purchases 
+                  (product_id, worker_id, customer_id, quantity, total_cost, date) VALUES
+                  ({product_id}, {worker_id}, {customer_id}, {quantity}, {total_cost}, '{date}')"""
+        self._cur.execute(sql)
+        self._conn.commit()

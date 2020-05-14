@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, DateField, FloatField, SelectField
-from wtforms.validators import DataRequired, NumberRange, Length
+from wtforms import StringField, PasswordField, SubmitField, DateField, FloatField, SelectField, IntegerField
+from wtforms.validators import DataRequired, NumberRange, Length, Regexp
 
 
 class LoginForm(FlaskForm):
@@ -17,9 +17,9 @@ class WorkerForm(FlaskForm):
     salary = FloatField('Salary', validators=[NumberRange(min=0)])
     job = StringField('Position', validators=[Length(max=32)])
     address = StringField('Address', validators=[DataRequired(), Length(max=128)])
-    passport_number = StringField('Passport number', validators=[DataRequired(), Length(max=10)])
-    telephone = StringField('Telephone number', validators=[DataRequired(), Length(max=16)])
-    email = StringField('Email', validators=[DataRequired(), Length(max=128)])
+    passport_number = StringField('Passport number', validators=[DataRequired(), Length(max=10), Regexp('^[\d]+$')])
+    telephone = StringField('Telephone number', validators=[DataRequired(), Length(max=16), Regexp('^[\d()-]+$')])
+    email = StringField('Email', validators=[DataRequired(), Length(max=128), Regexp('^[\w@.]+$')])
     submit = SubmitField('Add worker')
 
 
@@ -27,7 +27,7 @@ class SupplierForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(max=128)])
     address = StringField('Address', validators=[DataRequired(), Length(max=128)])
     telephone = StringField('Telephone number', validators=[DataRequired(), Length(max=16)])
-    email = StringField('Email', validators=[DataRequired(), Length(max=128)])
+    email = StringField('Email', validators=[DataRequired(), Length(max=128), Regexp('^[\w@.]+$')])
     submit = SubmitField('Add supplier')
 
 
@@ -35,8 +35,8 @@ class CustomerForm(FlaskForm):
     fullname = StringField('Fullname', validators=[DataRequired(), Length(max=128)])
     card_id = SelectField('Card ID', coerce=int)
     address = StringField('Address', validators=[DataRequired(), Length(max=128)])
-    telephone = StringField('Telephone number', validators=[DataRequired(), Length(max=16)])
-    email = StringField('Email', validators=[DataRequired(), Length(max=128)])
+    telephone = StringField('Telephone number', validators=[DataRequired(), Length(max=16), Regexp('^[\d()-]+$')])
+    email = StringField('Email', validators=[DataRequired(), Length(max=128), Regexp('^[\w@.]+$')])
     submit = SubmitField('Add customer')
 
 
@@ -47,9 +47,29 @@ class DiscountCardForm(FlaskForm):
     submit = SubmitField('Add discount card')
 
 
+class ProductForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired(), Length(max=128)])
+    quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1, max=32767)], default=1)
+    price = FloatField('Price', validators=[DataRequired(), NumberRange(min=0)], default=0)
+    promotion = StringField('Promotion', validators=[Length(max=30), Regexp('^[\w]+$')])
+    producer = SelectField('Producer', coerce=int)
+    supplier = SelectField('Supplier', coerce=int)
+    submit = SubmitField('Add product')
+
+
 class ProducerForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(max=128)])
     address = StringField('Address', validators=[DataRequired(), Length(max=128)])
-    telephone = StringField('Telephone number', validators=[DataRequired(), Length(max=16)])
-    email = StringField('Email', validators=[DataRequired(), Length(max=128)])
+    telephone = StringField('Telephone number', validators=[DataRequired(), Length(max=16), Regexp('^[\d()-]+$')])
+    email = StringField('Email', validators=[DataRequired(), Length(max=128), Regexp('^[\w@.]+$')])
     submit = SubmitField('Add producer')
+
+
+class PurchaseForm(FlaskForm):
+    quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1, max=32767)], default=1)
+    total_cost = FloatField('Total cost', validators=[DataRequired(), NumberRange(min=0)], default=0)
+    date = DateField('Date', validators=[DataRequired()], default=datetime.utcnow)
+    product_id = SelectField('Product ID', coerce=int)
+    worker_id = SelectField('Worker ID', coerce=int)
+    customer_id = SelectField('Customer ID', coerce=int)
+    submit = SubmitField('Add purchase')
