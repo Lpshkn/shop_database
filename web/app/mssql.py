@@ -22,8 +22,8 @@ def close_conn() -> None:
 
 class MssqlStorage:
 
-    _conn = pymssql.Connection
-    _cur = pymssql.Cursor
+    _conn: pymssql.Connection
+    _cur:  pymssql.Cursor
 
     @staticmethod
     def connect_to_db(server: str, user: str, password: str, dbname: str) -> pymssql.Connection:

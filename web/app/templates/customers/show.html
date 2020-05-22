@@ -1,28 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<table class="table">
-	  <thead>
-	    <tr>
-	      <th>ID</th>
-	      <th>Fullname</th>
-	      <th>Card ID</th>
-	      <th>Address</th>
-	      <th>Email</th>
-	      <th>Telephone</th>
-	    </tr>
-	  </thead>
-	  <tbody>
-	  	{% for customer in customers %}
-		<tr>
-	      <th scope="row">{{ customer.0 }}</th>
+<input class="form-control" type="text" placeholder="Search..." id="search" onkeyup='tableSearch("search", "table")'>
+<table id="table" class="table table-hover">
+    <thead>
+      <tr>
+	      <th>ID <img height="20" src='{{ sort_icon() }}' onclick="sortTableByNums('table', 0, true)"></th>
+	      <th>Fullname <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 1)"></th>
+	      <th>Card ID <img height="20" src='{{ sort_icon() }}' onclick="sortTableByNums('table', 2, false)"></th>
+	      <th>Address <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 3)"></th>
+	      <th>Email <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 4)"></th>
+	      <th>Telephone <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 5)"></th>
+      </tr>
+  </thead>
+  <tbody>
+  	{% for customer in customers %}
+	  <tr>
+	      <td scope="row"><strong>{{ customer.0 }}</strong></td>
 	      <td>{{ customer.1 }}</td>
 	      <td>{{ customer.2 }}</td>
 	      <td>{{ customer.3 }}</td>
 	      <td>{{ customer.4 }}</td>
 	      <td>{{ customer.5 }}</td>
-	    </tr>
-		{% endfor %}
-	  </tbody>
-	</table>
+      </tr>
+	{% endfor %}
+    </tbody>
+</table>
 {% endblock content %}

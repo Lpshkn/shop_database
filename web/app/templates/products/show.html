@@ -1,30 +1,31 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<table class="table">
-	  <thead>
-	    <tr>
-	      <th>ID</th>
-	      <th>Name</th>
-	      <th>Producer</th>
-	      <th>Quantity</th>
-	      <th>Supplier</th>
-	      <th>Price</th>
-	      <th>Promotion</th>
-	    </tr>
-	  </thead>
-	  <tbody>
-	  	{% for product in products %}
-		<tr>
-	      <th scope="row">{{ product.0 }}</th>
+<input class="form-control" type="text" placeholder="Search..." id="search" onkeyup='tableSearch("search", "table")'>
+<table id="table" class="table table-hover">
+    <thead>
+      <tr>
+	      <th>ID <img height="20" src='{{ sort_icon() }}' onclick="sortTableByNums('table', 0, true)"></th>
+	      <th>Name <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 1)"></th>
+	      <th>Producer <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 2)"></th>
+	      <th>Quantity <img height="20" src='{{ sort_icon() }}' onclick="sortTableByNums('table', 3, false)"></th>
+	      <th>Supplier <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 4)"></th>
+	      <th>Price <img height="20" src='{{ sort_icon() }}' onclick="sortTableByNums('table', 5, false)"></th>
+	      <th>Promotion <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 6)"></th>
+      </tr>
+  </thead>
+  <tbody>
+  	{% for product in products %}
+	  <tr>
+	      <td scope="row"><strong>{{ product.0 }}</strong></td>
 	      <td>{{ product.1 }}</td>
 	      <td>{{ product.2 }}</td>
 	      <td>{{ product.3 }}</td>
 	      <td>{{ product.4 }}</td>
 	      <td>{{ product.5 }}</td>
 	      <td>{{ product.6 }}</td>
-	    </tr>
-		{% endfor %}
-	  </tbody>
-	</table>
+      </tr>
+	{% endfor %}
+    </tbody>
+</table>
 {% endblock content %}

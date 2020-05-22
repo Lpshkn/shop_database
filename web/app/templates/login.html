@@ -10,11 +10,17 @@
         <link rel="stylesheet" href={{ url_for('static', filename='css/sidebar.css') }}>
         <link rel="stylesheet" href={{ url_for('static', filename='css/bootstrap.min.css') }}>
 
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
+        <link rel="icon" type="image/png" sizes="96x96" href="{{ url_for('static', filename='images/favicon-96x96.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
+
+        <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}"/>
+
         <title>{{ title }}</title>
     </head>
     <body>
         <div class="row justify-content-center">
-            <h1>Shop Database</h1>
+            <h1 style="color: white; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;">Shop Database<!--img src="{{ url_for('static', filename='images/favicon-96x96.png') }}" width="45"--></h1>
         </div>
         <main class="login-form">
             <div class="container">

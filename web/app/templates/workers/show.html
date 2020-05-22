@@ -1,23 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<table class="table">
-	  <thead>
-	    <tr>
-	      <th>ID</th>
-	      <th>Fullname</th>
-	      <th>Salary</th>
-	      <th>Position</th>
-	      <th>Address</th>
-	      <th>Passport number</th>
-	      <th>Telephone</th>
-	      <th>Email</th>
-	    </tr>
-	  </thead>
-	  <tbody>
-	  	{% for worker in workers %}
-		<tr>
-	      <th scope="row">{{ worker.0 }}</th>
+<input class="form-control" type="text" placeholder="Search..." id="search" onkeyup='tableSearch("search", "table")'>
+<table id="table" class="table table-hover">
+    <thead>
+      <tr>
+	      <th>ID <img height="20" src='{{ sort_icon() }}' onclick="sortTableByNums('table', 0, true)"></th>
+	      <th>Fullname <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 1)"></th>
+	      <th>Salary <img height="20" src='{{ sort_icon() }}' onclick="sortTableByNums('table', 2, false)"></th>
+	      <th>Position <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 3)"></th>
+	      <th>Address <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 4)"></th>
+	      <th>Passport number <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 5)"></th>
+	      <th>Telephone <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 6)"></th>
+	      <th>Email <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 7)"></th>
+      </tr>
+  </thead>
+  <tbody>
+  	{% for worker in workers %}
+	  <tr>
+	      <td scope="row"><strong>{{ worker.0 }}</strong></td>
 	      <td>{{ worker.1 }}</td>
 	      <td>{{ worker.2 }}</td>
 	      <td>{{ worker.3 }}</td>
@@ -25,8 +26,8 @@
 	      <td>{{ worker.5 }}</td>
 	      <td>{{ worker.6 }}</td>
 	      <td>{{ worker.7 }}</td>
-	    </tr>
-		{% endfor %}
-	  </tbody>
-	</table>
+      </tr>
+	{% endfor %}
+    </tbody>
+</table>
 {% endblock content %}

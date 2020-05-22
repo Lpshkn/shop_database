@@ -1,25 +1,26 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<table class="table">
-	  <thead>
-	    <tr>
-	      <th>ID</th>
-	      <th>Discoint</th>
-	      <th>Start date</th>
-	      <th>Expiration</th>
-	    </tr>
-	  </thead>
-	  <tbody>
-	  	{% for card in cards %}
-		<tr>
-	      <th scope="row">{{ card.0 }}</th>
+<input class="form-control" type="text" placeholder="Search..." id="search" onkeyup='tableSearch("search", "table")'>
+<table id="table" class="table table-hover">
+    <thead>
+      <tr>
+	      <th>ID <img height="20" src='{{ sort_icon() }}' onclick="sortTableByNums('table', 0, true)"></th>
+	      <th>Discoint <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 1)"></th>
+	      <th>Start date <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 2)"></th>
+	      <th>Expiration <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 3)"></th>
+      </tr>
+  </thead>
+  <tbody>
+  	{% for card in cards %}
+	  <tr>
+	      <td scope="row"><strong>{{ card.0 }}</strong></td>
 	      <td>{{ card.1 }}</td>
 	      <td>{{ card.2 }}</td>
 	      <td>{{ card.3 }}</td>
 	      <td>{{ card.4 }}</td>
-	    </tr>
-		{% endfor %}
-	  </tbody>
-	</table>
+      </tr>
+	{% endfor %}
+    </tbody>
+</table>
 {% endblock content %}

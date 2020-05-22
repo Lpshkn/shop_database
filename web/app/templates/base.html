@@ -8,6 +8,12 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
+  <link rel="icon" type="image/png" sizes="96x96" href="{{ url_for('static', filename='images/favicon-96x96.png') }}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
+
+  <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}"/>
+
   {% if title %}
   <title>{{ title }}</title>
   {% else %}
@@ -21,6 +27,9 @@
   <!-- Custom styles for this template -->
   <link rel="stylesheet" href={{ url_for('static', filename='css/simple-sidebar.css') }}>
 
+  <script src="{{ url_for('static', filename='js/tables.js') }}"></script>
+  <style type="text/css"> img { cursor: pointer; }</style>
+
 </head>
 
 <body>
@@ -29,9 +38,9 @@
 
     <!-- Sidebar -->
     <div class="bg-light border-right" id="sidebar-wrapper">
-      <div class="sidebar-heading">Action</div>
+      <div class="sidebar-heading">Action <img height="20" src='{{ add_icon() }}' onclick=""></div>
       <div class="list-group list-group-flush">
-        <a href="/{{ link }}/show" class="list-group-item list-group-item-action bg-light">Show all</a>
+        <a href="/{{ link }}/show" class="list-group-item list-group-item-action bg-light">Show all </a>
         <a href="/{{ link }}/insert" class="list-group-item list-group-item-action bg-light">Insert</a>
         <a href="/{{ link }}/update" class="list-group-item list-group-item-action bg-light">Update</a>
         <a href="/{{ link }}/delete" class="list-group-item list-group-item-action bg-light">Delete</a>
