@@ -17,7 +17,7 @@
   {% if title %}
   <title>{{ title }}</title>
   {% else %}
-  <title>ShopDB</title>
+  <title>Shop database</title>
   {% endif %}
 
   <!-- Bootstrap core CSS -->
@@ -38,7 +38,7 @@
 
     <!-- Sidebar -->
     <div class="bg-light border-right" id="sidebar-wrapper">
-      <div class="sidebar-heading">Action <img height="20" src='{{ add_icon() }}' onclick=""></div>
+      <div class="sidebar-heading">Action</div>
       <div class="list-group list-group-flush">
         <a href="/{{ link }}/show" class="list-group-item list-group-item-action bg-light">Show all </a>
         <a href="/{{ link }}/insert" class="list-group-item list-group-item-action bg-light">Insert</a>
@@ -66,7 +66,7 @@
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <h5>Table: {{ table_name }}</h5>
+        <h5 id='h5'>Table: {{ table_name }}</h5>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
@@ -102,6 +102,28 @@
 
   </div>
   <!-- /#wrapper -->
+
+  <script type="text/javascript">
+
+    const table = document.getElementById('table');
+
+    for (i = 1; i <= table.rows.length; i++) {
+      const row = document.getElementById(`row_${i}`);
+      document.getElementById(`del_img_${i}`).style.display = "none";
+      document.getElementById(`upd_img_${i}`).style.display = "none";    
+    }
+
+    function showImages(row_index) {
+      document.getElementById(`del_img_${row_index}`).style.display = "";
+      document.getElementById(`upd_img_${row_index}`).style.display = "";
+    }
+
+    function hideImages(row_index) {
+      document.getElementById(`del_img_${row_index}`).style.display = "none";
+      document.getElementById(`upd_img_${row_index}`).style.display = "none";
+    }
+
+  </script>
 
 </body>
 
