@@ -3,6 +3,7 @@ from app import app
 from app import forms
 from app import mssql
 from flask import render_template, flash, redirect, url_for, request
+from flask.views import MethodView
 from flask_login import login_user, logout_user, login_required
 from app.models import User
 from werkzeug.urls import url_parse
@@ -188,55 +189,87 @@ def insert_product():
     return render_template('products/insert.html', **info)
 
 
-@app.route('/customers/show', methods=['GET', 'POST'])
-@login_required
-def customers():
-    storage = mssql.CustomersStorage.get_connection(
-        conn=mssql.get_conn())
-    info = {
+def register_api(view, endpoint, url, pk='id', pk_type='int'):
+    view_func = view.as_view(endpoint)
+    app.add_url_rule(url, view_func=view_func, methods=['GET'])
+    app.add_url_rule('%s/<%s:%s>' % (url, pk_type, pk), view_func=view_func, methods=['POST'])
+
+
+class CustomerAPI(MethodView):
+    decorators = [login_required]
+    template = 'customers.html'
+    url = 'customers/'
+    context = {
         'title': 'Customers | Shop database',
         'table_name': 'Customers',
-        'link': 'customers',
-        'customers': storage.get_customers()
+        'link': 'customers'
     }
-    return render_template('customers/show.html', **info)
 
+    @staticmethod
+    def get_customers():
+        storage = mssql.CustomersStorage().get_connection(
+            conn=mssql.get_conn())
+        return storage.get_customers()
 
-@app.route('/customers/insert', methods=['GET', 'POST'])
-@login_required
-def insert_customer():
-    storage = mssql.DiscountCardsStorage.get_connection(
-        conn=mssql.get_conn())
-    form = forms.CustomerForm()
-    choices = [(0, '-')] + [(i+1, str(card_id)) for i, card_id in enumerate(storage.get_cards_ids())]
-    form.card_id.choices = choices
-    info = {
-        'title': 'Add customer | Shop database',
-        'table_name': 'Customers',
-        'link': 'customers',
-        'form': form
-    }
-    if form.validate_on_submit():
-        try:
-            choice = form.card_id.data
-            card_id = choices[choice][1] if choice else "NULL"
-            storage = mssql.CustomersStorage.get_connection(
-                conn=mssql.get_conn())
-            storage.add_customer(
-                fullname=form.fullname.data,
-                address=form.address.data,
-                telephone=form.telephone.data,
-                email=form.email.data,
-                card_id=card_id)
-            info['message'] = f"Customer '{form.fullname.data}' was successfully added to database."
-            render_template('customers/insert.html', **info)
-        except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
-            flash("Error on inserting value into table.")
-            return redirect(url_for('insert_customer'))
-    elif form.is_submitted():
+    @staticmethod
+    def get_form():
+        cards_storage = mssql.DiscountCardsStorage().get_connection(
+            conn=mssql.get_conn())
+        choices = [(0, '-')] + [
+            (i + 1, str(card_id))
+            for i, card_id in enumerate(cards_storage.get_cards_ids())
+        ]
+        form = forms.CustomerForm()
+        form.card_id.choices = choices
+        return form
+
+    def update(self, customer_id):
+        flash("Update %d" % customer_id)
+        return render_template(self.template, **self.context)
+
+    def delete(self, customer_id):
+        flash("Delete %d" % customer_id)
+        return render_template(self.template, **self.context)
+
+    def add(self):
+        if self.context['form'].validate_on_submit():
+            try:
+                choice = self.form.card_id.data
+                card_id = self.choices[choice][1] if choice else "NULL"
+                self.storage.add_customer(
+                    fullname=self.form.fullname.data,
+                    address=self.form.address.data,
+                    telephone=self.form.telephone.data,
+                    email=self.form.email.data,
+                    card_id=card_id)
+                self.context['message'] = f"Customer '{self.form.fullname.data}' was successfully added to database."
+                return render_template(self.template, **self.context)
+            except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
+                flash("Error on inserting value into table.")
+                return redirect(self.url)
         flash("Invalid form data.")
+        return render_template(self.template, **self.context)
 
-    return render_template('customers/insert.html', **info)
+    def get(self):
+        self.context['customers'] = CustomerAPI.get_customers()
+        self.context['form'] = CustomerAPI.get_form()
+        return render_template(self.template, **self.context)
+
+    def post(self, customer_id):
+        self.context['customers'] = CustomerAPI.get_customers()
+        self.context['form'] = CustomerAPI.get_form()
+        print(request, request.form)
+        if request.form['submit'] == 'Add':
+            return self.add()
+        if request.form['submit'] == 'Update':
+            return self.update(customer_id)
+        if request.form['submit'] == 'Delete':
+            return self.delete(customer_id)
+        flash("BLYAT")
+        return render_template(self.template, **self.context)
+
+
+register_api(CustomerAPI, 'customer_api', '/customers/', pk='customer_id')
 
 
 @app.route('/discount_cards/show', methods=['GET', 'POST'])

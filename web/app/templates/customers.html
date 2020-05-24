@@ -70,7 +70,6 @@
    
    /*  Побочные стили   */
    box-shadow: 0 3px 10px -.5px rgba(0, 0, 0, .2); 
-   text-align: center;
    padding: 30px;
    border-radius: 3px;
    background-color: #fff;
@@ -100,16 +99,55 @@
 }
 </style>
 
-<div class="modalmodal" data-modal="1">
-   <!--   Svg иконка для закрытия окна  -->
-   <svg class="modal__cross js-modal-close" xmlns="http://www.w3.org/2000/svg"               viewBox="0 0 24 24"><path d="M23.954 21.03l-9.184-9.095 9.092-9.174-2.832-2.807-9.09 9.179-9.176-9.088-2.81 2.81 9.186 9.105-9.095 9.184 2.81 2.81 9.112-9.192 9.18 9.1z"/></svg>
-   <p class="modal__title">Заголовок окна 1</p>
-</div>
-
 <div class="modalmodal" data-modal="2">
    <!--   Svg иконка для закрытия окна  -->
    <svg class="modal__cross js-modal-close" xmlns="http://www.w3.org/2000/svg"               viewBox="0 0 24 24"><path d="M23.954 21.03l-9.184-9.095 9.092-9.174-2.832-2.807-9.09 9.179-9.176-9.088-2.81 2.81 9.186 9.105-9.095 9.184 2.81 2.81 9.112-9.192 9.18 9.1z"/></svg>
-   <p class="modal__title">Заголовок окна 2</p>
+   <h4>Update</h4>
+   <hr class="my hr4">
+    <form action="/customers/128"  method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.fullname.label }}<br>
+            {{ form.fullname(size=32) }}<br>
+        </p>
+        <p>
+            {{ form.address.label }}<br>
+            {{ form.address(size=32) }}<br>
+        </p>
+        <p>
+            {{ form.email.label }}<br>
+            {{ form.email(size=32) }}<br>
+        </p>
+        <p>
+            {{ form.telephone.label }}<br>
+            {{ form.telephone(size=16) }}<br>
+        </p>
+        <p>
+            {{ form.card_id.label }}<br>
+            {{ form.card_id() }}<br>
+        </p>
+        <hr class="my hr4">
+        <p>
+        	<button type="button" class="btn btn-outline-secondary js-modal-close">Cancel</button>
+        	{{ form.submit(value="Update", class="btn btn-outline-success") }}
+        </p>
+    </form>
+</div>
+
+<div class="modalmodal" data-modal="1">
+   <!--   Svg иконка для закрытия окна  -->
+   <svg class="modal__cross js-modal-close" xmlns="http://www.w3.org/2000/svg"               viewBox="0 0 24 24"><path d="M23.954 21.03l-9.184-9.095 9.092-9.174-2.832-2.807-9.09 9.179-9.176-9.088-2.81 2.81 9.186 9.105-9.095 9.184 2.81 2.81 9.112-9.192 9.18 9.1z"/></svg>
+   <h4>Delete</h4>
+   <hr class="my hr4">
+   <p>Are you sure? This action cannot be canceled.
+   </p>
+   <hr class="my hr4">
+   <p style="align-items: right">
+	<button type="button" class="btn btn-outline-secondary js-modal-close">Cancel</button>
+  <form action="/customers/228" method="post">
+    {{ form.submit(value="Delete", class="btn btn-outline-danger") }}
+  </form>
+   </p>
 </div>
 
 <!-- Подложка под модальным окном -->
@@ -168,6 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.body.addEventListener('keyup', function (e) {
         var key = e.keyCode;
+
 
         if (key == 27) {
 

@@ -37,7 +37,7 @@ class CustomerForm(FlaskForm):
     address = StringField('Address', validators=[DataRequired(), Length(max=128)])
     telephone = StringField('Telephone number', validators=[DataRequired(), Length(max=16), Regexp('^[\d()-]+$')])
     email = StringField('Email', validators=[DataRequired(), Length(max=128), Regexp('^[\w@.]+$')])
-    submit = SubmitField('Add customer')
+    submit = SubmitField()
 
 
 class DiscountCardForm(FlaskForm):

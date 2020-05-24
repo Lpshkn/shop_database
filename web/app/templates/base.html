@@ -38,19 +38,12 @@
 
     <!-- Sidebar -->
     <div class="bg-light border-right" id="sidebar-wrapper">
-      <div class="sidebar-heading">Action</div>
-      <div class="list-group list-group-flush">
-        <a href="/{{ link }}/show" class="list-group-item list-group-item-action bg-light">Show all </a>
-        <a href="/{{ link }}/insert" class="list-group-item list-group-item-action bg-light">Insert</a>
-        <a href="/{{ link }}/update" class="list-group-item list-group-item-action bg-light">Update</a>
-        <a href="/{{ link }}/delete" class="list-group-item list-group-item-action bg-light">Delete</a>
-      </div>
-      <div class="sidebar-heading">Switch table</div>
+      <div class="sidebar-heading">Table</div>
       <div class="list-group list-group-flush">
         <a href="{{ url_for('workers') }}" class="list-group-item list-group-item-action bg-light">Workers</a>
         <a href="{{ url_for('suppliers') }}" class="list-group-item list-group-item-action bg-light">Suppliers</a>
         <a href="{{ url_for('products') }}" class="list-group-item list-group-item-action bg-light">Products</a>
-        <a href="{{ url_for('customers') }}" class="list-group-item list-group-item-action bg-light">Customers</a>
+        <a href="{{ url_for('customer_api') }}" class="list-group-item list-group-item-action bg-light">Customers</a>
         <a href="{{ url_for('discount_cards') }}" class="list-group-item list-group-item-action bg-light">Discount cards</a>
         <a href="{{ url_for('producers') }}" class="list-group-item list-group-item-action bg-light">Producers</a>
         <a href="{{ url_for('purchases') }}" class="list-group-item list-group-item-action bg-light">Purchases</a>
@@ -66,7 +59,7 @@
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <h5 id='h5'>Table: {{ table_name }}</h5>
+        <h5 id='h5'>{{ table_name }}</h5>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
@@ -88,11 +81,17 @@
 
       <div class="container-fluid">
         <br>
-        {% for message in get_flashed_messages() %}
+
+        {% for error in get_flashed_messages() %}
         <div class="alert alert-danger" role="alert">
+            {{ error }}
+        </div>
+        {% endfor %}
+        {% if message %}
+        <div class="alert alert-success" role="alert">
             {{ message }}
         </div>                    
-        {% endfor %}
+        {% endif %}
 
         {% block content %}
         {% endblock content %}
