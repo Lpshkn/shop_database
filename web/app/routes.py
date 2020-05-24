@@ -189,20 +189,13 @@ def insert_product():
     return render_template('products/insert.html', **info)
 
 
-def register_api(view, endpoint, url, pk='id', pk_type='int'):
-    view_func = view.as_view(endpoint)
-    app.add_url_rule(url, view_func=view_func, methods=['GET'])
-    app.add_url_rule('%s/<%s:%s>' % (url, pk_type, pk), view_func=view_func, methods=['POST'])
-
-
 class CustomerAPI(MethodView):
     decorators = [login_required]
     template = 'customers.html'
-    url = 'customers/'
+    url = '/customers/'
     context = {
         'title': 'Customers | Shop database',
-        'table_name': 'Customers',
-        'link': 'customers'
+        'table_name': 'Customers'
     }
 
     @staticmethod
@@ -223,12 +216,28 @@ class CustomerAPI(MethodView):
         form.card_id.choices = choices
         return form
 
-    def update(self, customer_id):
-        flash("Update %d" % customer_id)
+    def update(self):
+        if self.context['form'].validate_on_submit():
+            try:
+                choice = self.form.card_id.data
+                card_id = self.choices[choice][1] if choice else "NULL"
+                self.storage.update_customer(
+                    fullname=self.form.fullname.data,
+                    address=self.form.address.data,
+                    telephone=self.form.telephone.data,
+                    email=self.form.email.data,
+                    card_id=card_id)
+                message = f"Information about customer '{self.form.fullname.data}' was successfully updated."
+                self.context['message'] = message
+                return render_template(self.template, **self.context)
+            except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
+                flash("Error on inserting value into table.")
+                return redirect(self.url)
+        flash("Invalid form data.")
         return render_template(self.template, **self.context)
 
-    def delete(self, customer_id):
-        flash("Delete %d" % customer_id)
+    def delete(self):
+        self.context['message'] = ("Delete %s" % request.form['customer_id'])
         return render_template(self.template, **self.context)
 
     def add(self):
@@ -251,25 +260,25 @@ class CustomerAPI(MethodView):
         return render_template(self.template, **self.context)
 
     def get(self):
+        self.context['message'] = ''
         self.context['customers'] = CustomerAPI.get_customers()
         self.context['form'] = CustomerAPI.get_form()
         return render_template(self.template, **self.context)
 
-    def post(self, customer_id):
+    def post(self):
         self.context['customers'] = CustomerAPI.get_customers()
         self.context['form'] = CustomerAPI.get_form()
         print(request, request.form)
         if request.form['submit'] == 'Add':
             return self.add()
         if request.form['submit'] == 'Update':
-            return self.update(customer_id)
+            return self.update()
         if request.form['submit'] == 'Delete':
-            return self.delete(customer_id)
-        flash("BLYAT")
+            return self.delete()
         return render_template(self.template, **self.context)
 
 
-register_api(CustomerAPI, 'customer_api', '/customers/', pk='customer_id')
+app.add_url_rule('/customers/', view_func=CustomerAPI.as_view('customer_api'), methods=['POST', 'GET'])
 
 
 @app.route('/discount_cards/show', methods=['GET', 'POST'])

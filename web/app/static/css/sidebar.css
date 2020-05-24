@@ -9,6 +9,10 @@
   color: #fff;
 }
 
+img {
+  cursor: pointer;
+}
+
 .content-container {
   padding-top: 20px;
 }

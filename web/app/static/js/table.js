@@ -1,11 +1,11 @@
 function tableSearch(input_id, table_id) {
-    var phrase = document.getElementById(input_id);
-    var table = document.getElementById(table_id);
-    var regPhrase = new RegExp(phrase.value, 'i');
-    var flag = false;
-    for (var i = 1; i < table.rows.length; i++) {
+    const phrase = document.getElementById(input_id);
+    const table = document.getElementById(table_id);
+    const regPhrase = new RegExp(phrase.value, 'i');
+    let flag = false;
+    for (let i = 1; i < table.rows.length; i++) {
         flag = false;
-        for (var j = table.rows[i].cells.length - 1; j >= 0; j--) {
+        for (let j = table.rows[i].cells.length - 1; j >= 0; j--) {
             flag = regPhrase.test(table.rows[i].cells[j].innerHTML);
             if (flag) break;
         }
@@ -17,12 +17,12 @@ function tableSearch(input_id, table_id) {
     }
 }
 
-
 function sortTableByNums(table_id, column_num, has_child) {
-    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-    table = document.getElementById(table_id);
-    switching = true;
-    dir = "asc";
+    const table = document.getElementById(table_id);
+    let rows, i, x, y, shouldSwitch;
+    let switchCount = 0;
+    let switching = true;
+    let dir = "asc";
 
     while (switching) {
         switching = false;
@@ -37,15 +37,15 @@ function sortTableByNums(table_id, column_num, has_child) {
             }
             y = rows[i + 1].getElementsByTagName("TD")[column_num];
             if (has_child) {
-            y = y.firstChild;
+                y = y.firstChild;
             }
-            if (dir == "asc") {
-                if (parseInt(x.innerHTML) > parseInt(y.innerHTML)) {
-                  shouldSwitch = true;
-                  break;
+            if (dir === "asc") {
+                if (Number(x.innerHTML) > Number(y.innerHTML)) {
+                    shouldSwitch = true;
+                    break;
                 }
-            } else if (dir == "desc") {
-                if (parseInt(x.innerHTML) < parseInt(y.innerHTML)) {
+            } else if (dir === "desc") {
+                if (Number(x.innerHTML) < Number(y.innerHTML)) {
                     shouldSwitch = true;
                     break;
                 }
@@ -54,9 +54,9 @@ function sortTableByNums(table_id, column_num, has_child) {
         if (shouldSwitch) {
             rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
             switching = true;
-            switchcount ++;
+            switchCount ++;
         } else {
-            if (switchcount == 0 && dir == "asc") {
+            if (switchCount === 0 && dir === "asc") {
                 dir = "desc";
                 switching = true;
             }
@@ -65,10 +65,11 @@ function sortTableByNums(table_id, column_num, has_child) {
 }
 
 function sortTable(table_id, column_num) {
-    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-    table = document.getElementById(table_id);
-    switching = true;
-    dir = "asc";
+    const table = document.getElementById(table_id);
+    let rows, i, x, y, shouldSwitch;
+    let switchCount = 0;
+    let switching = true;
+    let dir = "asc";
 
     while (switching) {
         switching = false;
@@ -79,12 +80,12 @@ function sortTable(table_id, column_num) {
 
             x = rows[i].getElementsByTagName("TD")[column_num];
             y = rows[i + 1].getElementsByTagName("TD")[column_num];
-            if (dir == "asc") {
+            if (dir === "asc") {
                 if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
                   shouldSwitch = true;
                   break;
                 }
-            } else if (dir == "desc") {
+            } else if (dir === "desc") {
             if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
                 shouldSwitch = true;
                 break;
@@ -94,25 +95,12 @@ function sortTable(table_id, column_num) {
         if (shouldSwitch) {
             rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
             switching = true;
-            switchcount ++;
+            switchCount ++;
         } else {
-            if (switchcount == 0 && dir == "asc") {
+            if (switchCount === 0 && dir === "asc") {
                 dir = "desc";
                 switching = true;
             }
         }
-    }
-}
-
-function hideTable(input_id, table_id) {
-    if (document.getElementById(input_id).style.display == "") {
-        document.getElementById(input_id).style.display = "none";
-    } else {
-        document.getElementById(input_id).style.display = "";
-    }
-    if (document.getElementById(table_id).style.display == "") {
-        document.getElementById(table_id).style.display = "none";
-    } else {
-        document.getElementById(table_id).style.display = "";
     }
 }

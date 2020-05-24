@@ -21,14 +21,15 @@
   {% endif %}
 
   <!-- Bootstrap core CSS -->
-  <link rel="stylesheet" href={{ url_for('static', filename='css/sidebar.css') }}>
-  <link rel="stylesheet" href={{ url_for('static', filename='css/bootstrap.min.css') }}>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
 
   <!-- Custom styles for this template -->
-  <link rel="stylesheet" href={{ url_for('static', filename='css/simple-sidebar.css') }}>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/simple-sidebar.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/modal-window.css') }}">
 
-  <script src="{{ url_for('static', filename='js/tables.js') }}"></script>
-  <style type="text/css"> img { cursor: pointer; }</style>
+  <script src="{{ url_for('static', filename='js/table.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/modal-window.js') }}"></script>
 
 </head>
 
@@ -59,8 +60,8 @@
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
+        
         <h5 id='h5'>{{ table_name }}</h5>
-
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
             <li class="nav-item">
@@ -101,28 +102,6 @@
 
   </div>
   <!-- /#wrapper -->
-
-  <script type="text/javascript">
-
-    const table = document.getElementById('table');
-
-    for (i = 1; i <= table.rows.length; i++) {
-      const row = document.getElementById(`row_${i}`);
-      document.getElementById(`del_img_${i}`).style.display = "none";
-      document.getElementById(`upd_img_${i}`).style.display = "none";    
-    }
-
-    function showImages(row_index) {
-      document.getElementById(`del_img_${row_index}`).style.display = "";
-      document.getElementById(`upd_img_${row_index}`).style.display = "";
-    }
-
-    function hideImages(row_index) {
-      document.getElementById(`del_img_${row_index}`).style.display = "none";
-      document.getElementById(`upd_img_${row_index}`).style.display = "none";
-    }
-
-  </script>
 
 </body>
 
