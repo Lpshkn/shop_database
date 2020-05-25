@@ -59,6 +59,7 @@ class WorkerAPI(MethodView):
     def update(self, form):
         if form.validate_on_submit():
             try:
+                '''
                 storage = mssql.WorkersStorage.get_connection(
                     conn=mssql.get_conn())
                 storage.update_worker(
@@ -68,7 +69,7 @@ class WorkerAPI(MethodView):
                     address=form.address.data,
                     passport_number=form.passport_number.data,
                     telephone=form.telephone.data,
-                    email=form.email.data)
+                    email=form.email.data)'''
                 self.context['message'] = f"Information about worker '{form.fullname.data}' was successfully updated."
                 return render_template(self.template, **self.context)
             except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
@@ -124,48 +125,82 @@ class WorkerAPI(MethodView):
 app.add_url_rule('/workers/', view_func=WorkerAPI.as_view('workers_api'), methods=['POST', 'GET'])
 
 
-@app.route('/suppliers/show', methods=['GET', 'POST'])
-@login_required
-def suppliers():
-    storage = mssql.SuppliersStorage.get_connection(
-        conn=mssql.get_conn())
-    info = {
+class SupplierAPI(MethodView):
+    decorators = [login_required]
+    template = 'suppliers.html'
+    url = '/suppliers/'
+    context = {
         'title': 'Suppliers | Shop database',
         'table_name': 'Suppliers',
-        'link': 'suppliers',
-        'suppliers': storage.get_suppliers()
     }
-    return render_template('suppliers/show.html', **info)
 
+    @staticmethod
+    def get_suppliers() -> list:
+        storage = mssql.SuppliersStorage.get_connection(
+            conn=mssql.get_conn())
+        return storage.get_suppliers()
 
-@app.route('/suppliers/insert', methods=['GET', 'POST'])
-@login_required
-def insert_supplier():
-    form = forms.SupplierForm()
-    info = {
-        'title': 'Add supplier | Shop database',
-        'table_name': 'Suppliers',
-        'link': 'suppliers',
-        'form': form
-    }
-    if form.validate_on_submit():
-        try:
-            storage = mssql.SuppliersStorage.get_connection(
-                conn=mssql.get_conn())
-            storage.add_supplier(
-                name=form.name.data,
-                address=form.address.data,
-                telephone=form.telephone.data,
-                email=form.email.data)
-            info['message'] = f"Supplier '{form.name.data}' was successfully added to database."
-            render_template('suppliers/insert.html', **info)
-        except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
-            flash("Error on inserting value into table.")
-            return redirect(url_for('insert_supplier'))
-    elif form.is_submitted():
+    def update(self, form):
+        if form.validate_on_submit():
+            try:
+                '''
+                storage = mssql.SuppliersStorage.get_connection(
+                    conn=mssql.get_conn())
+                storage.add_supplier(
+                    name=form.name.data,
+                    address=form.address.data,
+                    telephone=form.telephone.data,
+                    email=form.email.data)'''
+                self.context['message'] = f"Information about supplier '{form.name.data}' was successfully updated."
+                return render_template(self.template, **self.context)
+            except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
+                flash("Error on inserting values into table.")
+                return redirect(self.url)
         flash("Invalid form data.")
+        return render_template(self.template, **self.context)
 
-    return render_template('suppliers/insert.html', **info)
+    def delete(self):
+        self.context['message'] = ("Delete %s" % request.form['supplier_id'])
+        return render_template(self.template, **self.context)
+
+    def add(self, form):
+        if form.validate_on_submit():
+            try:
+                storage = mssql.SuppliersStorage.get_connection(
+                    conn=mssql.get_conn())
+                storage.add_supplier(
+                    name=form.name.data,
+                    address=form.address.data,
+                    telephone=form.telephone.data,
+                    email=form.email.data)
+                self.context['message'] = f"Supplier '{form.name.data}' was successfully added to database."
+                return render_template(self.template, **self.context)
+            except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
+                flash("Error on inserting values into table.")
+                return redirect(self.url)
+        flash("Invalid form data.")
+        return render_template(self.template, **self.context)
+
+    def get(self):
+        self.context['message'] = ''
+        self.context['suppliers'] = SupplierAPI.get_suppliers()
+        self.context['form'] = forms.SupplierForm()
+        return render_template(self.template, **self.context)
+
+    def post(self):
+        self.context['suppliers'] = SupplierAPI.get_suppliers()
+        form = forms.SupplierForm()
+        self.context['form'] = form
+        if request.form['submit'] == 'Add':
+            return self.add(form)
+        if request.form['submit'] == 'Update':
+            return self.update(form)
+        if request.form['submit'] == 'Delete':
+            return self.delete()
+        return render_template(self.template, **self.context)
+
+
+app.add_url_rule('/suppliers/', view_func=SupplierAPI.as_view('suppliers_api'), methods=['POST', 'GET'])
 
 
 @app.route('/products/show', methods=['GET', 'POST'])
