@@ -1,88 +1,53 @@
-.sidebar-container {
-  position: fixed;
-  width: 220px;
-  height: 100%;
-  left: 0;
+/*!
+ * Start Bootstrap - Simple Sidebar (https://startbootstrap.com/template-overviews/simple-sidebar)
+ * Copyright 2013-2019 Start Bootstrap
+ * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-simple-sidebar/blob/master/LICENSE)
+ */
+body {
   overflow-x: hidden;
-  overflow-y: auto;
-  background: #1a1a1a;
-  color: #fff;
 }
 
 img {
   cursor: pointer;
 }
 
-.content-container {
-  padding-top: 20px;
+#sidebar-wrapper {
+  min-height: 100vh;
+  margin-left: -15rem;
+  -webkit-transition: margin .25s ease-out;
+  -moz-transition: margin .25s ease-out;
+  -o-transition: margin .25s ease-out;
+  transition: margin .25s ease-out;
 }
 
-.sidebar-logo {
-  padding: 10px 15px 10px 30px;
-  font-size: 20px;
-  background-color: #2574A9;
+#sidebar-wrapper .sidebar-heading {
+  padding: 0.875rem 1.25rem;
+  font-size: 1.2rem;
 }
 
-.sidebar-navigation {
-  padding: 0;
-  margin: 0;
-  list-style-type: none;
-  position: relative;
+#sidebar-wrapper .list-group {
+  width: 200px;
 }
 
-.sidebar-navigation li {
-  background-color: transparent;
-  position: relative;
-  display: inline-block;
-  width: 100%;
-  line-height: 20px;
+#page-content-wrapper {
+  min-width: 100vw;
 }
 
-.sidebar-navigation li a {
-  padding: 10px 15px 10px 30px;
-  display: block;
-  color: #fff;
+#wrapper.toggled #sidebar-wrapper {
+  margin-left: 0;
 }
 
-.sidebar-navigation li .fa {
-  margin-right: 10px;
-}
+@media (min-width: 768px) {
+  #sidebar-wrapper {
+    margin-left: 0;
+  }
 
-.sidebar-navigation li a:active,
-.sidebar-navigation li a:hover,
-.sidebar-navigation li a:focus {
-  text-decoration: none;
-  outline: none;
-}
+  #page-content-wrapper {
+    min-width: 0;
+    width: 100%;
+  }
 
-.sidebar-navigation li::before {
-  background-color: #2574A9;
-  position: absolute;
-  content: '';
-  height: 100%;
-  left: 0;
-  top: 0;
-  -webkit-transition: width 0.2s ease-in;
-  transition: width 0.2s ease-in;
-  width: 3px;
-  z-index: -1;
-}
-
-.sidebar-navigation li:hover::before {
-  width: 100%;
-}
-
-.sidebar-navigation .header {
-  font-size: 12px;
-  text-transform: uppercase;
-  background-color: #151515;
-  padding: 10px 15px 10px 30px;
-}
-
-.sidebar-navigation .header::before {
-  background-color: transparent;
-}
-
-.content-container {
-  padding-left: 220px;
+  #wrapper.toggled #sidebar-wrapper {
+    margin-left: -15rem;
+  }
 }

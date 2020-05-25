@@ -1,7 +1,20 @@
 import pymssql
+from flask import flash, redirect, url_for
+from functools import wraps
 from datetime import datetime
 
 _conn: pymssql.Connection = None
+
+
+def check_conn(view_func):
+    @wraps(view_func)
+    def wrapper_func(*args, **kwargs):
+        try:
+            return view_func(*args, **kwargs)
+        except AttributeError:
+            flash('Connection to database lost.')
+            return redirect(url_for('login'))
+    return wrapper_func
 
 
 def set_conn(**kwargs) -> None:

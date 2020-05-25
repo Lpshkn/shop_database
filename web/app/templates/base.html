@@ -21,11 +21,10 @@
   {% endif %}
 
   <!-- Bootstrap core CSS -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
 
   <!-- Custom styles for this template -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/simple-sidebar.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/modal-window.css') }}">
 
   <script src="{{ url_for('static', filename='js/table.js') }}"></script>
@@ -45,8 +44,8 @@
         <a href="{{ url_for('suppliers_api') }}" class="list-group-item list-group-item-action bg-light">Suppliers</a>
         <a href="{{ url_for('products_api') }}" class="list-group-item list-group-item-action bg-light">Products</a>
         <a href="{{ url_for('customer_api') }}" class="list-group-item list-group-item-action bg-light">Customers</a>
-        <a href="{{ url_for('discount_cards') }}" class="list-group-item list-group-item-action bg-light">Discount cards</a>
-        <a href="{{ url_for('producers') }}" class="list-group-item list-group-item-action bg-light">Producers</a>
+        <a href="{{ url_for('discount_card_api') }}" class="list-group-item list-group-item-action bg-light">Discount cards</a>
+        <a href="{{ url_for('producer_api') }}" class="list-group-item list-group-item-action bg-light">Producers</a>
         <a href="{{ url_for('purchases') }}" class="list-group-item list-group-item-action bg-light">Purchases</a>
       </div>
     </div>

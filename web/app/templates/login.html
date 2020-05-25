@@ -7,8 +7,8 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        <link rel="stylesheet" href={{ url_for('static', filename='css/sidebar.css') }}>
-        <link rel="stylesheet" href={{ url_for('static', filename='css/bootstrap.min.css') }}>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
 
         <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
         <link rel="icon" type="image/png" sizes="96x96" href="{{ url_for('static', filename='images/favicon-96x96.png') }}">
@@ -37,21 +37,14 @@
                                         
                                 <form action="" method="post">
                                     {{ form.hidden_tag() }}
-                                    <p>
-                                        {{ form.server.label }}<br>
-                                        {{ form.server(size=32) }}<br>
-                                    </p>
-                                    <p>
-                                        {{ form.dbname.label }}<br>
-                                        {{ form.dbname(size=32) }}<br>
-                                    <p>
-                                        {{ form.username.label }}<br>
-                                        {{ form.username(size=32) }}<br>
-                                    </p>
-                                    <p>
-                                        {{ form.password.label }}<br>
-                                        {{ form.password(size=32) }}<br>
-                                    </p>
+                                    {{ form.server.label }}<br>
+                                    {{ form.server(size=32, class="form-control") }}<br>
+                                    {{ form.dbname.label }}<br>
+                                    {{ form.dbname(size=32, class="form-control") }}<br>
+                                    {{ form.username.label }}<br>
+                                    {{ form.username(size=32, class="form-control") }}<br>
+                                    {{ form.password.label }}<br>
+                                    {{ form.password(size=32, class="form-control") }}<br>
                                     <p>{{ form.submit(class="btn btn-outline-secondary") }}</p>
                                 </form>
 

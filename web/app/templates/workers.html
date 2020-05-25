@@ -7,21 +7,21 @@
 <table id="table" class="table table-hover">
     <thead>
       <tr>
-      	  <th>Action</th>
-	      <th>ID <img height="20" src='{{ sort_icon() }}' onclick="sortTableByNums('table', 0, true)"></th>
-	      <th>Fullname <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 1)"></th>
-	      <th>Salary <img height="20" src='{{ sort_icon() }}' onclick="sortTableByNums('table', 2, false)"></th>
-	      <th>Position <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 3)"></th>
-	      <th>Address <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 4)"></th>
-	      <th>Passport <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 5)"></th>
-	      <th>Telephone <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 6)"></th>
-	      <th>Email <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 7)"></th>
+      	<th>Action</th>
+	      <th>ID <img src='{{ sort_icon() }}' onclick="sortTableByNums('table', 0, true)"></th>
+	      <th>Fullname <img src='{{ sort_icon() }}' onclick="sortTable('table', 1)"></th>
+	      <th>Salary <img src='{{ sort_icon() }}' onclick="sortTableByNums('table', 2, false)"></th>
+	      <th>Position <img src='{{ sort_icon() }}' onclick="sortTable('table', 3)"></th>
+	      <th>Address <img src='{{ sort_icon() }}' onclick="sortTable('table', 4)"></th>
+	      <th>Passport <img src='{{ sort_icon() }}' onclick="sortTable('table', 5)"></th>
+	      <th>Telephone <img src='{{ sort_icon() }}' onclick="sortTable('table', 6)"></th>
+	      <th>Email <img src='{{ sort_icon() }}' onclick="sortTable('table', 7)"></th>
       </tr>
   </thead>
   <tbody>
   	{% for worker in workers %}
 	  <tr id="row_{{ loop.index }}" onmouseover='showImages(`{{ loop.index }}`)' onmouseout='hideImages(`{{ loop.index }}`)'>
-	  	<th><img id="del_img_{{ loop.index }}" title="Delete" height="20" src="{{ delete_icon() }}" class="js-open-modal" data-modal="delete-modal" onclick='fillDeleteModal("row_{{ loop.index }}")'>     <img id="upd_img_{{ loop.index }}" title="Update" height="20" src="{{ update_icon() }}" class="js-open-modal" data-modal="update-modal" onclick='fillUpdateModal("row_{{ loop.index }}")'></th>
+	  	<th><img id="del_img_{{ loop.index }}" title="Delete" src="{{ delete_icon() }}" class="js-open-modal" data-modal="delete-modal" onclick='fillDeleteModal("row_{{ loop.index }}")'>     <img id="upd_img_{{ loop.index }}" title="Update" src="{{ update_icon() }}" class="js-open-modal" data-modal="update-modal" onclick='fillUpdateModal("row_{{ loop.index }}")'></th>
 	      <td scope="row"><strong>{{ worker.0 }}</strong></td>
 	      <td>{{ worker.1 }}</td>
 	      <td>{{ worker.2 }}</td>

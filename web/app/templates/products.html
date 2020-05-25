@@ -8,19 +8,19 @@
     <thead>
       <tr>
       	  <th>Action</th>
-	      <th>ID <img height="20" src='{{ sort_icon() }}' onclick="sortTableByNums('table', 0, true)"></th>
-	      <th>Name <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 1)"></th>
-	      <th>Producer <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 2)"></th>
-	      <th>Quantity <img height="20" src='{{ sort_icon() }}' onclick="sortTableByNums('table', 3, false)"></th>
-	      <th>Supplier <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 4)"></th>
-	      <th>Price <img height="20" src='{{ sort_icon() }}' onclick="sortTableByNums('table', 5, false)"></th>
-	      <th>Promotion <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 6)"></th>
+	      <th>ID <img src='{{ sort_icon() }}' onclick="sortTableByNums('table', 0, true)"></th>
+	      <th>Name <img src='{{ sort_icon() }}' onclick="sortTable('table', 1)"></th>
+	      <th>Producer <img src='{{ sort_icon() }}' onclick="sortTable('table', 2)"></th>
+	      <th>Quantity <img src='{{ sort_icon() }}' onclick="sortTableByNums('table', 3, false)"></th>
+	      <th>Supplier <img src='{{ sort_icon() }}' onclick="sortTable('table', 4)"></th>
+	      <th>Price <img src='{{ sort_icon() }}' onclick="sortTableByNums('table', 5, false)"></th>
+	      <th>Promotion <img src='{{ sort_icon() }}' onclick="sortTable('table', 6)"></th>
       </tr>
   </thead>
   <tbody>
   	{% for product in products %}
 	  <tr id="row_{{ loop.index }}" onmouseover='showImages(`{{ loop.index }}`)' onmouseout='hideImages(`{{ loop.index }}`)'>
-	  	<th><img id="del_img_{{ loop.index }}" title="Delete" height="20" src="{{ delete_icon() }}" class="js-open-modal" data-modal="delete-modal" onclick='fillDeleteModal("row_{{ loop.index }}")'>     <img id="upd_img_{{ loop.index }}" title="Update" height="20" src="{{ update_icon() }}" class="js-open-modal" data-modal="update-modal" onclick='fillUpdateModal("row_{{ loop.index }}")'></th>
+	  	<th><img id="del_img_{{ loop.index }}" title="Delete" src="{{ delete_icon() }}" class="js-open-modal" data-modal="delete-modal" onclick='fillDeleteModal("row_{{ loop.index }}")'>     <img id="upd_img_{{ loop.index }}" title="Update" src="{{ update_icon() }}" class="js-open-modal" data-modal="update-modal" onclick='fillUpdateModal("row_{{ loop.index }}")'></th>
 	      <td scope="row"><strong>{{ product.0 }}</strong></td>
 	      <td>{{ product.1 }}</td>
 	      <td>{{ product.2 }}</td>
@@ -32,35 +32,6 @@
 	{% endfor %}
     </tbody>
 </table>
-
-    <form action="" method="post">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.name.label }}<br>
-            {{ form.name(size=32) }}<br>
-        </p>
-        <p>
-            {{ form.quantity.label }}<br>
-            {{ form.quantity(size=32) }}<br>
-        </p>
-        <p>
-            {{ form.price.label }}<br>
-            {{ form.price(size=32) }}<br>
-        </p>
-        <p>
-            {{ form.supplier.label }}<br>
-            {{ form.supplier() }}<br>
-        </p>
-        <p>
-            {{ form.producer.label }}<br>
-            {{ form.producer() }}<br>
-        </p>
-        <p>
-            {{ form.promotion.label }}<br>
-            {{ form.promotion(size=10) }}<br>
-        </p>
-        <p>{{ form.submit() }}</p>
-    </form>
 
 <div class="modal-window" data-modal="add-modal">
    <img class="modal__cross js-modal-close" src='{{ close_icon() }}'>
@@ -121,7 +92,7 @@
    <div class="modal-footer">
     <form action="" method="post">
        <input type="hidden" id="del_id" name="product_id" value="">
-	     <button type="button" class="btn btn-outline-secondary js-modal-close">Cancel</button>
+	   <button type="button" class="btn btn-outline-secondary js-modal-close">Cancel</button>
        {{ form.submit(value="Delete", class="btn btn-outline-danger") }}
     </form>
    </div>

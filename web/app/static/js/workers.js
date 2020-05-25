@@ -1,9 +1,9 @@
 function fillDeleteModal(id) {
     const elemChildren = document.getElementById(id).children;
-    const customer_id = elemChildren[1].children[0].innerHTML;
+    const worker_id = elemChildren[1].children[0].innerHTML;
     const fullname = elemChildren[2].innerHTML;
-    document.querySelector('input#del_id').value = customer_id;
-    document.querySelector('p#del_info').innerHTML = `Are you sure that you want remove ${fullname}?` +
+    document.querySelector('input#del_id').value = worker_id;
+    document.querySelector('p#del_info').innerHTML = `Are you sure that you want to remove ${fullname}?` +
         ` This action cannot be canceled.`
 }
 

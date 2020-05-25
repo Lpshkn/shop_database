@@ -8,17 +8,17 @@
 	<thead>
 	  <tr>
 	  	  <th>Action</th>
-	      <th>ID <img height="20" src='{{ sort_icon() }}' onclick="sortTableByNums('table', 0, true)"></th>
-	      <th>Name <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 1)"></th>
-	      <th>Address <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 2)"></th>
-	      <th>Email <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 3)"></th>
-	      <th>Telephone <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 4)"></th>
+	      <th>ID <img src='{{ sort_icon() }}' onclick="sortTableByNums('table', 0, true)"></th>
+	      <th>Name <img src='{{ sort_icon() }}' onclick="sortTable('table', 1)"></th>
+	      <th>Address <img src='{{ sort_icon() }}' onclick="sortTable('table', 2)"></th>
+	      <th>Email <img src='{{ sort_icon() }}' onclick="sortTable('table', 3)"></th>
+	      <th>Telephone <img src='{{ sort_icon() }}' onclick="sortTable('table', 4)"></th>
 	  </tr>
 	</thead>
 	<tbody>
 	{% for supplier in suppliers %}
 	  <tr id="row_{{ loop.index }}" onmouseover='showImages(`{{ loop.index }}`)' onmouseout='hideImages(`{{ loop.index }}`)'>
-	  	<th><img id="del_img_{{ loop.index }}" title="Delete" height="20" src="{{ delete_icon() }}" class="js-open-modal" data-modal="delete-modal" onclick='fillDeleteModal("row_{{ loop.index }}")'>     <img id="upd_img_{{ loop.index }}" title="Update" height="20" src="{{ update_icon() }}" class="js-open-modal" data-modal="update-modal" onclick='fillUpdateModal("row_{{ loop.index }}")'></th>
+	  	<th><img id="del_img_{{ loop.index }}" title="Delete" src="{{ delete_icon() }}" class="js-open-modal" data-modal="delete-modal" onclick='fillDeleteModal("row_{{ loop.index }}")'>     <img id="upd_img_{{ loop.index }}" title="Update" src="{{ update_icon() }}" class="js-open-modal" data-modal="update-modal" onclick='fillUpdateModal("row_{{ loop.index }}")'></th>
 	      <td scope="row"><strong>{{ supplier.0 }}</strong></td>
 	      <td>{{ supplier.1 }}</td>
 	      <td>{{ supplier.2 }}</td>

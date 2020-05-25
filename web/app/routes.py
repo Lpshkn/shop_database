@@ -42,7 +42,7 @@ def login():
 
 
 class WorkerAPI(MethodView):
-    decorators = [login_required]
+    decorators = [login_required, mssql.check_conn]
     template = 'workers.html'
     url = '/workers/'
     context = {
@@ -123,7 +123,7 @@ class WorkerAPI(MethodView):
 
 
 class SupplierAPI(MethodView):
-    decorators = [login_required]
+    decorators = [login_required, mssql.check_conn]
     template = 'suppliers.html'
     url = '/suppliers/'
     context = {
@@ -198,7 +198,7 @@ class SupplierAPI(MethodView):
 
 
 class ProductAPI(MethodView):
-    decorators = [login_required]
+    decorators = [login_required, mssql.check_conn]
     template = 'products.html'
     url = '/products/'
     context = {
@@ -292,7 +292,7 @@ class ProductAPI(MethodView):
 
 
 class CustomerAPI(MethodView):
-    decorators = [login_required]
+    decorators = [login_required, mssql.check_conn]
     template = 'customers.html'
     url = '/customers/'
     context = {
@@ -322,8 +322,10 @@ class CustomerAPI(MethodView):
         if form.validate_on_submit():
             try:
                 choice = form.card_id.data
-                card_id = self.choices[choice][1] if choice else "NULL"
-                self.storage.update_customer(
+                card_id = form.card_id.choices[choice][1] if choice else "NULL"
+                storage = mssql.CustomersStorage().get_connection(
+                    conn=mssql.get_conn())
+                storage.update_customer(
                     fullname=form.fullname.data,
                     address=form.address.data,
                     telephone=form.telephone.data,
@@ -346,8 +348,10 @@ class CustomerAPI(MethodView):
         if form.validate_on_submit():
             try:
                 choice = form.card_id.data
-                card_id = self.choices[choice][1] if choice else "NULL"
-                self.storage.add_customer(
+                card_id = form.card_id.choices[choice][1] if choice else "NULL"
+                storage = mssql.CustomersStorage().get_connection(
+                    conn=mssql.get_conn())
+                storage.add_customer(
                     fullname=form.fullname.data,
                     address=form.address.data,
                     telephone=form.telephone.data,
@@ -380,53 +384,86 @@ class CustomerAPI(MethodView):
         return render_template(self.template, **self.context)
 
 
+class DiscountCardAPI(MethodView):
+    decorators = [login_required, mssql.check_conn]
+    template = 'discount_cards.html'
+    url = '/discount_cards/'
+    context = {
+        'title': 'Discount cards | Shop database',
+        'table_name': 'Discount cards',
+    }
+
+    @staticmethod
+    def get_cards() -> list:
+        storage = mssql.DiscountCardsStorage().get_connection(
+            conn=mssql.get_conn())
+        return storage.get_cards()
+
+    def update(self, form):
+        if form.validate_on_submit():
+            try:
+                storage = mssql.DiscountCardsStorage.get_connection(
+                    conn=mssql.get_conn())
+                storage.add_card(
+                    discount=form.discount.data,
+                    start_date=form.start_date.data,
+                    expiration=form.expiration.data)
+                message = f"Information about card with {form.discount.data * 100}% discount was successfully updated."
+                self.context['message'] = message
+                return render_template(self.template, **self.context)
+            except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
+                flash("Error on inserting value into table.")
+                return redirect(self.url)
+        flash("Invalid form data.")
+        return render_template(self.template, **self.context)
+
+    def delete(self):
+        self.context['message'] = ("Delete %s" % request.form['card_id'])
+        return render_template(self.template, **self.context)
+
+    def add(self, form):
+        if form.validate_on_submit():
+            try:
+                storage = mssql.DiscountCardsStorage.get_connection(
+                    conn=mssql.get_conn())
+                storage.add_card(
+                    discount=form.discount.data,
+                    start_date=form.start_date.data,
+                    expiration=form.expiration.data)
+                message = f"Discount card [{form.discount.data * 100}%] was successfully added to database."
+                self.context['message'] = message
+                return render_template(self.template, **self.context)
+            except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
+                flash("Error on inserting value into table.")
+                return redirect(self.url)
+        flash("Invalid form data.")
+        return render_template(self.template, **self.context)
+
+    def get(self):
+        self.context['message'] = ''
+        self.context['cards'] = DiscountCardAPI.get_cards()
+        self.context['form'] = forms.DiscountCardForm()
+        return render_template(self.template, **self.context)
+
+    def post(self):
+        self.context['cards'] = DiscountCardAPI.get_cards()
+        form = forms.DiscountCardForm()
+        self.context['form'] = form
+        if request.form['submit'] == 'Add':
+            return self.add(form)
+        if request.form['submit'] == 'Update':
+            return self.update(form)
+        if request.form['submit'] == 'Delete':
+            return self.delete()
+        return render_template(self.template, **self.context)
+
+
 app.add_url_rule('/workers/', view_func=WorkerAPI.as_view('workers_api'), methods=['POST', 'GET'])
 app.add_url_rule('/suppliers/', view_func=SupplierAPI.as_view('suppliers_api'), methods=['POST', 'GET'])
 app.add_url_rule('/products/', view_func=ProductAPI.as_view('products_api'), methods=['POST', 'GET'])
 app.add_url_rule('/customers/', view_func=CustomerAPI.as_view('customer_api'), methods=['POST', 'GET'])
-
-
-@app.route('/discount_cards/show', methods=['GET', 'POST'])
-@login_required
-def discount_cards():
-    storage = mssql.DiscountCardsStorage.get_connection(
-        conn=mssql.get_conn())
-    info = {
-        'title': 'Discount cards | Shop database',
-        'table_name': 'Discount cards',
-        'link': 'discount_cards',
-        'cards': storage.get_cards()
-    }
-    return render_template('discount_cards/show.html', **info)
-
-
-@app.route('/discount_cards/insert', methods=['GET', 'POST'])
-@login_required
-def insert_card():
-    form = forms.DiscountCardForm()
-    info = {
-        'title': 'Add discount card | Shop database',
-        'table_name': 'Discount cards',
-        'link': 'discount_cards',
-        'form': form
-    }
-    if form.validate_on_submit():
-        try:
-            storage = mssql.DiscountCardsStorage.get_connection(
-                conn=mssql.get_conn())
-            storage.add_card(
-                discount=form.discount.data,
-                start_date=form.start_date.data,
-                expiration=form.expiration.data)
-            info['message'] = f"Discount card [{form.discount.data * 100}%] was successfully added to database."
-            return render_template('discount_cards/insert.html', **info)
-        except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
-            flash("Error on inserting value into table.")
-            return redirect(url_for('insert_card'))
-    elif form.is_submitted():
-        flash("Invalid form data.")
-
-    return render_template('discount_cards/insert.html', **info)
+app.add_url_rule('/discount_cards/', view_func=DiscountCardAPI.as_view('discount_card_api'), methods=['POST', 'GET'])
+app.add_url_rule('/producers/', view_func=DiscountCardAPI.as_view('producer_api'), methods=['POST', 'GET'])
 
 
 @app.route('/producers/show', methods=['GET', 'POST'])
