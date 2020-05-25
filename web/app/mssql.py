@@ -12,7 +12,7 @@ def check_conn(view_func):
         try:
             return view_func(*args, **kwargs)
         except AttributeError:
-            flash('Connection to database lost.')
+            flash('Connection to database lost')
             return redirect(url_for('login'))
     return wrapper_func
 

@@ -110,6 +110,7 @@ class WorkerAPI(MethodView):
         return render_template(self.template, **self.context)
 
     def post(self):
+        self.context['message'] = ''
         self.context['customers'] = WorkerAPI.get_workers()
         form = forms.WorkerForm()
         self.context['form'] = form
@@ -185,6 +186,7 @@ class SupplierAPI(MethodView):
         return render_template(self.template, **self.context)
 
     def post(self):
+        self.context['message'] = ''
         self.context['suppliers'] = SupplierAPI.get_suppliers()
         form = forms.SupplierForm()
         self.context['form'] = form
@@ -231,6 +233,7 @@ class ProductAPI(MethodView):
     def update(self, form):
         if form.validate_on_submit():
             try:
+                '''
                 storage = mssql.ProductsStorage.get_connection(
                     conn=mssql.get_conn())
                 storage.add_product(
@@ -239,7 +242,7 @@ class ProductAPI(MethodView):
                     price=form.price.data,
                     promotion=form.promotion.data,
                     supplier=form.supplier.choices[form.supplier.data][1],
-                    producer=form.producer.choices[form.producer.data][1])
+                    producer=form.producer.choices[form.producer.data][1])'''
                 self.context['message'] = f"Information about product '{form.name.data}' was successfully updated."
                 return render_template(self.template, **self.context)
             except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
@@ -279,6 +282,7 @@ class ProductAPI(MethodView):
         return render_template(self.template, **self.context)
 
     def post(self):
+        self.context['message'] = ''
         self.context['products'] = ProductAPI.get_products()
         form = ProductAPI.get_form()
         self.context['form'] = form
@@ -321,6 +325,7 @@ class CustomerAPI(MethodView):
     def update(self, form):
         if form.validate_on_submit():
             try:
+                '''
                 choice = form.card_id.data
                 card_id = form.card_id.choices[choice][1] if choice else "NULL"
                 storage = mssql.CustomersStorage().get_connection(
@@ -330,7 +335,7 @@ class CustomerAPI(MethodView):
                     address=form.address.data,
                     telephone=form.telephone.data,
                     email=form.email.data,
-                    card_id=card_id)
+                    card_id=card_id)'''
                 message = f"Information about customer '{form.fullname.data}' was successfully updated."
                 self.context['message'] = message
                 return render_template(self.template, **self.context)
@@ -372,6 +377,7 @@ class CustomerAPI(MethodView):
         return render_template(self.template, **self.context)
 
     def post(self):
+        self.context['message'] = ''
         self.context['customers'] = CustomerAPI.get_customers()
         form = CustomerAPI.get_form()
         self.context['form'] = form
@@ -402,12 +408,13 @@ class DiscountCardAPI(MethodView):
     def update(self, form):
         if form.validate_on_submit():
             try:
+                '''
                 storage = mssql.DiscountCardsStorage.get_connection(
                     conn=mssql.get_conn())
                 storage.update_card(
                     discount=form.discount.data,
                     start_date=form.start_date.data,
-                    expiration=form.expiration.data)
+                    expiration=form.expiration.data)'''
                 message = f"Information about card with {form.discount.data * 100}% discount was successfully updated."
                 self.context['message'] = message
                 return render_template(self.template, **self.context)
@@ -446,6 +453,7 @@ class DiscountCardAPI(MethodView):
         return render_template(self.template, **self.context)
 
     def post(self):
+        self.context['message'] = ''
         self.context['cards'] = DiscountCardAPI.get_cards()
         form = forms.DiscountCardForm()
         self.context['form'] = form
@@ -476,15 +484,15 @@ class ProducerAPI(MethodView):
     def update(self, form):
         if form.validate_on_submit():
             try:
+                '''
                 storage = mssql.ProducersStorage.get_connection(
                     conn=mssql.get_conn())
                 storage.update_producer(
                     name=form.name.data,
                     address=form.address.data,
                     telephone=form.telephone.data,
-                    email=form.email.data)
+                    email=form.email.data)'''
                 message = f"Information about producer '{form.name.data}' was successfully updated."
-                self.context['message'] = message
                 self.context['message'] = message
                 return render_template(self.template, **self.context)
             except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
@@ -523,9 +531,125 @@ class ProducerAPI(MethodView):
         return render_template(self.template, **self.context)
 
     def post(self):
+        self.context['message'] = ''
         self.context['producers'] = ProducerAPI.get_producers()
         form = forms.ProducerForm()
         self.context['form'] = form
+        if request.form['submit'] == 'Add':
+            return self.add(form)
+        if request.form['submit'] == 'Update':
+            return self.update(form)
+        if request.form['submit'] == 'Delete':
+            return self.delete()
+        return render_template(self.template, **self.context)
+
+
+class PurchaseAPI(MethodView):
+    decorators = [login_required, mssql.check_conn]
+    template = 'purchases.html'
+    url = '/purchases/'
+    context = {
+        'title': 'Purchases | Shop database',
+        'table_name': 'Purchases',
+    }
+
+    @staticmethod
+    def get_purchases() -> list:
+        storage = mssql.PurchasesStorage().get_connection(
+            conn=mssql.get_conn())
+        return storage.get_purchases()
+
+    @staticmethod
+    def get_form() -> forms.PurchaseForm:
+        form = forms.PurchaseForm()
+
+        storage = mssql.ProductsStorage.get_connection(
+            conn=mssql.get_conn())
+        products_choices = [(i, str(_id)) for i, _id in enumerate(storage.get_products_ids())]
+        form.product_id.choices = products_choices
+
+        storage = mssql.CustomersStorage.get_connection(
+            conn=mssql.get_conn())
+        customers_choices = [(i, str(_id)) for i, _id in enumerate(storage.get_customers_ids())]
+        form.customer_id.choices = customers_choices
+
+        storage = mssql.WorkersStorage.get_connection(
+            conn=mssql.get_conn())
+        workers_choices = [(0, '-')] + [(i + 1, str(_id)) for i, _id in enumerate(storage.get_workers_ids())]
+        form.worker_id.choices = workers_choices
+
+        return form
+
+    def update(self, form):
+        if form.validate_on_submit():
+            try:
+                '''
+                worker_num = form.worker_id.data
+                worker_id = form.worker_id.choices[worker_num][1] if worker_num else "NULL"
+
+                storage = mssql.PurchasesStorage.get_connection(
+                    conn=mssql.get_conn())
+                storage.update_purchase(
+                    total_cost=form.total_cost.data,
+                    quantity=form.quantity.data,
+                    date=form.date.data,
+                    product_id=form.product_id.choices[form.product_id.data][1],
+                    customer_id=form.customer_id.choices[form.customer_id.data][1],
+                    worker_id=worker_id)'''
+                message = f"Information about purchase on total cost {form.total_cost.data} was successfully updated."
+                self.context['message'] = message
+                return render_template(self.template, **self.context)
+            except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
+                flash("Error on inserting value into table.")
+                return redirect(self.url)
+        flash("Invalid form data.")
+        return render_template(self.template, **self.context)
+
+    def delete(self):
+        self.context['message'] = ("Delete %s" % request.form['purchase_id'])
+        return render_template(self.template, **self.context)
+
+    def add(self, form):
+        if form.validate_on_submit():
+            try:
+                worker_num = form.worker_id.data
+                worker_id = form.worker_id.choices[worker_num][1] if worker_num else "NULL"
+
+                storage = mssql.PurchasesStorage.get_connection(
+                    conn=mssql.get_conn())
+                storage.add_purchase(
+                    total_cost=form.total_cost.data,
+                    quantity=form.quantity.data,
+                    date=form.date.data,
+                    product_id=form.product_id.choices[form.product_id.data][1],
+                    customer_id=form.customer_id.choices[form.customer_id.data][1],
+                    worker_id=worker_id)
+                message = f"Purchase on total cost {form.total_cost.data} was successfully added to database."
+                self.context['message'] = message
+                return render_template(self.template, **self.context)
+            except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
+                flash("Error on inserting value into table.")
+                return redirect(self.url)
+        flash("Invalid form data.")
+        return render_template(self.template, **self.context)
+
+    def get(self):
+        self.context['message'] = ''
+        self.context['purchases'] = PurchaseAPI.get_purchases()
+        self.context['form'] = PurchaseAPI.get_form()
+        return render_template(self.template, **self.context)
+
+    def post(self):
+        self.context['message'] = ''
+        self.context['purchases'] = PurchaseAPI.get_purchases()
+        form = PurchaseAPI.get_form()
+        self.context['form'] = form
+        print('customer_id ', form.customer_id.errors)
+        print('product_id ', form.product_id.errors)
+        print('worker_id ', form.worker_id.errors)
+        print('quantity ', form.quantity.errors)
+        print('date ', form.date.errors)
+        print('total_cost ', form.total_cost.errors)
         if request.form['submit'] == 'Add':
             return self.add(form)
         if request.form['submit'] == 'Update':
@@ -553,112 +677,6 @@ app.add_url_rule('/discount_cards/',
 app.add_url_rule('/producers/',
                  view_func=ProducerAPI.as_view('producer_api'),
                  methods=['POST', 'GET'])
-
-
-@app.route('/producers/show', methods=['GET', 'POST'])
-@login_required
-def producers():
-    storage = mssql.ProducersStorage.get_connection(
-        conn=mssql.get_conn())
-    info = {
-        'title': 'Producers | Shop database',
-        'table_name': 'Producers',
-        'link': 'producers',
-        'producers': storage.get_producers()
-    }
-    return render_template('producers/show.html', **info)
-
-
-@app.route('/producers/insert', methods=['GET', 'POST'])
-@login_required
-def insert_producer():
-    form = forms.ProducerForm()
-    info = {
-        'title': 'Add producer | Shop database',
-        'table_name': 'Producers',
-        'link': 'producers',
-        'form': form
-    }
-    if form.validate_on_submit():
-        try:
-            storage = mssql.ProducersStorage.get_connection(
-                conn=mssql.get_conn())
-            storage.add_producer(
-                name=form.name.data,
-                address=form.address.data,
-                telephone=form.telephone.data,
-                email=form.email.data)
-            info['message'] = f"Producer '{form.name.data}' was successfully added to database."
-            return render_template('producers/insert.html', **info)
-        except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
-            flash("Error on inserting value into table.")
-            return redirect(url_for('insert_producer'))
-    elif form.is_submitted():
-        flash("Invalid form data.")
-
-    return render_template('producers/insert.html', **info)
-
-
-@app.route('/purchases/show', methods=['GET', 'POST'])
-@login_required
-def purchases():
-    storage = mssql.PurchasesStorage.get_connection(
-        conn=mssql.get_conn())
-    info = {
-        'title': 'Purchases | Shop database',
-        'table_name': 'Purchases',
-        'link': 'purchases',
-        'producers': storage.get_purchases()
-    }
-    return render_template('purchases/show.html', **info)
-
-
-@app.route('/purchases/insert', methods=['GET', 'POST'])
-@login_required
-def insert_purchase():
-    form = forms.PurchaseForm()
-
-    storage = mssql.ProductsStorage.get_connection(
-        conn=mssql.get_conn())
-    products_choices = [(i, str(_id)) for i, _id in enumerate(storage.get_products_ids())]
-    form.product_id.choices = products_choices
-
-    storage = mssql.CustomersStorage.get_connection(
-        conn=mssql.get_conn())
-    customers_choices = [(i, str(_id)) for i, _id in enumerate(storage.get_customers_ids())]
-    form.customer_id.choices = customers_choices
-
-    storage = mssql.WorkersStorage.get_connection(
-        conn=mssql.get_conn())
-    workers_choices = [(0, '-')] + [(i+1, str(_id)) for i, _id in enumerate(storage.get_workers_ids())]
-    form.worker_id.choices = workers_choices
-
-    info = {
-        'title': 'Add purchase | Shop database',
-        'table_name': 'Purchases',
-        'link': 'purchases',
-        'form': form
-    }
-    if form.validate_on_submit():
-        try:
-            worker_num = form.worker_id.data
-            worker_id = workers_choices[worker_num][1] if worker_num else "NULL"
-
-            storage = mssql.PurchasesStorage.get_connection(
-                conn=mssql.get_conn())
-            storage.add_purchase(
-                total_cost=form.total_cost.data,
-                quantity=form.quantity.data,
-                date=form.date.data,
-                product_id=products_choices[form.product_id.data][1],
-                customer_id=customers_choices[form.customer_id.data][1],
-                worker_id=worker_id)
-            info['message'] = f"Purchase on total cost {form.total_cost.data} was successfully added to database."
-            return render_template('purchases/insert.html', **info)
-        except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
-            flash("Error on inserting value into table.")
-            return redirect(url_for('insert_purchase'))
-    elif form.is_submitted():
-        flash("Invalid form data.")
-
-    return render_template('purchases/insert.html', **info)
+app.add_url_rule('/purchases/',
+                 view_func=PurchaseAPI.as_view('purchase_api'),
+                 methods=['POST', 'GET'])
