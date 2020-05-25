@@ -404,7 +404,7 @@ class DiscountCardAPI(MethodView):
             try:
                 storage = mssql.DiscountCardsStorage.get_connection(
                     conn=mssql.get_conn())
-                storage.add_card(
+                storage.update_card(
                     discount=form.discount.data,
                     start_date=form.start_date.data,
                     expiration=form.expiration.data)
@@ -458,12 +458,101 @@ class DiscountCardAPI(MethodView):
         return render_template(self.template, **self.context)
 
 
-app.add_url_rule('/workers/', view_func=WorkerAPI.as_view('workers_api'), methods=['POST', 'GET'])
-app.add_url_rule('/suppliers/', view_func=SupplierAPI.as_view('suppliers_api'), methods=['POST', 'GET'])
-app.add_url_rule('/products/', view_func=ProductAPI.as_view('products_api'), methods=['POST', 'GET'])
-app.add_url_rule('/customers/', view_func=CustomerAPI.as_view('customer_api'), methods=['POST', 'GET'])
-app.add_url_rule('/discount_cards/', view_func=DiscountCardAPI.as_view('discount_card_api'), methods=['POST', 'GET'])
-app.add_url_rule('/producers/', view_func=DiscountCardAPI.as_view('producer_api'), methods=['POST', 'GET'])
+class ProducerAPI(MethodView):
+    decorators = [login_required, mssql.check_conn]
+    template = 'producers.html'
+    url = '/producers/'
+    context = {
+        'title': 'Producers | Shop database',
+        'table_name': 'Producers',
+    }
+
+    @staticmethod
+    def get_producers() -> list:
+        storage = mssql.ProducersStorage().get_connection(
+            conn=mssql.get_conn())
+        return storage.get_producers()
+
+    def update(self, form):
+        if form.validate_on_submit():
+            try:
+                storage = mssql.ProducersStorage.get_connection(
+                    conn=mssql.get_conn())
+                storage.update_producer(
+                    name=form.name.data,
+                    address=form.address.data,
+                    telephone=form.telephone.data,
+                    email=form.email.data)
+                message = f"Information about producer '{form.name.data}' was successfully updated."
+                self.context['message'] = message
+                self.context['message'] = message
+                return render_template(self.template, **self.context)
+            except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
+                flash("Error on inserting value into table.")
+                return redirect(self.url)
+        flash("Invalid form data.")
+        return render_template(self.template, **self.context)
+
+    def delete(self):
+        self.context['message'] = ("Delete %s" % request.form['producer_id'])
+        return render_template(self.template, **self.context)
+
+    def add(self, form):
+        if form.validate_on_submit():
+            try:
+                storage = mssql.ProducersStorage.get_connection(
+                    conn=mssql.get_conn())
+                storage.add_producer(
+                    name=form.name.data,
+                    address=form.address.data,
+                    telephone=form.telephone.data,
+                    email=form.email.data)
+                message = f"Producer '{form.name.data}' was successfully added to database."
+                self.context['message'] = message
+                return render_template(self.template, **self.context)
+            except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
+                flash("Error on inserting value into table.")
+                return redirect(self.url)
+        flash("Invalid form data.")
+        return render_template(self.template, **self.context)
+
+    def get(self):
+        self.context['message'] = ''
+        self.context['producers'] = ProducerAPI.get_producers()
+        self.context['form'] = forms.ProducerForm()
+        return render_template(self.template, **self.context)
+
+    def post(self):
+        self.context['producers'] = ProducerAPI.get_producers()
+        form = forms.ProducerForm()
+        self.context['form'] = form
+        if request.form['submit'] == 'Add':
+            return self.add(form)
+        if request.form['submit'] == 'Update':
+            return self.update(form)
+        if request.form['submit'] == 'Delete':
+            return self.delete()
+        return render_template(self.template, **self.context)
+
+
+app.add_url_rule('/workers/',
+                 view_func=WorkerAPI.as_view('workers_api'),
+                 methods=['POST', 'GET'])
+app.add_url_rule('/suppliers/',
+                 view_func=SupplierAPI.as_view('suppliers_api'),
+                 methods=['POST', 'GET'])
+app.add_url_rule('/products/',
+                 view_func=ProductAPI.as_view('products_api'),
+                 methods=['POST', 'GET'])
+app.add_url_rule('/customers/',
+                 view_func=CustomerAPI.as_view('customer_api'),
+                 methods=['POST', 'GET'])
+app.add_url_rule('/discount_cards/',
+                 view_func=DiscountCardAPI.as_view('discount_card_api'),
+                 methods=['POST', 'GET'])
+app.add_url_rule('/producers/',
+                 view_func=ProducerAPI.as_view('producer_api'),
+                 methods=['POST', 'GET'])
 
 
 @app.route('/producers/show', methods=['GET', 'POST'])
