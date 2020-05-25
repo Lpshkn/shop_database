@@ -1,3 +1,22 @@
+function main() {
+    const table = document.getElementById('table');
+
+    for (let i = 1; i <= table.rows.length; i++) {
+        document.getElementById(`del_img_${i}`).style.display = "none";
+        document.getElementById(`upd_img_${i}`).style.display = "none";
+    }
+}
+
+function showImages(row_index) {
+    document.getElementById(`del_img_${row_index}`).style.display = "";
+    document.getElementById(`upd_img_${row_index}`).style.display = "";
+}
+
+function hideImages(row_index) {
+    document.getElementById(`del_img_${row_index}`).style.display = "none";
+    document.getElementById(`upd_img_${row_index}`).style.display = "none";
+}
+
 function tableSearch(input_id, table_id) {
     const phrase = document.getElementById(input_id);
     const table = document.getElementById(table_id);

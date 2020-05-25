@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<button type="button" class="btn btn-outline-secondary btn-sml btn-block js-open-modal" data-modal="add-modal">Add worker</button>
+<input class="form-control" type="text" placeholder="Search..." id="search" onkeyup='tableSearch("search", "table")'>
+<table id="table" class="table table-hover">
+    <thead>
+      <tr>
+      	  <th>Action</th>
+	      <th>ID <img height="20" src='{{ sort_icon() }}' onclick="sortTableByNums('table', 0, true)"></th>
+	      <th>Fullname <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 1)"></th>
+	      <th>Salary <img height="20" src='{{ sort_icon() }}' onclick="sortTableByNums('table', 2, false)"></th>
+	      <th>Position <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 3)"></th>
+	      <th>Address <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 4)"></th>
+	      <th>Passport <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 5)"></th>
+	      <th>Telephone <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 6)"></th>
+	      <th>Email <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 7)"></th>
+      </tr>
+  </thead>
+  <tbody>
+  	{% for worker in workers %}
+	  <tr id="row_{{ loop.index }}" onmouseover='showImages(`{{ loop.index }}`)' onmouseout='hideImages(`{{ loop.index }}`)'>
+	  	<th><img id="del_img_{{ loop.index }}" title="Delete row" height="20" src="{{ delete_icon() }}" class="js-open-modal" data-modal="delete-modal" onclick='fillDeleteModal("row_{{ loop.index }}")'>     <img id="upd_img_{{ loop.index }}" title="Update row" height="20" src="{{ update_icon() }}" class="js-open-modal" data-modal="update-modal" onclick='fillUpdateModal("row_{{ loop.index }}")'></th>
+	      <td scope="row"><strong>{{ worker.0 }}</strong></td>
+	      <td>{{ worker.1 }}</td>
+	      <td>{{ worker.2 }}</td>
+	      <td>{{ worker.3 }}</td>
+	      <td>{{ worker.4 }}</td>
+	      <td>{{ worker.5 }}</td>
+	      <td>{{ worker.6 }}</td>
+	      <td>{{ worker.7 }}</td>
+      </tr>
+	{% endfor %}
+    </tbody>
+</table>
+
+<div class="modal-window" data-modal="add-modal">
+   <img class="modal__cross js-modal-close" src='{{ close_icon() }}'>
+   <h4>New worker</h4>
+   <hr class="my hr4">
+    <form action="" id="add_form" method="post">
+        {{ form.hidden_tag() }}
+        {{ form.fullname.label }}
+        {{ form.fullname(class="form-control") }}<br>
+        {{ form.salary.label }}
+        {{ form.salary(class="form-control") }}<br>
+        {{ form.job.label }}
+        {{ form.job(class="form-control") }}<br>
+        {{ form.address.label }}
+        {{ form.address(class="form-control") }}<br>
+        {{ form.email.label }}
+        {{ form.email(class="form-control") }}<br>
+        {{ form.telephone.label }}
+        {{ form.telephone(class="form-control") }}<br>
+        {{ form.passport_number.label }}
+        {{ form.passport_number(class="form-control") }}<br>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary js-modal-close">Cancel</button>
+          {{ form.submit(value="Add", class="btn btn-outline-success") }}
+        </div>
+    </form>
+</div>
+
+<div class="modal-window" data-modal="update-modal">
+   <img class="modal__cross js-modal-close" src="{{ close_icon() }}">
+   <h4>Update</h4>
+   <hr class="my hr4">
+    <form action="" method="post">
+        <input type="hidden" id="upd_id" name="worker_id" value="">
+        {{ form.hidden_tag() }}
+        {{ form.fullname.label }}
+        {{ form.fullname(class="form-control") }}<br>
+        {{ form.salary.label }}
+        {{ form.salary(class="form-control") }}<br>
+        {{ form.job.label }}
+        {{ form.job(class="form-control") }}<br>
+        {{ form.address.label }}
+        {{ form.address(class="form-control") }}<br>
+        {{ form.email.label }}
+        {{ form.email(class="form-control") }}<br>
+        {{ form.telephone.label }}
+        {{ form.telephone(class="form-control") }}<br>
+        {{ form.passport_number.label }}
+        {{ form.passport_number(class="form-control") }}<br>
+        <div class="modal-footer">
+        	<button type="button" class="btn btn-outline-secondary js-modal-close">Cancel</button>
+        	{{ form.submit(value="Update", class="btn btn-outline-success") }}
+        </div>
+    </form>
+</div>
+
+<div class="modal-window" data-modal="delete-modal">
+   <img class="modal__cross js-modal-close" src="{{ close_icon() }}">
+   <h4>Delete</h4>
+   <hr class="my hr4">
+   <p id='del_info'></p>
+   <div class="modal-footer">
+    <form action="" method="post">
+       <input type="hidden" id="del_id" name="worker_id" value="">
+	     <button type="button" class="btn btn-outline-secondary js-modal-close">Cancel</button>
+       {{ form.submit(value="Delete", class="btn btn-outline-danger") }}
+    </form>
+   </div>
+</div>
+
+<!-- Подложка под модальным окном -->
+<div class="overlay js-overlay-modal"></div>
+
+<script src="{{ url_for('static', filename='js/workers.js') }}"></script>
+<script type="text/javascript">
+    main();
+</script>
+{% endblock content %}
