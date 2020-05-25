@@ -16,7 +16,7 @@
 	  </tr>
 	</thead>
 	<tbody>
-		{% for supplier in suppliers %}
+	{% for supplier in suppliers %}
 	  <tr id="row_{{ loop.index }}" onmouseover='showImages(`{{ loop.index }}`)' onmouseout='hideImages(`{{ loop.index }}`)'>
 	  	<th><img id="del_img_{{ loop.index }}" title="Delete" height="20" src="{{ delete_icon() }}" class="js-open-modal" data-modal="delete-modal" onclick='fillDeleteModal("row_{{ loop.index }}")'>     <img id="upd_img_{{ loop.index }}" title="Update" height="20" src="{{ update_icon() }}" class="js-open-modal" data-modal="update-modal" onclick='fillUpdateModal("row_{{ loop.index }}")'></th>
 	      <td scope="row"><strong>{{ supplier.0 }}</strong></td>
@@ -32,7 +32,7 @@
 
 <div class="modal-window" data-modal="add-modal">
    <img class="modal__cross js-modal-close" src='{{ close_icon() }}'>
-   <h4>New customer</h4>
+   <h4>New supplier</h4>
    <hr class="my hr4">
     <form action="" id="add_form" method="post">
         {{ form.hidden_tag() }}
@@ -94,4 +94,5 @@
 <script type="text/javascript">
     main();
 </script>
+
 {% endblock content %}

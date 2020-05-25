@@ -122,9 +122,6 @@ class WorkerAPI(MethodView):
         return render_template(self.template, **self.context)
 
 
-app.add_url_rule('/workers/', view_func=WorkerAPI.as_view('workers_api'), methods=['POST', 'GET'])
-
-
 class SupplierAPI(MethodView):
     decorators = [login_required]
     template = 'suppliers.html'
@@ -200,64 +197,98 @@ class SupplierAPI(MethodView):
         return render_template(self.template, **self.context)
 
 
-app.add_url_rule('/suppliers/', view_func=SupplierAPI.as_view('suppliers_api'), methods=['POST', 'GET'])
-
-
-@app.route('/products/show', methods=['GET', 'POST'])
-@login_required
-def products():
-    storage = mssql.ProductsStorage.get_connection(
-        conn=mssql.get_conn())
-    info = {
+class ProductAPI(MethodView):
+    decorators = [login_required]
+    template = 'products.html'
+    url = '/products/'
+    context = {
         'title': 'Products | Shop database',
         'table_name': 'Products',
-        'link': 'products',
-        'products': storage.get_products()
     }
-    return render_template('products/show.html', **info)
 
+    @staticmethod
+    def get_products() -> list:
+        storage = mssql.ProductsStorage.get_connection(
+            conn=mssql.get_conn())
+        return storage.get_products()
 
-@app.route('/products/insert', methods=['GET', 'POST'])
-@login_required
-def insert_product():
-    form = forms.ProductForm()
+    @staticmethod
+    def get_form() -> forms.CustomerForm:
+        form = forms.ProductForm()
 
-    storage = mssql.ProducersStorage.get_connection(
-        conn=mssql.get_conn())
-    producers_choices = list(enumerate(storage.get_producers_names()))
-    form.producer.choices = producers_choices
+        storage = mssql.ProducersStorage.get_connection(
+            conn=mssql.get_conn())
+        producers_choices = list(enumerate(storage.get_producers_names()))
+        form.producer.choices = producers_choices
 
-    storage = mssql.SuppliersStorage.get_connection(
-        conn=mssql.get_conn())
-    suppliers_choices = list(enumerate(storage.get_suppliers_names()))
-    form.supplier.choices = suppliers_choices
+        storage = mssql.SuppliersStorage.get_connection(
+            conn=mssql.get_conn())
+        suppliers_choices = list(enumerate(storage.get_suppliers_names()))
+        form.supplier.choices = suppliers_choices
 
-    info = {
-        'title': 'Add product | Shop database',
-        'table_name': 'Products',
-        'link': 'products',
-        'form': form
-    }
-    if form.validate_on_submit():
-        try:
-            storage = mssql.ProductsStorage.get_connection(
-                conn=mssql.get_conn())
-            storage.add_product(
-                name=form.name.data,
-                quantity=form.quantity.data,
-                price=form.price.data,
-                promotion=form.promotion.data,
-                supplier=suppliers_choices[form.supplier.data][1],
-                producer=producers_choices[form.producer.data][1])
-            info['message'] = f"Product '{form.name.data}' was successfully added to database."
-            return render_template('products/insert.html', **info)
-        except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
-            flash("Error on inserting value into table.")
-            return redirect(url_for('insert_product'))
-    elif form.is_submitted():
+        return form
+
+    def update(self, form):
+        if form.validate_on_submit():
+            try:
+                storage = mssql.ProductsStorage.get_connection(
+                    conn=mssql.get_conn())
+                storage.add_product(
+                    name=form.name.data,
+                    quantity=form.quantity.data,
+                    price=form.price.data,
+                    promotion=form.promotion.data,
+                    supplier=form.supplier.choices[form.supplier.data][1],
+                    producer=form.producer.choices[form.producer.data][1])
+                self.context['message'] = f"Information about product '{form.name.data}' was successfully updated."
+                return render_template(self.template, **self.context)
+            except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
+                flash("Error on inserting value into table.")
+                return redirect(self.url)
         flash("Invalid form data.")
+        return render_template(self.template, **self.context)
 
-    return render_template('products/insert.html', **info)
+    def delete(self):
+        self.context['message'] = ("Delete %s" % request.form['product_id'])
+        return render_template(self.template, **self.context)
+
+    def add(self, form):
+        if form.validate_on_submit():
+            try:
+                storage = mssql.ProductsStorage.get_connection(
+                    conn=mssql.get_conn())
+                storage.add_product(
+                    name=form.name.data,
+                    quantity=form.quantity.data,
+                    price=form.price.data,
+                    promotion=form.promotion.data,
+                    supplier=form.supplier.choices[form.supplier.data][1],
+                    producer=form.producer.choices[form.producer.data][1])
+                self.context['message'] = f"Product '{form.name.data}' was successfully added to database."
+                return render_template(self.template, **self.context)
+            except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
+                flash("Error on inserting value into table.")
+                return redirect(self.url)
+        flash("Invalid form data.")
+        return render_template(self.template, **self.context)
+
+    def get(self):
+        self.context['message'] = ''
+        self.context['products'] = ProductAPI.get_products()
+        self.context['form'] = ProductAPI.get_form()
+        return render_template(self.template, **self.context)
+
+    def post(self):
+        self.context['products'] = ProductAPI.get_products()
+        form = ProductAPI.get_form()
+        self.context['form'] = form
+        if request.form['submit'] == 'Add':
+            return self.add(form)
+        if request.form['submit'] == 'Update':
+            return self.update(form)
+        if request.form['submit'] == 'Delete':
+            return self.delete()
+        return render_template(self.template, **self.context)
 
 
 class CustomerAPI(MethodView):
@@ -349,6 +380,9 @@ class CustomerAPI(MethodView):
         return render_template(self.template, **self.context)
 
 
+app.add_url_rule('/workers/', view_func=WorkerAPI.as_view('workers_api'), methods=['POST', 'GET'])
+app.add_url_rule('/suppliers/', view_func=SupplierAPI.as_view('suppliers_api'), methods=['POST', 'GET'])
+app.add_url_rule('/products/', view_func=ProductAPI.as_view('products_api'), methods=['POST', 'GET'])
 app.add_url_rule('/customers/', view_func=CustomerAPI.as_view('customer_api'), methods=['POST', 'GET'])
 
 

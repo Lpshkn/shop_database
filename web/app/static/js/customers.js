@@ -22,7 +22,7 @@ function fillUpdateModal(id) {
     const opts = sel.options;
 
     for (let j = 0;; j++) {
-        if (opts[j].value === val) {
+        if (opts[j].innerHTML === val) {
             sel.selectedIndex = j;
             break;
         }
