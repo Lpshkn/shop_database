@@ -59,15 +59,15 @@ class WorkerAPI(MethodView):
     def update(self, storage, form):
         if form.validate_on_submit():
             try:
-                '''
                 storage.update_worker(
+                    worker_id=request.form['worker_id'],
                     fullname=form.fullname.data,
                     salary=form.salary.data,
                     job=form.job.data,
                     address=form.address.data,
                     passport_number=form.passport_number.data,
                     telephone=form.telephone.data,
-                    email=form.email.data)'''
+                    email=form.email.data)
                 self.context['message'] = f'Information about worker {form.fullname.data} was successfully updated.'
                 return render_template(self.template, **self.context)
             except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
@@ -140,12 +140,12 @@ class SupplierAPI(MethodView):
     def update(self, storage, form):
         if form.validate_on_submit():
             try:
-                '''
                 storage.add_supplier(
+                    supplier_id=request.form['supplier_id'],
                     name=form.name.data,
                     address=form.address.data,
                     telephone=form.telephone.data,
-                    email=form.email.data)'''
+                    email=form.email.data)
                 self.context['message'] = f'Information about supplier {form.name.data} was successfully updated.'
                 return render_template(self.template, **self.context)
             except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
@@ -231,14 +231,14 @@ class ProductAPI(MethodView):
     def update(self, storage, form):
         if form.validate_on_submit():
             try:
-                '''
                 storage.add_product(
+                    product_id=request.form['product_id'],
                     name=form.name.data,
                     quantity=form.quantity.data,
                     price=form.price.data,
                     promotion=form.promotion.data,
                     supplier=form.supplier.choices[form.supplier.data][1],
-                    producer=form.producer.choices[form.producer.data][1])'''
+                    producer=form.producer.choices[form.producer.data][1])
                 self.context['message'] = f'Information about product {form.name.data} was successfully updated.'
                 return render_template(self.template, **self.context)
             except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
@@ -322,15 +322,15 @@ class CustomerAPI(MethodView):
     def update(self, storage, form):
         if form.validate_on_submit():
             try:
-                '''
                 choice = form.card_id.data
                 card_id = form.card_id.choices[choice][1] if choice else "NULL"
                 storage.update_customer(
+                    customer_id=request.form['customer_id'],
                     fullname=form.fullname.data,
                     address=form.address.data,
                     telephone=form.telephone.data,
                     email=form.email.data,
-                    card_id=card_id)'''
+                    card_id=card_id)
                 message = f'Information about customer {form.fullname.data} was successfully updated.'
                 self.context['message'] = message
                 return render_template(self.template, **self.context)
@@ -404,11 +404,11 @@ class DiscountCardAPI(MethodView):
     def update(self, storage, form):
         if form.validate_on_submit():
             try:
-                '''
                 storage.update_card(
+                    card_id=request.form['card_id'],
                     discount=form.discount.data,
                     start_date=form.start_date.data,
-                    expiration=form.expiration.data)'''
+                    expiration=form.expiration.data)
                 message = f'Information about card with {form.discount.data * 100}% discount was successfully updated.'
                 self.context['message'] = message
                 return render_template(self.template, **self.context)
@@ -479,12 +479,12 @@ class ProducerAPI(MethodView):
     def update(self, storage, form):
         if form.validate_on_submit():
             try:
-                '''
                 storage.update_producer(
+                    producer_id=request.form['producer_id'],
                     name=form.name.data,
                     address=form.address.data,
                     telephone=form.telephone.data,
-                    email=form.email.data)'''
+                    email=form.email.data)
                 message = f'Information about producer {form.name.data} was successfully updated.'
                 self.context['message'] = message
                 return render_template(self.template, **self.context)
@@ -577,16 +577,16 @@ class PurchaseAPI(MethodView):
     def update(self, storage, form):
         if form.validate_on_submit():
             try:
-                '''
                 worker_num = form.worker_id.data
                 worker_id = form.worker_id.choices[worker_num][1] if worker_num else "NULL"
                 storage.update_purchase(
+                    purchase_id=request.form['purchase_id'],
                     total_cost=form.total_cost.data,
                     quantity=form.quantity.data,
                     date=form.date.data,
                     product_id=form.product_id.choices[form.product_id.data][1],
                     customer_id=form.customer_id.choices[form.customer_id.data][1],
-                    worker_id=worker_id)'''
+                    worker_id=worker_id)
                 message = f'Information about purchase on total cost {form.total_cost.data} was successfully updated.'
                 self.context['message'] = message
                 return render_template(self.template, **self.context)

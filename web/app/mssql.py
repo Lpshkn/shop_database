@@ -74,6 +74,16 @@ class WorkersStorage(MssqlStorage):
         self._cur.execute(sql)
         self._conn.commit()
 
+    def update_worker(self, worker_id: int, fullname: str, salary: float, job: str,
+                      address: str, passport_number: str, telephone: str, email: str) -> None:
+        sql = f"""UPDATE shopdb.dbo.Workers 
+                  SET fullname = N'{fullname}', salary = {salary}, job = N'{job}', 
+                      address = N'{address}', passport_number = '{passport_number}',
+                      telephone = '{telephone}', email = '{email}'
+                  WHERE worker_id = {worker_id}"""
+        self._cur.execute(sql)
+        self._conn.commit()
+
     def add_worker(self, fullname: str, salary: float, job: str, address: str,
                    passport_number: str, telephone: str, email: str) -> None:
         sql = f"""INSERT INTO 
@@ -112,6 +122,15 @@ class SuppliersStorage(MssqlStorage):
                     shopdb.dbo.Workers 
                   WHERE
                     supplier_id = {supplier_id}"""
+        self._cur.execute(sql)
+        self._conn.commit()
+
+    def update_supplier(self, supplier_id: int, name: str, address: str,
+                        telephone: str, email: str) -> None:
+        sql = f"""UPDATE shopdb.dbo.Suppliers 
+                  SET name = N'{name}', address = N'{address}',
+                      telephone = '{telephone}', email = '{email}'
+                  WHERE supplier_id = {supplier_id}"""
         self._cur.execute(sql)
         self._conn.commit()
 
@@ -155,7 +174,18 @@ class ProductsStorage(MssqlStorage):
         self._cur.execute(sql)
         self._conn.commit()
 
-    def add_product(self, name: str, producer: str, quantity: int, supplier: str, price: float, promotion: str) -> None:
+    def update_product(self, product_id: int, name: str, producer: str, quantity: int,
+                       supplier: str, price: float, promotion: str) -> None:
+        sql = f"""UPDATE shopdb.dbo.Products 
+                  SET name = N'{name}', producer = N'{producer}',
+                      quantity = {quantity}, supplier = N'{supplier}',
+                      price = {price}, promotion = '{promotion}'
+                  WHERE product_id = {product_id}"""
+        self._cur.execute(sql)
+        self._conn.commit()
+
+    def add_product(self, name: str, producer: str, quantity: int,
+                    supplier: str, price: float, promotion: str) -> None:
         sql = f"""INSERT INTO 
                     shopdb.dbo.Products(name, producer, quantity, supplier, price)
                   VALUES
@@ -195,7 +225,18 @@ class CustomersStorage(MssqlStorage):
         self._cur.execute(sql)
         self._conn.commit()
 
-    def add_customer(self, fullname: str, card_id: int, address: str, telephone: str, email: str) -> None:
+    def update_customer(self, customer_id: int, fullname: str, card_id: int,
+                        address: str, telephone: str, email: str) -> None:
+        sql = f"""UPDATE shopdb.dbo.Customers 
+                  SET fullname = N'{fullname}', card_id = {card_id},
+                      address = N'{address}', telephone = '{telephone}',
+                      email = '{email}'
+                  WHERE customer_id = {customer_id}"""
+        self._cur.execute(sql)
+        self._conn.commit()
+
+    def add_customer(self, fullname: str, card_id: int, address: str,
+                     telephone: str, email: str) -> None:
         sql = f"""INSERT INTO
                     shopdb.dbo.Customers(fullname, address, card_id, email, telephone)
                   VALUES
@@ -231,6 +272,15 @@ class DiscountCardsStorage(MssqlStorage):
                     shopdb.dbo.DiscountCards 
                   WHERE
                     card_id = {card_id}"""
+        self._cur.execute(sql)
+        self._conn.commit()
+
+    def update_card(self, card_id: int, discount: float,
+                    start_date: datetime, expiration: datetime) -> None:
+        sql = f"""UPDATE shopdb.dbo.DiscountCards 
+                  SET discount = {discount}, start_date = '{start_date}',
+                      expiration = '{expiration}'
+                  WHERE card_id = {card_id}"""
         self._cur.execute(sql)
         self._conn.commit()
 
@@ -274,6 +324,15 @@ class ProducersStorage(MssqlStorage):
         self._cur.execute(sql)
         self._conn.commit()
 
+    def update_producer(self, producer_id: int, name: str, address: str,
+                        telephone: str, email: str) -> None:
+        sql = f"""UPDATE shopdb.dbo.Producers 
+                  SET name = N'{name}', address = N'{address}',
+                      email = '{email}', telephone = '{telephone}', 
+                  WHERE producer_id = {producer_id}"""
+        self._cur.execute(sql)
+        self._conn.commit()
+
     def add_producer(self, name: str, address: str, telephone: str, email: str) -> None:
         sql = f"""INSERT INTO 
                     shopdb.dbo.Producers(name, address, email, telephone)
@@ -308,6 +367,16 @@ class PurchasesStorage(MssqlStorage):
                     shopdb.dbo.Purchases 
                   WHERE
                     purchase_id = {purchase_id}"""
+        self._cur.execute(sql)
+        self._conn.commit()
+
+    def update_purchase(self, purchase_id: int, product_id: int, worker_id: int,
+                        customer_id: int, quantity: int, total_cost: float, date: datetime) -> None:
+        sql = f"""UPDATE shopdb.dbo.Purchases 
+                  SET product_id = {product_id}, worker_id = {worker_id},
+                      customer_id = {customer_id}, quantity = {quantity},
+                      total_cost = {total_cost}, date = '{date}'
+                  WHERE purchase_id = {purchase_id}"""
         self._cur.execute(sql)
         self._conn.commit()
 
