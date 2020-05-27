@@ -56,12 +56,10 @@ class WorkerAPI(MethodView):
             conn=mssql.get_conn())
         return storage.get_workers()
 
-    def update(self, form):
+    def update(self, storage, form):
         if form.validate_on_submit():
             try:
                 '''
-                storage = mssql.WorkersStorage.get_connection(
-                    conn=mssql.get_conn())
                 storage.update_worker(
                     fullname=form.fullname.data,
                     salary=form.salary.data,
@@ -70,23 +68,22 @@ class WorkerAPI(MethodView):
                     passport_number=form.passport_number.data,
                     telephone=form.telephone.data,
                     email=form.email.data)'''
-                self.context['message'] = f"Information about worker '{form.fullname.data}' was successfully updated."
+                self.context['message'] = f'Information about worker {form.fullname.data} was successfully updated.'
                 return render_template(self.template, **self.context)
             except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
-                flash("Error on inserting values into table.")
+                flash('Error on inserting values into table.')
                 return redirect(self.url)
-        flash("Invalid form data.")
+        flash('Invalid form data.')
         return render_template(self.template, **self.context)
 
-    def delete(self):
-        self.context['message'] = ("Delete %s" % request.form['worker_id'])
+    def delete(self, storage, form):
+        storage.delete_worker(worker_id=request.form['worker_id'])
+        self.context['message'] = f'Successfully delete worker {form.fullname.data} from database.'
         return render_template(self.template, **self.context)
 
-    def add(self, form):
+    def add(self, storage, form):
         if form.validate_on_submit():
             try:
-                storage = mssql.WorkersStorage.get_connection(
-                    conn=mssql.get_conn())
                 storage.add_worker(
                     fullname=form.fullname.data,
                     salary=form.salary.data,
@@ -95,7 +92,7 @@ class WorkerAPI(MethodView):
                     passport_number=form.passport_number.data,
                     telephone=form.telephone.data,
                     email=form.email.data)
-                self.context['message'] = f"Worker '{form.fullname.data}' was successfully added to database."
+                self.context['message'] = f'Worker {form.fullname.data} was successfully added to database.'
                 return render_template(self.template, **self.context)
             except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
                 flash("Error on inserting values into table.")
@@ -104,22 +101,24 @@ class WorkerAPI(MethodView):
         return render_template(self.template, **self.context)
 
     def get(self):
-        self.context['message'] = ''
-        self.context['workers'] = WorkerAPI.get_workers()
         self.context['form'] = forms.WorkerForm()
+        self.context['workers'] = WorkerAPI.get_workers()
+        self.context['message'] = ''
         return render_template(self.template, **self.context)
 
     def post(self):
-        self.context['message'] = ''
-        self.context['customers'] = WorkerAPI.get_workers()
+        storage = mssql.WorkersStorage.get_connection(
+            conn=mssql.get_conn())
         form = forms.WorkerForm()
         self.context['form'] = form
+        self.context['workers'] = WorkerAPI.get_workers()
+        self.context['message'] = ''
         if request.form['submit'] == 'Add':
-            return self.add(form)
+            return self.add(storage, form)
         if request.form['submit'] == 'Update':
-            return self.update(form)
+            return self.update(storage, form)
         if request.form['submit'] == 'Delete':
-            return self.delete()
+            return self.delete(storage, form)
         return render_template(self.template, **self.context)
 
 
@@ -138,64 +137,63 @@ class SupplierAPI(MethodView):
             conn=mssql.get_conn())
         return storage.get_suppliers()
 
-    def update(self, form):
+    def update(self, storage, form):
         if form.validate_on_submit():
             try:
                 '''
-                storage = mssql.SuppliersStorage.get_connection(
-                    conn=mssql.get_conn())
                 storage.add_supplier(
                     name=form.name.data,
                     address=form.address.data,
                     telephone=form.telephone.data,
                     email=form.email.data)'''
-                self.context['message'] = f"Information about supplier '{form.name.data}' was successfully updated."
+                self.context['message'] = f'Information about supplier {form.name.data} was successfully updated.'
                 return render_template(self.template, **self.context)
             except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
-                flash("Error on inserting values into table.")
+                flash('Error on inserting values into table.')
                 return redirect(self.url)
-        flash("Invalid form data.")
+        flash('Invalid form data.')
         return render_template(self.template, **self.context)
 
-    def delete(self):
-        self.context['message'] = ("Delete %s" % request.form['supplier_id'])
+    def delete(self, storage, form):
+        storage.delete_supplier(supplier_id=request.form['supplier_id'])
+        self.context['message'] = f'Successfully delete supplier {form.name.data} from database.'
         return render_template(self.template, **self.context)
 
-    def add(self, form):
+    def add(self, storage, form):
         if form.validate_on_submit():
             try:
-                storage = mssql.SuppliersStorage.get_connection(
-                    conn=mssql.get_conn())
                 storage.add_supplier(
                     name=form.name.data,
                     address=form.address.data,
                     telephone=form.telephone.data,
                     email=form.email.data)
-                self.context['message'] = f"Supplier '{form.name.data}' was successfully added to database."
+                self.context['message'] = f'Supplier {form.name.data} was successfully added to database.'
                 return render_template(self.template, **self.context)
             except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
-                flash("Error on inserting values into table.")
+                flash('Error on inserting values into table.')
                 return redirect(self.url)
-        flash("Invalid form data.")
+        flash('Invalid form data.')
         return render_template(self.template, **self.context)
 
     def get(self):
-        self.context['message'] = ''
-        self.context['suppliers'] = SupplierAPI.get_suppliers()
         self.context['form'] = forms.SupplierForm()
+        self.context['suppliers'] = SupplierAPI.get_suppliers()
+        self.context['message'] = ''
         return render_template(self.template, **self.context)
 
     def post(self):
-        self.context['message'] = ''
-        self.context['suppliers'] = SupplierAPI.get_suppliers()
+        storage = mssql.SuppliersStorage.get_connection(
+            conn=mssql.get_conn())
         form = forms.SupplierForm()
         self.context['form'] = form
+        self.context['suppliers'] = SupplierAPI.get_suppliers()
+        self.context['message'] = ''
         if request.form['submit'] == 'Add':
-            return self.add(form)
+            return self.add(storage, form)
         if request.form['submit'] == 'Update':
-            return self.update(form)
+            return self.update(storage, form)
         if request.form['submit'] == 'Delete':
-            return self.delete()
+            return self.delete(storage, form)
         return render_template(self.template, **self.context)
 
 
@@ -230,12 +228,10 @@ class ProductAPI(MethodView):
 
         return form
 
-    def update(self, form):
+    def update(self, storage, form):
         if form.validate_on_submit():
             try:
                 '''
-                storage = mssql.ProductsStorage.get_connection(
-                    conn=mssql.get_conn())
                 storage.add_product(
                     name=form.name.data,
                     quantity=form.quantity.data,
@@ -243,23 +239,22 @@ class ProductAPI(MethodView):
                     promotion=form.promotion.data,
                     supplier=form.supplier.choices[form.supplier.data][1],
                     producer=form.producer.choices[form.producer.data][1])'''
-                self.context['message'] = f"Information about product '{form.name.data}' was successfully updated."
+                self.context['message'] = f'Information about product {form.name.data} was successfully updated.'
                 return render_template(self.template, **self.context)
             except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
-                flash("Error on inserting value into table.")
+                flash('Error on inserting value into table.')
                 return redirect(self.url)
-        flash("Invalid form data.")
+        flash('Invalid form data.')
         return render_template(self.template, **self.context)
 
-    def delete(self):
-        self.context['message'] = ("Delete %s" % request.form['product_id'])
+    def delete(self, storage, form):
+        storage.delete_product(product_id=request.form['product_id'])
+        self.context['message'] = f'Successfully delete product {form.name.data} from database.'
         return render_template(self.template, **self.context)
 
-    def add(self, form):
+    def add(self, storage, form):
         if form.validate_on_submit():
             try:
-                storage = mssql.ProductsStorage.get_connection(
-                    conn=mssql.get_conn())
                 storage.add_product(
                     name=form.name.data,
                     quantity=form.quantity.data,
@@ -267,31 +262,33 @@ class ProductAPI(MethodView):
                     promotion=form.promotion.data,
                     supplier=form.supplier.choices[form.supplier.data][1],
                     producer=form.producer.choices[form.producer.data][1])
-                self.context['message'] = f"Product '{form.name.data}' was successfully added to database."
+                self.context['message'] = f'Product {form.name.data} was successfully added to database.'
                 return render_template(self.template, **self.context)
             except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
-                flash("Error on inserting value into table.")
+                flash('Error on inserting value into table.')
                 return redirect(self.url)
-        flash("Invalid form data.")
+        flash('Invalid form data.')
         return render_template(self.template, **self.context)
 
     def get(self):
-        self.context['message'] = ''
-        self.context['products'] = ProductAPI.get_products()
         self.context['form'] = ProductAPI.get_form()
+        self.context['products'] = ProductAPI.get_products()
+        self.context['message'] = ''
         return render_template(self.template, **self.context)
 
     def post(self):
-        self.context['message'] = ''
-        self.context['products'] = ProductAPI.get_products()
+        storage = mssql.ProductsStorage.get_connection(
+            conn=mssql.get_conn())
         form = ProductAPI.get_form()
         self.context['form'] = form
+        self.context['products'] = ProductAPI.get_products()
+        self.context['message'] = ''
         if request.form['submit'] == 'Add':
-            return self.add(form)
+            return self.add(storage, form)
         if request.form['submit'] == 'Update':
-            return self.update(form)
+            return self.update(storage, form)
         if request.form['submit'] == 'Delete':
-            return self.delete()
+            return self.delete(storage, form)
         return render_template(self.template, **self.context)
 
 
@@ -322,71 +319,70 @@ class CustomerAPI(MethodView):
         form.card_id.choices = choices
         return form
 
-    def update(self, form):
+    def update(self, storage, form):
         if form.validate_on_submit():
             try:
                 '''
                 choice = form.card_id.data
                 card_id = form.card_id.choices[choice][1] if choice else "NULL"
-                storage = mssql.CustomersStorage().get_connection(
-                    conn=mssql.get_conn())
                 storage.update_customer(
                     fullname=form.fullname.data,
                     address=form.address.data,
                     telephone=form.telephone.data,
                     email=form.email.data,
                     card_id=card_id)'''
-                message = f"Information about customer '{form.fullname.data}' was successfully updated."
+                message = f'Information about customer {form.fullname.data} was successfully updated.'
                 self.context['message'] = message
                 return render_template(self.template, **self.context)
             except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
-                flash("Error on inserting value into table.")
+                flash('Error on inserting value into table.')
                 return redirect(self.url)
-        flash("Invalid form data.")
+        flash('Invalid form data.')
         return render_template(self.template, **self.context)
 
-    def delete(self):
-        self.context['message'] = ("Delete %s" % request.form['customer_id'])
+    def delete(self, storage, form):
+        storage.delete_customer(customer_id=request.form['customer_id'])
+        self.context['message'] = f'Successfully delete customer {form.fullname.data} from database.'
         return render_template(self.template, **self.context)
 
-    def add(self, form):
+    def add(self, storage, form):
         if form.validate_on_submit():
             try:
                 choice = form.card_id.data
                 card_id = form.card_id.choices[choice][1] if choice else "NULL"
-                storage = mssql.CustomersStorage().get_connection(
-                    conn=mssql.get_conn())
                 storage.add_customer(
                     fullname=form.fullname.data,
                     address=form.address.data,
                     telephone=form.telephone.data,
                     email=form.email.data,
                     card_id=card_id)
-                self.context['message'] = f"Customer '{form.fullname.data}' was successfully added to database."
+                self.context['message'] = f'Customer {form.fullname.data} was successfully added to database.'
                 return render_template(self.template, **self.context)
             except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
-                flash("Error on inserting value into table.")
+                flash('Error on inserting value into table.')
                 return redirect(self.url)
-        flash("Invalid form data.")
+        flash('Invalid form data.')
         return render_template(self.template, **self.context)
 
     def get(self):
-        self.context['message'] = ''
-        self.context['customers'] = CustomerAPI.get_customers()
         self.context['form'] = CustomerAPI.get_form()
+        self.context['customers'] = CustomerAPI.get_customers()
+        self.context['message'] = ''
         return render_template(self.template, **self.context)
 
     def post(self):
-        self.context['message'] = ''
-        self.context['customers'] = CustomerAPI.get_customers()
+        storage = mssql.CustomersStorage().get_connection(
+            conn=mssql.get_conn())
         form = CustomerAPI.get_form()
         self.context['form'] = form
+        self.context['customers'] = CustomerAPI.get_customers()
+        self.context['message'] = ''
         if request.form['submit'] == 'Add':
-            return self.add(form)
+            return self.add(storage, form)
         if request.form['submit'] == 'Update':
-            return self.update(form)
+            return self.update(storage, form)
         if request.form['submit'] == 'Delete':
-            return self.delete()
+            return self.delete(storage, form)
         return render_template(self.template, **self.context)
 
 
@@ -405,64 +401,63 @@ class DiscountCardAPI(MethodView):
             conn=mssql.get_conn())
         return storage.get_cards()
 
-    def update(self, form):
+    def update(self, storage, form):
         if form.validate_on_submit():
             try:
                 '''
-                storage = mssql.DiscountCardsStorage.get_connection(
-                    conn=mssql.get_conn())
                 storage.update_card(
                     discount=form.discount.data,
                     start_date=form.start_date.data,
                     expiration=form.expiration.data)'''
-                message = f"Information about card with {form.discount.data * 100}% discount was successfully updated."
+                message = f'Information about card with {form.discount.data * 100}% discount was successfully updated.'
                 self.context['message'] = message
                 return render_template(self.template, **self.context)
             except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
-                flash("Error on inserting value into table.")
+                flash('Error on inserting value into table.')
                 return redirect(self.url)
-        flash("Invalid form data.")
+        flash('Invalid form data.')
         return render_template(self.template, **self.context)
 
-    def delete(self):
-        self.context['message'] = ("Delete %s" % request.form['card_id'])
+    def delete(self, storage, form):
+        storage.delete_card(card_id=request.form['card_id'])
+        self.context['message'] = f'Successfully delete customer {form.fullname.data} from database.'
         return render_template(self.template, **self.context)
 
-    def add(self, form):
+    def add(self, storage, form):
         if form.validate_on_submit():
             try:
-                storage = mssql.DiscountCardsStorage.get_connection(
-                    conn=mssql.get_conn())
                 storage.add_card(
                     discount=form.discount.data,
                     start_date=form.start_date.data,
                     expiration=form.expiration.data)
-                message = f"Discount card [{form.discount.data * 100}%] was successfully added to database."
+                message = f'Discount card [{form.discount.data * 100}%] was successfully added to database.'
                 self.context['message'] = message
                 return render_template(self.template, **self.context)
             except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
-                flash("Error on inserting value into table.")
+                flash('Error on inserting value into table.')
                 return redirect(self.url)
-        flash("Invalid form data.")
+        flash('Invalid form data.')
         return render_template(self.template, **self.context)
 
     def get(self):
-        self.context['message'] = ''
-        self.context['cards'] = DiscountCardAPI.get_cards()
         self.context['form'] = forms.DiscountCardForm()
+        self.context['cards'] = DiscountCardAPI.get_cards()
+        self.context['message'] = ''
         return render_template(self.template, **self.context)
 
     def post(self):
-        self.context['message'] = ''
-        self.context['cards'] = DiscountCardAPI.get_cards()
+        storage = mssql.DiscountCardsStorage.get_connection(
+            conn=mssql.get_conn())
         form = forms.DiscountCardForm()
-        self.context['form'] = form
+        self.context['form'] = forms.DiscountCardForm()
+        self.context['cards'] = DiscountCardAPI.get_cards()
+        self.context['message'] = ''
         if request.form['submit'] == 'Add':
-            return self.add(form)
+            return self.add(storage, form)
         if request.form['submit'] == 'Update':
-            return self.update(form)
+            return self.update(storage, form)
         if request.form['submit'] == 'Delete':
-            return self.delete()
+            return self.delete(storage, form)
         return render_template(self.template, **self.context)
 
 
@@ -481,66 +476,65 @@ class ProducerAPI(MethodView):
             conn=mssql.get_conn())
         return storage.get_producers()
 
-    def update(self, form):
+    def update(self, storage, form):
         if form.validate_on_submit():
             try:
                 '''
-                storage = mssql.ProducersStorage.get_connection(
-                    conn=mssql.get_conn())
                 storage.update_producer(
                     name=form.name.data,
                     address=form.address.data,
                     telephone=form.telephone.data,
                     email=form.email.data)'''
-                message = f"Information about producer '{form.name.data}' was successfully updated."
+                message = f'Information about producer {form.name.data} was successfully updated.'
                 self.context['message'] = message
                 return render_template(self.template, **self.context)
             except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
-                flash("Error on inserting value into table.")
+                flash('Error on inserting value into table.')
                 return redirect(self.url)
-        flash("Invalid form data.")
+        flash('Invalid form data.')
         return render_template(self.template, **self.context)
 
-    def delete(self):
-        self.context['message'] = ("Delete %s" % request.form['producer_id'])
+    def delete(self, storage, form):
+        storage.delete_producer(producer_id=request.form['producer_id'])
+        self.context['message'] = f'Successfully delete producer {form.fullname.data} from database.'
         return render_template(self.template, **self.context)
 
-    def add(self, form):
+    def add(self, storage, form):
         if form.validate_on_submit():
             try:
-                storage = mssql.ProducersStorage.get_connection(
-                    conn=mssql.get_conn())
                 storage.add_producer(
                     name=form.name.data,
                     address=form.address.data,
                     telephone=form.telephone.data,
                     email=form.email.data)
-                message = f"Producer '{form.name.data}' was successfully added to database."
+                message = f'Producer {form.name.data} was successfully added to database.'
                 self.context['message'] = message
                 return render_template(self.template, **self.context)
             except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
-                flash("Error on inserting value into table.")
+                flash('Error on inserting value into table.')
                 return redirect(self.url)
-        flash("Invalid form data.")
+        flash('Invalid form data.')
         return render_template(self.template, **self.context)
 
     def get(self):
-        self.context['message'] = ''
-        self.context['producers'] = ProducerAPI.get_producers()
         self.context['form'] = forms.ProducerForm()
+        self.context['producers'] = ProducerAPI.get_producers()
+        self.context['message'] = ''
         return render_template(self.template, **self.context)
 
     def post(self):
-        self.context['message'] = ''
-        self.context['producers'] = ProducerAPI.get_producers()
+        storage = mssql.ProducersStorage.get_connection(
+            conn=mssql.get_conn())
         form = forms.ProducerForm()
         self.context['form'] = form
+        self.context['producers'] = ProducerAPI.get_producers()
+        self.context['message'] = ''
         if request.form['submit'] == 'Add':
-            return self.add(form)
+            return self.add(storage, form)
         if request.form['submit'] == 'Update':
-            return self.update(form)
+            return self.update(storage, form)
         if request.form['submit'] == 'Delete':
-            return self.delete()
+            return self.delete(storage, form)
         return render_template(self.template, **self.context)
 
 
@@ -580,15 +574,12 @@ class PurchaseAPI(MethodView):
 
         return form
 
-    def update(self, form):
+    def update(self, storage, form):
         if form.validate_on_submit():
             try:
                 '''
                 worker_num = form.worker_id.data
                 worker_id = form.worker_id.choices[worker_num][1] if worker_num else "NULL"
-
-                storage = mssql.PurchasesStorage.get_connection(
-                    conn=mssql.get_conn())
                 storage.update_purchase(
                     total_cost=form.total_cost.data,
                     quantity=form.quantity.data,
@@ -596,27 +587,25 @@ class PurchaseAPI(MethodView):
                     product_id=form.product_id.choices[form.product_id.data][1],
                     customer_id=form.customer_id.choices[form.customer_id.data][1],
                     worker_id=worker_id)'''
-                message = f"Information about purchase on total cost {form.total_cost.data} was successfully updated."
+                message = f'Information about purchase on total cost {form.total_cost.data} was successfully updated.'
                 self.context['message'] = message
                 return render_template(self.template, **self.context)
             except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
-                flash("Error on inserting value into table.")
+                flash('Error on inserting value into table.')
                 return redirect(self.url)
-        flash("Invalid form data.")
+        flash('Invalid form data.')
         return render_template(self.template, **self.context)
 
-    def delete(self):
-        self.context['message'] = ("Delete %s" % request.form['purchase_id'])
+    def delete(self, storage, form):
+        storage.delete_purchase(purchase_id=request.form['purchase_id'])
+        self.context['message'] = f'Successfully delete purchase on total cost {form.total_cost.data} from database.'
         return render_template(self.template, **self.context)
 
-    def add(self, form):
+    def add(self, storage, form):
         if form.validate_on_submit():
             try:
                 worker_num = form.worker_id.data
-                worker_id = form.worker_id.choices[worker_num][1] if worker_num else "NULL"
-
-                storage = mssql.PurchasesStorage.get_connection(
-                    conn=mssql.get_conn())
+                worker_id = form.worker_id.choices[worker_num][1] if worker_num else 'NULL'
                 storage.add_purchase(
                     total_cost=form.total_cost.data,
                     quantity=form.quantity.data,
@@ -624,26 +613,28 @@ class PurchaseAPI(MethodView):
                     product_id=form.product_id.choices[form.product_id.data][1],
                     customer_id=form.customer_id.choices[form.customer_id.data][1],
                     worker_id=worker_id)
-                message = f"Purchase on total cost {form.total_cost.data} was successfully added to database."
+                message = f'Purchase on total cost {form.total_cost.data} was successfully added to database.'
                 self.context['message'] = message
                 return render_template(self.template, **self.context)
             except (pymssql.OperationalError, pymssql.InterfaceError, pymssql.IntegrityError):
-                flash("Error on inserting value into table.")
+                flash('Error on inserting value into table.')
                 return redirect(self.url)
-        flash("Invalid form data.")
+        flash('Invalid form data.')
         return render_template(self.template, **self.context)
 
     def get(self):
-        self.context['message'] = ''
-        self.context['purchases'] = PurchaseAPI.get_purchases()
         self.context['form'] = PurchaseAPI.get_form()
+        self.context['purchases'] = PurchaseAPI.get_purchases()
+        self.context['message'] = ''
         return render_template(self.template, **self.context)
 
     def post(self):
-        self.context['message'] = ''
-        self.context['purchases'] = PurchaseAPI.get_purchases()
+        storage = mssql.PurchasesStorage.get_connection(
+            conn=mssql.get_conn())
         form = PurchaseAPI.get_form()
         self.context['form'] = form
+        self.context['purchases'] = PurchaseAPI.get_purchases()
+        self.context['message'] = ''
         print('customer_id ', form.customer_id.errors)
         print('product_id ', form.product_id.errors)
         print('worker_id ', form.worker_id.errors)
@@ -651,11 +642,11 @@ class PurchaseAPI(MethodView):
         print('date ', form.date.errors)
         print('total_cost ', form.total_cost.errors)
         if request.form['submit'] == 'Add':
-            return self.add(form)
+            return self.add(storage, form)
         if request.form['submit'] == 'Update':
-            return self.update(form)
+            return self.update(storage, form)
         if request.form['submit'] == 'Delete':
-            return self.delete()
+            return self.delete(storage, form)
         return render_template(self.template, **self.context)
 
 
