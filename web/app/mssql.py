@@ -11,7 +11,7 @@ def check_conn(view_func):
     def wrapper_func(*args, **kwargs):
         try:
             return view_func(*args, **kwargs)
-        except AttributeError:
+        except pymssql.OperationalError or pymssql.InterfaceError:
             flash('Connection to database lost')
             return redirect(url_for('login'))
     return wrapper_func
@@ -24,7 +24,9 @@ def set_conn(**kwargs) -> None:
 
 def get_conn() -> pymssql.Connection:
     global _conn
-    return _conn
+    if _conn:
+        return _conn
+    raise pymssql.OperationalError
 
 
 def close_conn() -> None:
@@ -328,7 +330,7 @@ class ProducersStorage(MssqlStorage):
                         telephone: str, email: str) -> None:
         sql = f"""UPDATE shopdb.dbo.Producers 
                   SET name = N'{name}', address = N'{address}',
-                      email = '{email}', telephone = '{telephone}', 
+                      email = '{email}', telephone = '{telephone}'
                   WHERE producer_id = {producer_id}"""
         self._cur.execute(sql)
         self._conn.commit()

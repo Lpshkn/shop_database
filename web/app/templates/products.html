@@ -7,7 +7,7 @@
 <table id="table" class="table table-hover">
     <thead>
       <tr>
-      	  <th>Action</th>
+      	<th>Action</th>
 	      <th>ID <img src='{{ sort_icon() }}' onclick="sortTableByNums('table', 0, true)"></th>
 	      <th>Name <img src='{{ sort_icon() }}' onclick="sortTable('table', 1)"></th>
 	      <th>Producer <img src='{{ sort_icon() }}' onclick="sortTable('table', 2)"></th>
@@ -97,6 +97,9 @@
     </form>
    </div>
 </div>
+
+<!-- Подложка под модальным окном -->
+<div class="overlay js-overlay-modal"></div>
 
 <script src="{{ url_for('static', filename='js/products.js') }}"></script>
 <script type="text/javascript">

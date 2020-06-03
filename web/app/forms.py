@@ -1,7 +1,9 @@
 from datetime import datetime
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, DateField, FloatField, SelectField, IntegerField
-from wtforms.validators import DataRequired, NumberRange, Length, Regexp
+from wtforms import (
+    StringField, DateField, PasswordField, SubmitField, DateTimeField, FloatField, SelectField, IntegerField)
+from wtforms.validators import (
+    DataRequired, NumberRange, Length, Regexp)
 
 
 class LoginForm(FlaskForm):
@@ -51,7 +53,7 @@ class ProductForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(max=128)])
     quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1, max=32767)], default=1)
     price = FloatField('Price', validators=[DataRequired(), NumberRange(min=0)], default=0)
-    promotion = StringField('Promotion', validators=[Length(max=30), Regexp('^[\w]+$')])
+    promotion = StringField('Promotion', validators=[Length(max=30), Regexp('^[0-9+%-]+$')])
     producer = SelectField('Producer', coerce=int)
     supplier = SelectField('Supplier', coerce=int)
     submit = SubmitField('Add product')
@@ -68,7 +70,7 @@ class ProducerForm(FlaskForm):
 class PurchaseForm(FlaskForm):
     quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1, max=32767)], default=1)
     total_cost = FloatField('Total cost', validators=[DataRequired(), NumberRange(min=0)], default=0)
-    date = DateField('Date', validators=[DataRequired()], default=datetime.utcnow)
+    date = DateTimeField('Date', validators=[DataRequired()], default=datetime.utcnow)
     product_id = SelectField('Product ID', coerce=int)
     worker_id = SelectField('Worker ID', coerce=int)
     customer_id = SelectField('Customer ID', coerce=int)

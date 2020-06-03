@@ -1,8 +1,8 @@
 function fillDeleteModal(id) {
     const elemChildren = document.getElementById(id).children;
-    const supplier_id = elemChildren[1].children[0].innerHTML;
+    const producer_id = elemChildren[1].children[0].innerHTML;
     const name = elemChildren[2].innerHTML;
-    document.querySelector('input#del_id').value = supplier_id;
+    document.querySelector('input#del_id').value = producer_id;
     document.querySelector('p#del_info').innerHTML = `Are you sure that you want to remove ${name}?` +
         ` This action cannot be canceled.`
 }

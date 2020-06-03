@@ -133,7 +133,7 @@ class SupplierAPI(MethodView):
     def update(self, storage, form):
         if form.validate_on_submit():
             try:
-                storage.add_supplier(
+                storage.update_supplier(
                     supplier_id=request.form['supplier_id'],
                     name=form.name.data,
                     address=form.address.data,
@@ -218,7 +218,7 @@ class ProductAPI(MethodView):
     def update(self, storage, form):
         if form.validate_on_submit():
             try:
-                storage.add_product(
+                storage.update_product(
                     product_id=request.form['product_id'],
                     name=form.name.data,
                     quantity=form.quantity.data,
@@ -592,12 +592,6 @@ class PurchaseAPI(MethodView):
         form = PurchaseAPI.get_form()
         self.context['form'] = form
         self.context['message'] = ''
-        print('customer_id ', form.customer_id.errors)
-        print('product_id ', form.product_id.errors)
-        print('worker_id ', form.worker_id.errors)
-        print('quantity ', form.quantity.errors)
-        print('date ', form.date.errors)
-        print('total_cost ', form.total_cost.errors)
         if request.form['submit'] == 'Add':
             self.add(storage, form)
         if request.form['submit'] == 'Update':
