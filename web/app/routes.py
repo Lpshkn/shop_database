@@ -1,5 +1,5 @@
 import pymssql
-from app import app
+from app import app, db
 from app import forms
 from app import mssql
 from flask import render_template, flash, redirect, url_for, request
@@ -18,14 +18,19 @@ def login():
     if form.validate_on_submit():
         try:
             user = User.query.filter_by(username=form.username.data).first()
-            if not user:
-                flash('Invalid user')
-                return redirect(url_for('login'))
             mssql.set_conn(
                 server=form.server.data,
                 user=form.username.data,
                 password=form.password.data,
                 dbname=form.dbname.data)
+            if not user:
+                user = User(
+                    server=form.server.data,
+                    username=form.username.data,
+                    password=form.password.data,
+                    dbname=form.dbname.data)
+                db.session.add(user)
+                db.session.commit()
             login_user(user)
             next_page = request.args.get('next')
             if not next_page or url_parse(next_page).netloc != '':
