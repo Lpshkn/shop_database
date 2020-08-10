@@ -4,7 +4,6 @@ MAINTAINER LeadNess
 COPY requirements.txt /mnt/
 RUN apt-get update \
  && apt-get install -y tdsodbc unixodbc-dev \
- && apt install unixodbc-bin -y  \
  && apt-get clean -y
 
 RUN python3.7 -m venv /usr/share/python3/venv \
