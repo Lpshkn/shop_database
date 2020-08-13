@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<button type="button" class="btn btn-outline-secondary btn-sml btn-block js-open-modal" data-modal="add-modal">Add purchase</button>
+<input class="form-control" type="text" placeholder="Search..." id="search" onkeyup='tableSearch("search", "table")'>
+<table id="table" class="table table-hover">
+    <thead>
+      <tr>
+      	  <th>Action</th>
+	      <th>ID <img height="20" src='{{ sort_icon() }}' onclick="sortTableByNums('table', 0, true)"></th>
+	      <th>Product ID <img height="20" src='{{ sort_icon() }}' onclick="sortTableByNums('table', 1, false)"></th>
+	      <th>Worker ID <img height="20" src='{{ sort_icon() }}' onclick="sortTableByNums('table', 2, false)"></th>
+	      <th>Customer ID <img height="20" src='{{ sort_icon() }}' onclick="sortTableByNums('table', 3, false)"></th>
+	      <th>Quantity <img height="20" src='{{ sort_icon() }}' onclick="sortTableByNums('table', 4, false)"></th>
+	      <th>Date <img height="20" src='{{ sort_icon() }}' onclick="sortTable('table', 5)"></th>
+	      <th>Total cost <img height="20" src='{{ sort_icon() }}' onclick="sortTableByNums('table', 6, false)"></th>
+      </tr>
+  </thead>
+  <tbody>
+  	{% for purchase in purchases %}
+	  <tr id="row_{{ loop.index }}" onmouseover='showImages(`{{ loop.index }}`)' onmouseout='hideImages(`{{ loop.index }}`)'>
+	  	<th><img id="del_img_{{ loop.index }}" title="Delete" src="{{ delete_icon() }}" class="js-open-modal" data-modal="delete-modal" onclick='fillDeleteModal("row_{{ loop.index }}")'>     <img id="upd_img_{{ loop.index }}" title="Update" src="{{ update_icon() }}" class="js-open-modal" data-modal="update-modal" onclick='fillUpdateModal("row_{{ loop.index }}")'></th>
+	      <td scope="row"><strong>{{ purchase.0 }}</strong></td>
+	      <td>{{ purchase.1 }}</td>
+	      <td>{{ purchase.2 }}</td>
+	      <td>{{ purchase.3 }}</td>
+	      <td>{{ purchase.4 }}</td>
+	      <td>{{ purchase.5 }}</td>
+	      <td>{{ purchase.6 }}</td>
+	      <td>{{ purchase.7 }}</td>
+      </tr>
+	{% endfor %}
+    </tbody>
+</table>
+
+<div class="modal-window" data-modal="add-modal">
+   <img class="modal__cross js-modal-close" src='{{ close_icon() }}'>
+   <h4>New purchase</h4>
+   <hr class="my hr4">
+    <form action="" id="add_form" method="post">
+        {{ form.hidden_tag() }}
+        {{ form.total_cost.label }}
+        {{ form.total_cost(class="form-control") }}<br>
+        {{ form.quantity.label }}
+        {{ form.quantity(class="form-control") }}<br>
+        {{ form.date.label }}
+        {{ form.date(class="form-control") }}<br>
+        {{ form.product_id.label }}
+        {{ form.product_id(class="form-control") }}<br>
+        {{ form.worker_id.label }}
+        {{ form.worker_id(class="form-control") }}<br>
+        {{ form.customer_id.label }}
+        {{ form.customer_id(class="form-control") }}<br>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary js-modal-close">Cancel</button>
+          {{ form.submit(value="Add", class="btn btn-outline-success") }}
+        </div>
+    </form>
+</div>
+
+<div class="modal-window" data-modal="update-modal">
+   <img class="modal__cross js-modal-close" src="{{ close_icon() }}">
+   <h4>Update</h4>
+   <hr class="my hr4">
+    <form action="" method="post">
+        <input type="hidden" id="upd_id" name="purchase_id" value="">
+        {{ form.hidden_tag() }}
+        {{ form.total_cost.label }}
+        {{ form.total_cost(class="form-control") }}<br>
+        {{ form.quantity.label }}
+        {{ form.quantity(class="form-control") }}<br>
+        {{ form.date.label }}
+        {{ form.date(class="form-control") }}<br>
+        {{ form.product_id.label }}
+        {{ form.product_id(class="form-control") }}<br>
+        {{ form.worker_id.label }}
+        {{ form.worker_id(class="form-control") }}<br>
+        {{ form.customer_id.label }}
+        {{ form.customer_id(class="form-control") }}<br>
+        <div class="modal-footer">
+        	<button type="button" class="btn btn-outline-secondary js-modal-close">Cancel</button>
+        	{{ form.submit(value="Update", class="btn btn-outline-success") }}
+        </div>
+    </form>
+</div>
+
+<div class="modal-window" data-modal="delete-modal">
+   <img class="modal__cross js-modal-close" src="{{ close_icon() }}">
+   <h4>Delete</h4>
+   <hr class="my hr4">
+   <p id='del_info'></p>
+   <div class="modal-footer">
+    <form action="" method="post">
+       <input type="hidden" id="del_id" name="purchase_id" value="">
+	     <button type="button" class="btn btn-outline-secondary js-modal-close">Cancel</button>
+       {{ form.submit(value="Delete", class="btn btn-outline-danger") }}
+    </form>
+   </div>
+</div>
+
+<!-- Подложка под модальным окном -->
+<div class="overlay js-overlay-modal"></div>
+
+<script src="{{ url_for('static', filename='js/purchases.js') }}"></script>
+<script type="text/javascript">
+    main();
+</script>
+
+{% endblock content %}

@@ -1,0 +1,16 @@
+language: python
+
+python:
+  - 3.6.8
+  - 3.7
+
+services:
+  - docker
+
+before_install:
+  - sudo apt-get update && sudo apt-get install -y tdsodbc unixodbc-dev
+  - sudo apt install unixodbc-bin -y
+  - sudo apt-get clean -y
+
+script:
+  - docker build -t web-db-manager .

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Leadness, 2020 -->
+        <!-- https://github.com/LeadNess/web-db-manager -->
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
+        <link rel="icon" type="image/png" sizes="96x96" href="{{ url_for('static', filename='images/favicon-96x96.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
+
+        <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}"/>
+
+        <title>{{ title }}</title>
+    </head>
+    <body>
+        <div class="row justify-content-center">
+            <h1 style="color: white; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;">Shop Database<!--img src="{{ url_for('static', filename='images/favicon-96x96.png') }}" width="45"--></h1>
+        </div>
+        <main class="login-form">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">Connect to database</div>
+                            {% for message in get_flashed_messages() %}
+                                <div class="alert alert-danger" role="alert">
+                                    {{ message }}
+                                </div>                    
+                            {% endfor %}
+                            <div class="row justify-content-center">
+                                        
+                                <form action="" method="post">
+                                    {{ form.hidden_tag() }}
+                                    {{ form.server.label }}<br>
+                                    {{ form.server(size=32, class="form-control") }}<br>
+                                    {{ form.dbname.label }}<br>
+                                    {{ form.dbname(size=32, class="form-control") }}<br>
+                                    {{ form.username.label }}<br>
+                                    {{ form.username(size=32, class="form-control") }}<br>
+                                    {{ form.password.label }}<br>
+                                    {{ form.password(size=32, class="form-control") }}<br>
+                                    <p>{{ form.submit(class="btn btn-outline-secondary") }}</p>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+    </body>
+</html>

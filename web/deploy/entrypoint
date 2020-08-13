@@ -1,0 +1,12 @@
+#!/bin/bash
+
+cd /usr/share/python3
+. venv/bin/activate
+
+export FLASK_APP=shopdb.py
+
+flask db init
+flask db migrate
+flask db upgrade
+
+flask run -h 0.0.0.0 -p 5000
