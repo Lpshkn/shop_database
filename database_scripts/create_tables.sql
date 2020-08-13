@@ -1,4 +1,10 @@
+IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'shopdb')
+    BEGIN
+        CREATE DATABASE shopdb
+    END
+
 USE shopdb
+EXECUTE sys.sp_cdc_enable_db;
 
 IF NOT EXISTS(SELECT * FROM shopdb.INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'DiscountCards')
     BEGIN
