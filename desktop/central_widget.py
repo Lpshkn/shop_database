@@ -69,6 +69,9 @@ class CentralWidget(QWidget):
 
             self.update_tables()
 
+    def create_deleting_dialog(self, columns, rows):
+        pass
+
     def update_tables(self):
         """
         This method makes an value update of all tables
