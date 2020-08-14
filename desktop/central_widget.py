@@ -30,12 +30,15 @@ class CentralWidget(QWidget):
         """
         cursor = self.connection.cursor()
 
+        # This is the default schema for the database, and if it's necessary to change it, you must change this value
+        schema = 'dbo'
         # Get all names of the tables containing in the database, except of the diagrams system table
         tables = cursor.execute("""
         SELECT TABLE_NAME 
             FROM INFORMATION_SCHEMA.TABLES 
-            WHERE TABLE_NAME <> 'sysdiagrams'
-        """).fetchall()
+            WHERE TABLE_NAME <> 'sysdiagrams' AND TABLE_NAME <> 'systranschemas'
+            AND TABLE_SCHEMA = '{0}'
+        """.format(schema)).fetchall()
         tables = [table[0] for table in tables]
 
         # Set new tables into tab widget
