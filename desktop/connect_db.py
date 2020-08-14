@@ -8,7 +8,7 @@ import re
 from os import mkdir, environ
 from os.path import join, dirname, isdir, isfile
 from PyQt5 import uic
-from PyQt5.QtWidgets import QDialog, QLineEdit, QLabel, QFrame
+from PyQt5.QtWidgets import QDialog, QLineEdit, QLabel, QFrame, QFormLayout
 from PyQt5.QtCore import Qt
 from desktop.convert_error_sql import convert_error_sql
 from desktop.database import Database
@@ -34,13 +34,15 @@ class ConnectDatabaseDialog(QDialog):
             print(e)
             exit(-1)
 
+        # Flag specifies that Windows credential will be used
+        self.trusted_connection = 'no'
         # Define error label to print error message it the dialog
         self.error_label = None
         self.error_line = None
         # Initialize config directory
         self.__init_config_directory()
         # Disable resizing a window
-        #self.setWindowFlags(Qt.Dialog | Qt.MSWindowsFixedSizeDialogHint)
+        self.setWindowFlags(Qt.Dialog | Qt.MSWindowsFixedSizeDialogHint)
         # Set echo mode to hide inputting a password
         self.password_ledit.setEchoMode(QLineEdit.Password)
 
@@ -152,7 +154,8 @@ class ConnectDatabaseDialog(QDialog):
 
         try:
             # Take connection to a database
-            self.database = Database.connect_db(server, database, name, password, autocommit=True)
+            self.database = Database.connect_db(server, database, name, password, autocommit=True,
+                                                trusted_connection=self.trusted_connection)
         except (pyodbc.InterfaceError, pyodbc.OperationalError) as e:
             self.set_error_connection(e.args)
             return
@@ -203,4 +206,14 @@ class ConnectDatabaseDialog(QDialog):
 
             self.resize(self.sizeHint())
 
+    def enable_login_pswd(self):
+        flag = False
+        self.trusted_connection = 'yes'
 
+        if self.autentification_combox.currentText() == 'Логин и пароль':
+            flag = True
+            self.trusted_connection = 'no'
+
+        for i in range(self.credentials_formlayout.count()):
+            obj = self.credentials_formlayout.itemAt(i).widget()
+            obj.setEnabled(flag)

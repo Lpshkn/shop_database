@@ -7,7 +7,8 @@ class Database:
 
     @staticmethod
     def connect_db(server: str, database: str, name: str, password: str, autocommit: bool = False,
-                   timeout: int = 4, driver: str = "DRIVER={ODBC Driver 17 for SQL Server}"):
+                   timeout: int = 4, driver: str = "DRIVER={ODBC Driver 17 for SQL Server}",
+                   trusted_connection='no'):
         """
         This method connects to the database and returns the connection object.
 
@@ -22,7 +23,6 @@ class Database:
 
         db_object = Database()
         db_object.connection = pyodbc.connect(driver, server=server, database=database,
-                                              uid=name, pwd=password, trusted_connection='yes', autocommit=autocommit, timeout=timeout)
+                                              uid=name, pwd=password, trusted_connection=trusted_connection, autocommit=autocommit, timeout=timeout)
 
-        #pyodbc.connect(trusted_connection=True)
         return db_object
