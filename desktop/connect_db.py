@@ -8,7 +8,7 @@ import re
 from os import mkdir, environ
 from os.path import join, dirname, isdir, isfile
 from PyQt5 import uic
-from PyQt5.QtWidgets import QDialog, QLineEdit, QLabel
+from PyQt5.QtWidgets import QDialog, QLineEdit, QLabel, QFrame
 from PyQt5.QtCore import Qt
 from desktop.convert_error_sql import convert_error_sql
 from desktop.database import Database
@@ -36,10 +36,11 @@ class ConnectDatabaseDialog(QDialog):
 
         # Define error label to print error message it the dialog
         self.error_label = None
+        self.error_line = None
         # Initialize config directory
         self.__init_config_directory()
         # Disable resizing a window
-        self.setWindowFlags(Qt.Dialog | Qt.MSWindowsFixedSizeDialogHint)
+        #self.setWindowFlags(Qt.Dialog | Qt.MSWindowsFixedSizeDialogHint)
         # Set echo mode to hide inputting a password
         self.password_ledit.setEchoMode(QLineEdit.Password)
 
@@ -168,21 +169,33 @@ class ConnectDatabaseDialog(QDialog):
         """
         This method sets error label if error has been occurred
         """
+        if not self.error_line:
+            self.error_line = QFrame(self)
+            self.error_line.setFrameShadow(QFrame.Sunken)
+            self.error_line.setFrameShape(QFrame.HLine)
+            self.error_line.setLineWidth(1)
+            self.fields_layout.insertWidget(1, self.error_line)
+
         if not self.error_label:
             error_msg = convert_error_sql(error)
 
             self.error_label = QLabel(error_msg, self)
             self.error_label.setWordWrap(True)
             self.error_label.setStyleSheet('QLabel { color : red; }')
-            self.fields_layout.insertWidget(1, self.error_label)
+            self.fields_layout.insertWidget(2, self.error_label)
 
             self.resize(self.sizeHint())
 
     def remove_error_connection(self):
         """
-        This method is slot which called when any field was edited. If error label is set,
-        then this method remove that label
+        This method is slot which called when any field was edited. If error label and line are set,
+        then this method remove these widgets
         """
+        if self.error_line:
+            self.fields_layout.removeWidget(self.error_line)
+            self.error_line.deleteLater()
+            self.error_line = None
+
         if self.error_label:
             self.fields_layout.removeWidget(self.error_label)
             self.error_label.deleteLater()
