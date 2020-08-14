@@ -35,7 +35,7 @@ class ConnectDatabaseDialog(QDialog):
             exit(-1)
 
         # Flag specifies that Windows credential will be used
-        self.trusted_connection = 'no'
+        self.trusted_connection = 'yes'
         # Define error label to print error message it the dialog
         self.error_label = None
         self.error_line = None
