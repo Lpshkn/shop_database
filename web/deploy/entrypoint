@@ -3,10 +3,13 @@
 cd /usr/share/python3
 . venv/bin/activate
 
+echo "from app import app" > shopdb.py
 export FLASK_APP=shopdb.py
 
 flask db init
 flask db migrate
 flask db upgrade
 
-flask run -h 0.0.0.0 -p 5000
+rm shopdb.py
+
+gunicorn wsgi:app -b 0.0.0.0:5000
