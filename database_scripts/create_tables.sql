@@ -4,6 +4,7 @@ IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'shopdb')
     END
 
 USE shopdb
+EXECUTE sys.sp_cdc_disable_db;
 EXECUTE sys.sp_cdc_enable_db;
 
 IF NOT EXISTS(SELECT * FROM shopdb.INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'DiscountCards')
@@ -214,3 +215,52 @@ IF NOT EXISTS(SELECT * FROM shopdb.INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 
                 ON UPDATE CASCADE
         )
     END
+
+EXEC sys.sp_cdc_enable_table
+@source_schema = N'dbo',
+@source_name = N'Customers',
+@role_name = N'CDCRole',
+@supports_net_changes = 1
+GO
+
+EXEC sys.sp_cdc_enable_table
+@source_schema = N'dbo',
+@source_name = N'Producers',
+@role_name = N'CDCRole',
+@supports_net_changes = 1
+GO
+
+EXEC sys.sp_cdc_enable_table
+@source_schema = N'dbo',
+@source_name = N'DiscountCards',
+@role_name = NULL,
+@supports_net_changes = 1
+GO
+
+EXEC sys.sp_cdc_enable_table
+@source_schema = N'dbo',
+@source_name = N'Products',
+@role_name = NULL,
+@supports_net_changes = 1
+GO
+
+EXEC sys.sp_cdc_enable_table
+@source_schema = N'dbo',
+@source_name = N'Purchases',
+@role_name = NULL,
+@supports_net_changes = 1
+GO
+
+EXEC sys.sp_cdc_enable_table
+@source_schema = N'dbo',
+@source_name = N'Suppliers',
+@role_name = NULL,
+@supports_net_changes = 1
+GO
+
+EXEC sys.sp_cdc_enable_table
+@source_schema = N'dbo',
+@source_name = N'Workers',
+@role_name = NULL,
+@supports_net_changes = 1
+GO
