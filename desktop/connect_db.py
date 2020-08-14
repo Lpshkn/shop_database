@@ -8,9 +8,10 @@ import re
 from os import mkdir, environ
 from os.path import join, dirname, isdir, isfile
 from PyQt5 import uic
-from PyQt5.QtWidgets import QDialog, QLineEdit, QLabel
+from PyQt5.QtWidgets import QDialog, QLineEdit, QLabel, QFrame, QFormLayout
 from PyQt5.QtCore import Qt
 from desktop.convert_error_sql import convert_error_sql
+from desktop.database import Database
 
 
 class ConnectDatabaseDialog(QDialog):
@@ -33,14 +34,19 @@ class ConnectDatabaseDialog(QDialog):
             print(e)
             exit(-1)
 
+        # Flag specifies that Windows credential will be used
+        self.trusted_connection = 'yes'
         # Define error label to print error message it the dialog
         self.error_label = None
+        self.error_line = None
         # Initialize config directory
         self.__init_config_directory()
         # Disable resizing a window
         self.setWindowFlags(Qt.Dialog | Qt.MSWindowsFixedSizeDialogHint)
         # Set echo mode to hide inputting a password
         self.password_ledit.setEchoMode(QLineEdit.Password)
+
+        self.database = None
 
         self.__load_config()
 
@@ -148,7 +154,8 @@ class ConnectDatabaseDialog(QDialog):
 
         try:
             # Take connection to a database
-            connection = connect_db(server, database, name, password)
+            self.database = Database.connect_db(server, database, name, password, autocommit=True,
+                                                trusted_connection=self.trusted_connection)
         except (pyodbc.InterfaceError, pyodbc.OperationalError) as e:
             self.set_error_connection(e.args)
             return
@@ -159,27 +166,39 @@ class ConnectDatabaseDialog(QDialog):
         # If the connection was established, then save all configurations into the configuration file
         self.__save_config()
         # Pass established connection into main window class
-        self.parent().set_connection(connection)
+        self.parent().set_connection(self.database.connection)
 
     def set_error_connection(self, error):
         """
         This method sets error label if error has been occurred
         """
+        if not self.error_line:
+            self.error_line = QFrame(self)
+            self.error_line.setFrameShadow(QFrame.Sunken)
+            self.error_line.setFrameShape(QFrame.HLine)
+            self.error_line.setLineWidth(1)
+            self.fields_layout.insertWidget(1, self.error_line)
+
         if not self.error_label:
             error_msg = convert_error_sql(error)
 
             self.error_label = QLabel(error_msg, self)
             self.error_label.setWordWrap(True)
             self.error_label.setStyleSheet('QLabel { color : red; }')
-            self.fields_layout.insertWidget(1, self.error_label)
+            self.fields_layout.insertWidget(2, self.error_label)
 
             self.resize(self.sizeHint())
 
     def remove_error_connection(self):
         """
-        This method is slot which called when any field was edited. If error label is set,
-        then this method remove that label
+        This method is slot which called when any field was edited. If error label and line are set,
+        then this method remove these widgets
         """
+        if self.error_line:
+            self.fields_layout.removeWidget(self.error_line)
+            self.error_line.deleteLater()
+            self.error_line = None
+
         if self.error_label:
             self.fields_layout.removeWidget(self.error_label)
             self.error_label.deleteLater()
@@ -187,18 +206,14 @@ class ConnectDatabaseDialog(QDialog):
 
             self.resize(self.sizeHint())
 
+    def enable_login_pswd(self):
+        flag = False
+        self.trusted_connection = 'yes'
 
-def connect_db(server: str, database: str, name: str, password: str):
-    """
-    This function connects to database and returns connection object
-    """
+        if self.autentification_combox.currentText() == 'Логин и пароль':
+            flag = True
+            self.trusted_connection = 'no'
 
-    connection = pyodbc.connect("DRIVER={ODBC Driver 17 for SQL Server}",
-                                server=server,
-                                database=database,
-                                uid=name,
-                                pwd=password,
-                                autocommit=True,
-                                timeout=4)
-
-    return connection
+        for i in range(self.credentials_formlayout.count()):
+            obj = self.credentials_formlayout.itemAt(i).widget()
+            obj.setEnabled(flag)
