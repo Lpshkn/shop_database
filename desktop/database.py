@@ -22,6 +22,7 @@ class Database:
 
         db_object = Database()
         db_object.connection = pyodbc.connect(driver, server=server, database=database,
-                                              uid=name, pwd=password, autocommit=autocommit, timeout=timeout)
+                                              uid=name, pwd=password, trusted_connection='yes', autocommit=autocommit, timeout=timeout)
 
+        #pyodbc.connect(trusted_connection=True)
         return db_object
