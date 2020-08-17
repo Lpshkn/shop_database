@@ -390,3 +390,24 @@ class PurchasesStorage(MssqlStorage):
                     ({product_id}, {worker_id}, {customer_id}, {quantity}, {total_cost}, '{date}')"""
         self._cur.execute(sql)
         self._conn.commit()
+
+
+class LogsStorage(MssqlStorage):
+
+    @staticmethod
+    def get_connection(conn: pymssql.Connection):
+        obj = LogsStorage()
+        obj._conn = conn
+        obj._cur = conn.cursor()
+        return obj
+
+    def get_logs(self, logs_table_name: str, id_field_name: str, obj_id: int) -> list:
+        self._cur.execute(f"""SELECT * FROM shopdb.cdc.{logs_table_name}
+                              WHERE {id_field_name} = {obj_id}""")
+        logs = []
+        row = self._cur.fetchone()
+        while row:
+            row = [str(item) or '-' for item in row]
+            logs.append(row)
+            row = self._cur.fetchone()
+        return logs

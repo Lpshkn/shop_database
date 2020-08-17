@@ -1,8 +1,8 @@
 import pymssql
-from app import app, db
+from app import app, db, csrf
 from app import forms
 from app import mssql
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, jsonify
 from flask.views import MethodView
 from flask_login import login_user, logout_user, login_required
 from app.models import User
@@ -46,12 +46,29 @@ def login():
     return render_template('login.html', title='Sign In | Shop database ', form=form)
 
 
+@app.route('/logs', methods=['POST'])
+@csrf.exempt
+def get_logs():
+    logs_table_name = request.form['logs_table_name']
+    id_field_name = request.form['id_field_name']
+    obj_id = int(request.form['obj_id'])
+
+    storage = mssql.LogsStorage.get_connection(
+        conn=mssql.get_conn())
+    logs = storage.get_logs(
+        logs_table_name=logs_table_name,
+        id_field_name=id_field_name,
+        obj_id=obj_id)
+    print(logs)
+    return jsonify({'logs': logs})
+
+
 class WorkerAPI(MethodView):
     decorators = [login_required, mssql.check_conn]
     template = 'workers.html'
     context = {
         'title': 'Workers | Shop database',
-        'table_name': 'Workers',
+        'logs_table_name': 'Workers',
     }
 
     @staticmethod
@@ -126,7 +143,7 @@ class SupplierAPI(MethodView):
     template = 'suppliers.html'
     context = {
         'title': 'Suppliers | Shop database',
-        'table_name': 'Suppliers',
+        'logs_table_name': 'Suppliers',
     }
 
     @staticmethod
@@ -195,7 +212,7 @@ class ProductAPI(MethodView):
     template = 'products.html'
     context = {
         'title': 'Products | Shop database',
-        'table_name': 'Products',
+        'logs_table_name': 'Products',
     }
 
     @staticmethod
@@ -284,7 +301,7 @@ class CustomerAPI(MethodView):
     template = 'customers.html'
     context = {
         'title': 'Customers | Shop database',
-        'table_name': 'Customers'
+        'logs_table_name': 'Customers'
     }
 
     @staticmethod
@@ -372,7 +389,7 @@ class DiscountCardAPI(MethodView):
     template = 'discount_cards.html'
     context = {
         'title': 'Discount cards | Shop database',
-        'table_name': 'Discount cards',
+        'logs_table_name': 'Discount cards',
     }
 
     @staticmethod
@@ -441,7 +458,7 @@ class ProducerAPI(MethodView):
     template = 'producers.html'
     context = {
         'title': 'Producers | Shop database',
-        'table_name': 'Producers',
+        'logs_table_name': 'Producers',
     }
 
     @staticmethod
@@ -512,7 +529,7 @@ class PurchaseAPI(MethodView):
     template = 'purchases.html'
     context = {
         'title': 'Purchases | Shop database',
-        'table_name': 'Purchases',
+        'logs_table_name': 'Purchases',
     }
 
     @staticmethod
