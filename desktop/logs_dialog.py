@@ -69,4 +69,4 @@ class GetLogsDialog(QDialog):
                 elif it[0] == 4:
                     _rows.append(["Значение после изменения"] + list(it[1:]))
 
-        self.table_widget.set_rows(_rows)
+        self.table_widget.set_rows(_rows, flags=(Qt.ItemIsSelectable, Qt.ItemIsEnabled))

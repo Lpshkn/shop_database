@@ -62,7 +62,7 @@ class TableWidget(QTableWidget):
         self.setColumnCount(len(columns))
         self.setHorizontalHeaderLabels(columns)
 
-    def set_rows(self, rows: list = None, flags: list = None):
+    def set_rows(self, rows: list = None, flags: tuple = None):
         """
         This method sets rows values of the table. It takes rows values from the passed list.
 
