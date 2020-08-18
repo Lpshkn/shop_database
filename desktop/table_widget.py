@@ -6,7 +6,7 @@ from PyQt5.QtCore import Qt, QDateTime
 
 
 class TableWidget(QTableWidget):
-    def __init__(self, parent, database, table_name):
+    def __init__(self, parent, database, table_name, auto_update=False):
         super().__init__(parent)
 
         self.setObjectName(table_name)
@@ -16,9 +16,10 @@ class TableWidget(QTableWidget):
 
         # The list contains all query which must be executed
         self._queries = []
-
-        self.update_table()
         self.update_configurations()
+
+        if auto_update:
+            self.update_table()
 
     def update_configurations(self, section_size=250):
         """
