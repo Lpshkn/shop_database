@@ -33,12 +33,13 @@ class CentralWidget(QWidget):
             widget = self.create_table(table_name)
             self.tab_widget.addTab(widget, table_name)
 
-    def create_table(self, table_name) -> QWidget:
+    def create_table(self, table_name: str, widget: QWidget = None) -> QWidget:
         """
         This method creates new table widget, sets all configurations and returns created widget
         """
-        widget = QWidget()
-        table_widget = TableWidget(widget, self.database, table_name)
+        if widget is None:
+            widget = QWidget()
+        table_widget = TableWidget(widget, self.database, table_name, auto_update=True)
         layout = QGridLayout()
         layout.addWidget(table_widget)
         widget.setLayout(layout)
@@ -71,3 +72,18 @@ class CentralWidget(QWidget):
             widget = self.tab_widget.widget(tab_index)
             table = widget.findChild(QTableWidget, table_name)
             table.update_table()
+
+    def get_logs_dialog(self):
+        """
+        Get the Dialog and set the values in this table.
+        """
+        table_name = self.tab_widget.tabText(self.tab_widget.currentIndex())
+        dialog = GetLogsDialog(self, self.database, table_name)
+        dialog.show()
+
+        widget = self.tab_widget.currentWidget()
+        if widget:
+            table = widget.findChild(QTableWidget, table_name)
+            if table:
+                rows = table.get_rows(selected=True)
+                dialog.set_values(rows)
