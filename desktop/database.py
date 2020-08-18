@@ -5,7 +5,7 @@ class Database:
     def __init__(self):
         self._connection = None
         # This is the default schema for the database, and if it's necessary to change it, you must change this value
-        self._schema = 'dbo'
+        self.default_schema = 'dbo'
         # The list contains all query which must be executed
         self._queries = []
 
@@ -105,7 +105,7 @@ class Database:
                 FROM INFORMATION_SCHEMA.TABLES 
                 WHERE TABLE_NAME <> 'sysdiagrams' AND TABLE_NAME <> 'systranschemas'
                 AND TABLE_SCHEMA = '{0}'
-                """.format(self._schema)).fetchall()
+                """.format(self.default_schema)).fetchall()
         tables = [table[0] for table in tables]
         return tables
 
