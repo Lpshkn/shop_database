@@ -1,6 +1,45 @@
 import pyodbc
 
 
+# Translate all the names of columns of the tables
+COLUMNS = {
+    'fullname': 'ФИО',
+    'card_id': 'Номер дисконтной карты',
+    'address': 'Адрес',
+    'email': 'Электронная почта',
+    'telephone': 'Телефон',
+    'discount': 'Скидка',
+    'start_date': 'Начальная дата использования',
+    'expiration': 'Срок использования',
+    'name': 'Название',
+    'producer': 'Производитель',
+    'quantity': 'Количество',
+    'supplier': 'Поставщик',
+    'price': 'Цена',
+    'promotion': 'Акция',
+    'product_id': 'ID товара',
+    'worker_id': 'ID работника',
+    'customer_id': 'ID покупателя',
+    'date': 'Дата',
+    'total_cost': 'Полная стоимость',
+    'salary': 'Зарплата',
+    'job': 'Должность',
+    'passport_number': 'Номер и серия паспорта'
+}
+
+
+# Translate the names of the tables
+TABLES = {
+    'Customers': 'Покупатели',
+    'DiscountCards': 'Дисконтные карты',
+    'Producers': 'Производители',
+    'Products': 'Товары',
+    'Purchases': 'Покупки',
+    'Suppliers': 'Поставщики',
+    'Workers': 'Работники'
+}
+
+
 class Database:
     def __init__(self):
         self._connection = None
