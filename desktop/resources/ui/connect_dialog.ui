@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>670</width>
-    <height>268</height>
+    <width>708</width>
+    <height>405</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -47,10 +47,30 @@
     <enum>QLayout::SetFixedSize</enum>
    </property>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0">
+    <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0">
      <property name="sizeConstraint">
       <enum>QLayout::SetFixedSize</enum>
      </property>
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap>../../../../../OneDrive/Рабочий стол/logodb.png</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
      <item>
       <layout class="QFormLayout" name="formLayout_2">
        <property name="sizeConstraint">
@@ -175,25 +195,6 @@
        <property name="leftMargin">
         <number>30</number>
        </property>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="name_user_ledit">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>389</width>
-           <height>24</height>
-          </size>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="0">
         <widget class="QLabel" name="name_user_label">
          <property name="enabled">
@@ -213,6 +214,25 @@
          </property>
          <property name="text">
           <string>Имя пользователя:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="name_user_ledit">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>389</width>
+           <height>24</height>
+          </size>
          </property>
         </widget>
        </item>

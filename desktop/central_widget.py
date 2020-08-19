@@ -2,6 +2,7 @@ from os.path import join, dirname
 from PyQt5 import uic
 from PyQt5.QtWidgets import QWidget, QGridLayout, QTableWidget
 from desktop.table_widget import TableWidget
+from desktop.logs_dialog import GetLogsDialog
 
 
 class CentralWidget(QWidget):
@@ -10,7 +11,7 @@ class CentralWidget(QWidget):
     # Define the filename to ui file of that widget
     FILENAME_UI = join(UI_DIR, 'central_widget.ui')
 
-    def __init__(self, parent, connection):
+    def __init__(self, parent, database):
         super().__init__(parent)
 
         # Load .ui file and initialize it
@@ -20,38 +21,25 @@ class CentralWidget(QWidget):
             print(e)
             exit(-1)
 
-        self.connection = connection
-
+        self.database = database
         self.setup_tables()
 
     def setup_tables(self):
         """
         This method setups all tables into central widget
         """
-        cursor = self.connection.cursor()
-
-        # This is the default schema for the database, and if it's necessary to change it, you must change this value
-        schema = 'dbo'
-        # Get all names of the tables containing in the database, except of the diagrams system table
-        tables = cursor.execute("""
-        SELECT TABLE_NAME 
-            FROM INFORMATION_SCHEMA.TABLES 
-            WHERE TABLE_NAME <> 'sysdiagrams' AND TABLE_NAME <> 'systranschemas'
-            AND TABLE_SCHEMA = '{0}'
-        """.format(schema)).fetchall()
-        tables = [table[0] for table in tables]
-
         # Set new tables into tab widget
-        for table_name in tables:
+        for table_name in self.database.get_tables():
             widget = self.create_table(table_name)
             self.tab_widget.addTab(widget, table_name)
 
-    def create_table(self, table_name) -> QWidget:
+    def create_table(self, table_name: str, widget: QWidget = None) -> QWidget:
         """
         This method creates new table widget, sets all configurations and returns created widget
         """
-        widget = QWidget()
-        table_widget = TableWidget(widget, self.connection, table_name)
+        if widget is None:
+            widget = QWidget()
+        table_widget = TableWidget(widget, self.database, table_name, auto_update=True)
         layout = QGridLayout()
         layout.addWidget(table_widget)
         widget.setLayout(layout)
@@ -84,3 +72,18 @@ class CentralWidget(QWidget):
             widget = self.tab_widget.widget(tab_index)
             table = widget.findChild(QTableWidget, table_name)
             table.update_table()
+
+    def get_logs_dialog(self):
+        """
+        Get the Dialog and set the values in this table.
+        """
+        table_name = self.tab_widget.tabText(self.tab_widget.currentIndex())
+        dialog = GetLogsDialog(self, self.database, table_name)
+        dialog.show()
+
+        widget = self.tab_widget.currentWidget()
+        if widget:
+            table = widget.findChild(QTableWidget, table_name)
+            if table:
+                rows = table.get_rows(selected=True)
+                dialog.set_values(rows)

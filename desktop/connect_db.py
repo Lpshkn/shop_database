@@ -166,7 +166,7 @@ class ConnectDatabaseDialog(QDialog):
         # If the connection was established, then save all configurations into the configuration file
         self.__save_config()
         # Pass established connection into main window class
-        self.parent().set_connection(self.database.connection)
+        self.parent().set_connection(self.database)
 
     def set_error_connection(self, error):
         """

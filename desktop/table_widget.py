@@ -6,19 +6,20 @@ from PyQt5.QtCore import Qt, QDateTime
 
 
 class TableWidget(QTableWidget):
-    def __init__(self, parent, connection, table_name):
+    def __init__(self, parent, database, table_name, auto_update=False):
         super().__init__(parent)
 
         self.setObjectName(table_name)
 
-        self.connection = connection
+        self.database = database
         self.table_name = table_name
 
         # The list contains all query which must be executed
         self._queries = []
-
-        self.update_table()
         self.update_configurations()
+
+        if auto_update:
+            self.update_table()
 
     def update_configurations(self, section_size=250):
         """
@@ -46,66 +47,30 @@ class TableWidget(QTableWidget):
         self.setColumnCount(0)
         self.setRowCount(0)
 
-        if columns:
-            self.set_columns(columns)
-        else:
-            self.set_columns_from_database(self.table_name)
-
-        if rows:
-            self.set_rows(rows, flags)
-        else:
-            self.set_rows_from_database(self.table_name, flags)
-
-    def set_columns_from_database(self, table_name: str):
-        """
-        This method sets columns names of the table. It takes columns names from the database using the table name.
-
-        :param table_name: take the columns names from this table
-        """
-
-        query = f"""
-                SELECT COLUMN_NAME
-                FROM INFORMATION_SCHEMA.COLUMNS
-                WHERE TABLE_NAME = '{table_name}'
-                """
-
-        self.add_query(query)
-        executed_query = self.execute_query()
-        columns = executed_query.fetchall()
-        columns = [column[0] for column in columns]
-
         self.set_columns(columns)
+        self.set_rows(rows, flags)
 
-    def set_columns(self, columns: list):
+    def set_columns(self, columns: list = None):
         """
         This method sets columns names of the table. It takes columns names from the passed list.
 
         :param columns: take the columns names from this list
         """
+        if columns is None:
+            columns = self.database.get_columns(self.table_name)
 
         self.setColumnCount(len(columns))
         self.setHorizontalHeaderLabels(columns)
 
-    def set_rows_from_database(self, table_name: str, flags: list):
-        """
-        This method sets rows values of the table. It takes rows values from the database using the table name.
-
-        :param table_name: take the rows values from this table
-        :param flags: a list of flags, which will be applied when setting the cells
-        """
-
-        self.add_query(f"SELECT * FROM {table_name}")
-        rows = self.execute_query().fetchall()
-
-        self.set_rows(rows, flags)
-
-    def set_rows(self, rows: list, flags: list):
+    def set_rows(self, rows: list = None, flags: list = None):
         """
         This method sets rows values of the table. It takes rows values from the passed list.
 
         :param rows: take the rows values from this list
         :param flags: a list of flags, which will be applied when setting the cells
         """
+        if rows is None:
+            rows = self.database.get_rows(self.table_name)
 
         # Create empty rows to fill them later
         self.setRowCount(len(rows))
@@ -132,8 +97,11 @@ class TableWidget(QTableWidget):
                 # Set the value into the cell
                 item = QTableWidgetItem()
                 item.setData(Qt.EditRole, value)
+
                 # Set flags to disable editing any cell
-                item.setFlags(reduce(lambda x, y: x | y, flags))
+                if flags:
+                    item.setFlags(reduce(lambda x, y: x | y, flags))
+
                 self.setItem(index_row, index_column, item)
 
     def get_columns(self, selected: bool = False) -> list:
@@ -171,69 +139,10 @@ class TableWidget(QTableWidget):
 
         return rows
 
-    def delete_tuple(self, force_delete: bool = True):
+    def delete_tuple(self):
         """
         This is a slot, which will be called when user will select any cells and will click the delete button.
         This method deletes appropriate rows from the database.
-
-        :param force_delete: the flag which specifies that it's important to execute the delete query at the moment
         """
-        for row in self.get_rows(selected=True):
-            # Make a delete query
-            conditions = []
-            query = f"DELETE FROM {self.table_name} WHERE "
-
-            # Iterate through the columns and append the conditions to delete the appropriate tuple
-            for column, item in zip(self.get_columns(), row):
-                if item:
-                    condition = f"{column} = '{item}'"
-                else:
-                    condition = f"{column} IS NULL"
-                conditions.append(condition)
-
-            # Concatenate whole list of conditions into the one query
-            query += ' AND '.join(conditions)
-            self.add_query(query)
-
-            if force_delete:
-                self.execute_query()
-
-    def add_query(self, query: str):
-        """
-        This method adds the query to the query list. Note, this method doesn't execute the query.
-        But this method must be used before executing the query.
-
-        :param query: this query will be added into the query list
-        """
-        self._queries.append(query)
-
-    def execute_query(self, all_queries: bool = False):
-        """
-        This method executes the first query containing in the query list. If it executes only one query,
-        it will return a result of executed query. Nevertheless, if the flag "all_queries" is True,
-        then the method will execute all queries starts from the first and doesn't return anything.
-
-        :param all_queries: specify that if it's necessary to execute all queries in the list
-        """
-        cursor = self.connection.cursor()
-
-        if all_queries:
-            for query in self._queries:
-                cursor.execute(query).commit()
-
-        else:
-            query = self._queries.pop(0)
-            executed_query = cursor.execute(query)
-            return executed_query
-
-    def reject_query(self, all_queries: bool = False):
-        """
-        This method rejects the last query containing in the query list and returns it. If the flag "all_queries"
-        is True, then the method will reject all queries in the query list and won't return any.
-
-        :param all_queries: specify that if it's necessary to reject all queries in the list
-        """
-        if all_queries:
-            self._queries.clear()
-        else:
-            return self._queries.pop()
+        rows = self.get_rows(selected=True)
+        self.database.delete_tuple(self.table_name, rows)

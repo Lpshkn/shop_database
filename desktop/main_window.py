@@ -24,9 +24,8 @@ class MainWindow(QMainWindow):
             print(e)
             exit(-1)
 
+        self.database = None
         self.connect_db_dialog = None
-        self.connection = None
-
         self.connect_db()
 
     def connect_db(self):
@@ -36,17 +35,16 @@ class MainWindow(QMainWindow):
         self.connect_db_dialog = ConnectDatabaseDialog(self)
         self.connect_db_dialog.show()
 
-    def set_connection(self, connection):
+    def set_connection(self, database):
         """
         When connection will be established in the dialog window, then this method will be called
         and the connection will be passed in here.
         """
-        self.connection = connection
-
         self.connect_action.setEnabled(False)
         self.disconnect_action.setEnabled(True)
+        self.database = database
 
-        central_widget = CentralWidget(self, self.connection)
+        central_widget = CentralWidget(self, self.database)
         self.setCentralWidget(central_widget)
 
     def disconnect_db(self):
