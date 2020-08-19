@@ -19,16 +19,16 @@
   </thead>
   <tbody>
   	{% for purchase in purchases %}
-	  <tr id="row_{{ loop.index }}" onmouseover='showImages(`{{ loop.index }}`)' onmouseout='hideImages(`{{ loop.index }}`)'>
+	  <tr id="row_{{ loop.index }}" onmouseover='showImages(`{{ loop.index }}`)' onmouseout='hideImages(`{{ loop.index }}`)' onclick="fillLogsModal('dbo_Purchases_CT', 'purchase_id', '{{ purchase.0 }}')">
 	  	<th><img id="del_img_{{ loop.index }}" title="Delete" src="{{ delete_icon() }}" class="js-open-modal" data-modal="delete-modal" onclick='fillDeleteModal("row_{{ loop.index }}")'>     <img id="upd_img_{{ loop.index }}" title="Update" src="{{ update_icon() }}" class="js-open-modal" data-modal="update-modal" onclick='fillUpdateModal("row_{{ loop.index }}")'></th>
 	      <td scope="row"><strong>{{ purchase.0 }}</strong></td>
-	      <td>{{ purchase.1 }}</td>
-	      <td>{{ purchase.2 }}</td>
-	      <td>{{ purchase.3 }}</td>
-	      <td>{{ purchase.4 }}</td>
-	      <td>{{ purchase.5 }}</td>
-	      <td>{{ purchase.6 }}</td>
-	      <td>{{ purchase.7 }}</td>
+	      <td class="js-open-modal" data-modal="logs-modal">{{ purchase.1 }}</td>
+	      <td class="js-open-modal" data-modal="logs-modal">{{ purchase.2 }}</td>
+	      <td class="js-open-modal" data-modal="logs-modal">{{ purchase.3 }}</td>
+	      <td class="js-open-modal" data-modal="logs-modal">{{ purchase.4 }}</td>
+	      <td class="js-open-modal" data-modal="logs-modal">{{ purchase.5 }}</td>
+	      <td class="js-open-modal" data-modal="logs-modal">{{ purchase.6 }}</td>
+	      <td class="js-open-modal" data-modal="logs-modal">{{ purchase.7 }}</td>
       </tr>
 	{% endfor %}
     </tbody>
@@ -95,6 +95,18 @@
        <input type="hidden" id="del_id" name="purchase_id" value="">
 	     <button type="button" class="btn btn-outline-secondary js-modal-close">Cancel</button>
        {{ form.submit(value="Delete", class="btn btn-outline-danger") }}
+    </form>
+   </div>
+</div>
+
+<div class="modal-window" data-modal="logs-modal">
+   <img class="modal__cross js-modal-close" src="{{ close_icon() }}">
+   <h4>Changes</h4>
+   <hr class="my hr4">
+    <div id='logs-div'></div>
+    <div class="modal-footer">
+    <form action="" method="post">
+       <button type="button" class="btn btn-outline-secondary js-modal-close">Close</button>
     </form>
    </div>
 </div>
