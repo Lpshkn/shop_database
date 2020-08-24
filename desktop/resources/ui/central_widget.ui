@@ -129,9 +129,26 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>add_button</sender>
+   <signal>clicked()</signal>
+   <receiver>central_widget</receiver>
+   <slot>get_adding_dialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>158</x>
+     <y>532</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>437</x>
+     <y>281</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>delete_tuple()</slot>
   <slot>get_logs_dialog()</slot>
+  <slot>get_adding_dialog()</slot>
  </slots>
 </ui>

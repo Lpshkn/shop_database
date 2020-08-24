@@ -3,6 +3,7 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import QWidget, QGridLayout, QTableWidget
 from desktop.table_widget import TableWidget
 from desktop.logs_dialog import GetLogsDialog
+from desktop.adding_values_dialog import AddingValuesDialog
 
 
 class CentralWidget(QWidget):
@@ -60,9 +61,6 @@ class CentralWidget(QWidget):
 
             self.update_tables()
 
-    def create_deleting_dialog(self, columns, rows):
-        pass
-
     def update_tables(self):
         """
         This method makes an value update of all tables
@@ -72,6 +70,14 @@ class CentralWidget(QWidget):
             widget = self.tab_widget.widget(tab_index)
             table = widget.findChild(QTableWidget, table_name)
             table.update_table()
+
+    def get_deleting_dialog(self, columns, rows):
+        pass
+
+    def get_adding_dialog(self):
+        table_name = self.tab_widget.tabText(self.tab_widget.currentIndex())
+        dialog = AddingValuesDialog(self, self.database, table_name)
+        dialog.show()
 
     def get_logs_dialog(self):
         """
