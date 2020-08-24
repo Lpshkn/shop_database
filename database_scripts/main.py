@@ -8,8 +8,8 @@ COMMON_WORDS_USERS_ENTER_WHEN_TRYING_TO_EXIT = {
 
 def main():
   host = 'localhost'
-  port = 5432
-  dbname = 'audio-library'
+  # port = ??? need to add the port
+  dbname = 'shopdb'
   user = input('[ db user ] ')
   password = stdiomask.getpass(prompt='[ db password ] ', mask='*')
   
