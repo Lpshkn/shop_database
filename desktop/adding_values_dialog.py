@@ -49,4 +49,18 @@ class AddingValuesDialog(QDialog):
 
             ledit = QLineEdit(self)
             ledit.setFont(font)
+            ledit.textEdited.connect(self.enable_accept_button)
             self.main_layout.addWidget(ledit, index, 1)
+
+    def enable_accept_button(self):
+        """
+        The slot that will be called, when an edit line will be edit.
+        If all the edit lines are not empty, then the add button will be enabled.
+        """
+        enabled = True
+        for row_index in range(self.main_layout.rowCount()):
+            item = self.main_layout.itemAtPosition(row_index, 1)
+            if item.widget().text() == '':
+                enabled = False
+                break
+        self.add_button.setEnabled(enabled)

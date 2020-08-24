@@ -101,6 +101,9 @@
      </property>
      <item>
       <widget class="QPushButton" name="add_button">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -163,5 +166,24 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>add_button</sender>
+   <signal>clicked()</signal>
+   <receiver>adding_values_dialog</receiver>
+   <slot>_add_values()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>203</x>
+     <y>278</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>325</x>
+     <y>152</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>_add_values()</slot>
+ </slots>
 </ui>
