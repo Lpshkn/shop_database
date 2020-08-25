@@ -10,7 +10,7 @@ from os.path import join, dirname, isdir, isfile
 from PyQt5 import uic
 from PyQt5.QtWidgets import QDialog, QLineEdit, QLabel, QFrame, QFormLayout
 from PyQt5.QtCore import Qt
-from desktop.convert_error_sql import convert_error_sql
+from desktop.convert_error_sql import process_error_sql
 from desktop.database import Database
 
 
@@ -180,7 +180,7 @@ class ConnectDatabaseDialog(QDialog):
             self.fields_layout.insertWidget(1, self.error_line)
 
         if not self.error_label:
-            error_msg = convert_error_sql(error)
+            error_msg = process_error_sql(error)
 
             self.error_label = QLabel(error_msg, self)
             self.error_label.setWordWrap(True)
