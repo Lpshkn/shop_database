@@ -51,8 +51,8 @@ class MainWindow(QMainWindow):
         """
         This method will close all tables and a database
         """
-        if self.connection:
-            self.connection = None
+        if self.database:
+            self.database = None
 
         self.disconnect_action.setEnabled(False)
         self.connect_action.setEnabled(True)
