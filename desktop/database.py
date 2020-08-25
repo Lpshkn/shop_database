@@ -1,4 +1,5 @@
 import pyodbc
+import datetime as dt
 
 
 # Translate all the names of columns of the tables
@@ -135,6 +136,19 @@ class Database:
 
             if force_delete:
                 self.execute_query()
+
+    def get_type_column(self, table_name, column):
+        """
+        Method gets the type of the column and returns it.
+        """
+        query = f"""
+                            SELECT DATA_TYPE 
+                            FROM INFORMATION_SCHEMA.COLUMNS
+                            WHERE 
+                                 TABLE_NAME = '{table_name}' AND 
+                                 COLUMN_NAME = '{column}'
+                            """
+        return self.execute_query(query=query).fetchone()[0]
 
     def get_tables(self):
         """
