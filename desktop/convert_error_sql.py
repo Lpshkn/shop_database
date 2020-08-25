@@ -1,25 +1,29 @@
 import re
-
-ERRORS_SQL = {
-    18456: "Попытка соединения отклонена в результате сбоя проверки подлинности из-за неправильного имени или пароля.",
-    4060: "Невозможно получить доступ к этой базе данных. Ошибка входа. Проверьте корректность названия базы данных."
-}
+import desktop.database as db
 
 
-def convert_error_sql(error: str) -> str:
+def process_error_sql(error: str) -> str:
     """
-    This function convert error returned by ODBC and returns processed error
+    This function processes error returned by ODBC and returns processed error
     """
-    split_error = error[1].split(';')[-1]
+    error_msg = re.sub(r"\[[\w\s-]+\]", r"", error[1])
+    msgs = []
+    for msg in re.split(r'\.[\b]', error_msg):
+        msg = msg.strip()
+        msg = msg[0].upper() + msg[1:]
+        msgs.append(msg)
 
-    error_number = re.search(r"\([\d-]+\)", split_error)
-    error_number = int(re.sub(r'[()]', r'', error_number.group(0)))
+    # Translate the table names
+    error_msg = '. '.join(msgs)
+    for table_name in db.TABLES.keys():
+        if table_name in error_msg:
+            error_msg = re.sub(r'"[\w]+\.[\w]+\.{0}"'.format(table_name), '"{0}"'.format(db.TABLES.get(table_name, table_name)), error_msg)
+            break
 
-    error_msg = ERRORS_SQL.get(error_number, None)
-    if error_msg:
-        error_msg = "Ошибка " + str(error_number) + ": " + error_msg
-    else:
-        error_msg = re.sub(r"(\[[\w\s-]+\])|(\([\w\s-]+\))", r"", split_error)
-        error_msg = "Ошибка: " + error_msg.strip()
+    # Translate the column names
+    for column_name in db.COLUMNS.keys():
+        if column_name in error_msg:
+            error_msg = re.sub(r'"{0}"'.format(column_name), '"{0}"'.format(db.COLUMNS.get(column_name, column_name)), error_msg)
+            break
 
     return error_msg
