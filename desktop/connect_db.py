@@ -157,7 +157,7 @@ class ConnectDatabaseDialog(QDialog):
             self.database = Database.connect_db(server, database, name, password, autocommit=True,
                                                 trusted_connection=self.trusted_connection)
         except (pyodbc.InterfaceError, pyodbc.OperationalError) as e:
-            self.set_error_connection(e.args)
+            self.set_error_connection(e.args[1])
             return
 
         # Close dialog window

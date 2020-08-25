@@ -6,7 +6,7 @@ def process_error_sql(error: str) -> str:
     """
     This function processes error returned by ODBC and returns processed error
     """
-    error_msg = re.sub(r"\[[\w\s-]+\]", r"", error[1])
+    error_msg = re.sub(r"\[[\w\s-]+\]", r"", error)
     msgs = []
     for msg in re.split(r'\.[\b]', error_msg):
         msg = msg.strip()
