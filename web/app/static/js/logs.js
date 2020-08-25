@@ -20,3 +20,18 @@ function logsAjax(logs_table_name, id_field_name, obj_id, fillModalFunction) {
 
 	xhr.send(encodeURI(uri));
 }
+
+function fillLogsModal(logs_table_name, id_field_name, obj_id) {
+    const logsDiv = document.getElementById('logs-div');
+    logsDiv.innerHTML = '';
+    logsAjax(logs_table_name, id_field_name, obj_id, function (logs) {
+        for (let i = 0; i < logs.length; i++) {
+            const logP = document.createElement('p');
+            logP.innerHTML = logs[i];
+            logsDiv.appendChild(logP);
+        }
+        if (logs.length === 0) {
+        	logsDiv.innerHTML = 'No changes<br>';
+		}
+    });
+}
