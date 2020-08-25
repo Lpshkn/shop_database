@@ -1,16 +1,18 @@
 import datetime
 import decimal
+import desktop.database as db
 from functools import reduce
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
 from PyQt5.QtCore import Qt, QDateTime
 
 
 class TableWidget(QTableWidget):
-    def __init__(self, parent, database, table_name, auto_update=False):
+    def __init__(self, parent, database, table_name, auto_update=False, translate=False):
         super().__init__(parent)
 
         self.setObjectName(table_name)
 
+        self.translate = translate
         self.database = database
         self.table_name = table_name
 
@@ -58,6 +60,9 @@ class TableWidget(QTableWidget):
         """
         if columns is None:
             columns = self.database.get_columns(self.table_name)
+
+        if self.translate:
+            columns = [db.COLUMNS.get(column, column) for column in columns]
 
         self.setColumnCount(len(columns))
         self.setHorizontalHeaderLabels(columns)
