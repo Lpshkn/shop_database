@@ -19,6 +19,8 @@ COLUMNS = {
     'promotion': 'Акция',
     'product_id': 'ID товара',
     'worker_id': 'ID работника',
+    'producer_id': 'ID производителя',
+    'supplier_id': 'ID поставщика',
     'customer_id': 'ID покупателя',
     'date': 'Дата',
     'total_cost': 'Полная стоимость',
@@ -157,24 +159,28 @@ class Database:
         """
         self._queries.append(query)
 
-    def execute_query(self, all_queries: bool = False):
+    def execute_query(self, query: str = None, all_queries: bool = False):
         """
         This method executes the first query containing in the query list. If it executes only one query,
         it will return a result of executed query. Nevertheless, if the flag "all_queries" is True,
         then the method will execute all queries starts from the first and doesn't return anything.
 
+        :param query: the query to the database. If it's specified, the query is executed immediately
         :param all_queries: specify that if it's necessary to execute all queries in the list
         """
         cursor = self._connection.cursor()
 
-        if all_queries:
-            for query in self._queries:
-                cursor.execute(query).commit()
-
+        if query:
+            return cursor.execute(query)
         else:
-            query = self._queries.pop(0)
-            executed_query = cursor.execute(query)
-            return executed_query
+            if all_queries:
+                for query in self._queries:
+                    cursor.execute(query).commit()
+
+            else:
+                query = self._queries.pop(0)
+                executed_query = cursor.execute(query)
+                return executed_query
 
     def reject_query(self, all_queries: bool = False):
         """
