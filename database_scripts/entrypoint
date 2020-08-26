@@ -1,0 +1,9 @@
+#!/bin/bash
+
+echo "Installing Mssql server"
+sudo /opt/mssql/bin/mssql-conf setup
+sudo /opt/mssql/bin/mssql-conf set sqlagent.enabled true
+sudo /opt/mssql/bin/sqlservr > /dev/null &
+
+/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P Password1337 -i /create_tables.sql
+/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P Password1337 -i /insert_values.sql
