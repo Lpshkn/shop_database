@@ -200,9 +200,6 @@ IF NOT EXISTS(SELECT * FROM shopdb.INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 
                      NOT NULL
                      DEFAULT GETDATE(),
 
-        total_cost   MONEY
-                     NOT NULL,
-
         CONSTRAINT product_foreign FOREIGN KEY (product_id)
             REFERENCES Products(product_id)
                 ON DELETE CASCADE
