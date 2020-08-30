@@ -24,7 +24,11 @@ IF NOT EXISTS(SELECT * FROM shopdb.INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 
                      DEFAULT GETDATE(),
 
         expiration   DATE
+                     NOT NULL,
+
+        is_blocked   BIT
                      NOT NULL
+                     DEFAULT 0
         );
     END
 
