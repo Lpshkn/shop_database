@@ -36,3 +36,17 @@ RETURNS MONEY
         SET @total_cost = @total_cost * (1 - @discount_card_discount)
         RETURN @total_cost
     END
+GO
+
+-- This function returns the information about suppliers and producers that have @substr in their name
+CREATE OR ALTER FUNCTION show_all_companies_with_substr(@substr NVARCHAR(max))
+    RETURNS TABLE
+    AS RETURN
+       (SELECT name, address, email, telephone
+       FROM Producers
+       WHERE CHARINDEX(@substr, Producers.name) > 0
+       UNION
+       SELECT name, address, email, telephone
+       FROM Suppliers
+       WHERE CHARINDEX(@substr, Suppliers.name) > 0)
+GO
